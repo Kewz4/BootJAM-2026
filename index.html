@@ -35,12 +35,16 @@
   --r:         14px;
   --r-sm:      9px;
   --r-lg:      20px;
+  /* easing */
+  --ease-out:    cubic-bezier(0.23, 1, 0.32, 1);
+  --ease-drawer: cubic-bezier(0.32, 0.72, 0, 1);
+  --ease-in-out: cubic-bezier(0.77, 0, 0.175, 1);
 }
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 
 body {
   font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
-  font-size: 16px; line-height: 1.5;
+  font-size: 16px; line-height: 1.6;
   color: var(--text); background: var(--bg);
   min-height: 100vh; -webkit-font-smoothing: antialiased;
   overscroll-behavior: none;
@@ -58,18 +62,19 @@ body {
 .view.active { display: flex; }
 
 /* slide transition */
-.view.slide-in  { animation: slideIn .22s ease both; }
-.view.slide-out { animation: slideOut .18s ease both; }
-@keyframes slideIn  { from{transform:translateX(100%);opacity:.3} to{transform:translateX(0);opacity:1} }
-@keyframes slideOut { from{transform:translateX(0);opacity:1} to{transform:translateX(-30%);opacity:0} }
+.view.slide-in  { animation: slideIn .26s var(--ease-out) both; }
+.view.slide-out { animation: slideOut .18s var(--ease-in-out) both; }
+@keyframes slideIn  { from{transform:translateX(28px);opacity:0} to{transform:translateX(0);opacity:1} }
+@keyframes slideOut { from{transform:translateX(0);opacity:1} to{transform:translateX(-20px);opacity:0} }
 
 /* ─── TOPBAR ─── */
 .topbar {
   background: var(--surface);
   border-bottom: 1px solid var(--border);
-  padding: 0 16px;
-  height: 56px;
-  display: flex; align-items: center; justify-content: space-between;
+  padding: env(safe-area-inset-top) 16px 0;
+  min-height: calc(56px + env(safe-area-inset-top));
+  display: flex; align-items: flex-end; justify-content: space-between;
+  padding-bottom: 10px;
   position: sticky; top: 0; z-index: 90;
   flex-shrink: 0;
 }
@@ -78,17 +83,18 @@ body {
 .topbar-title { font-size: 16px; font-weight: 700; color: var(--muted); }
 .sep { width: 1px; height: 20px; background: var(--border); }
 .tb-btn {
-  width: 38px; height: 38px; border-radius: var(--r-sm);
+  width: 44px; height: 44px; border-radius: var(--r-sm);
   border: 1px solid var(--border); background: var(--surface);
   cursor: pointer; display: flex; align-items: center; justify-content: center;
-  color: var(--text); font-size: 18px; transition: background .15s;
+  color: var(--text); font-size: 18px; transition: background .15s, transform 100ms ease-out;
   -webkit-tap-highlight-color: transparent;
 }
+.tb-btn:active { transform: scale(0.93); }
 .tb-btn:hover { background: var(--bg); }
 .back-btn {
   display: flex; align-items: center; gap: 5px;
   background: none; border: none; cursor: pointer;
-  color: var(--navy); font-size: 15px; font-weight: 700;
+  color: var(--navy); font-size: 16px; font-weight: 700;
   padding: 6px 0; font-family: inherit;
   -webkit-tap-highlight-color: transparent;
 }
@@ -109,10 +115,11 @@ body {
 }
 .bn {
   display: flex; flex-direction: column; align-items: center;
-  padding: 8px 6px 6px; cursor: pointer; border: none; background: none;
-  color: var(--muted); font-size: 11px; font-weight: 600;
-  position: relative; gap: 3px; transition: color .2s;
+  padding: 10px 6px 8px; cursor: pointer; border: none; background: none;
+  color: var(--muted); font-size: 12px; font-weight: 700;
+  position: relative; gap: 4px; transition: color .2s;
   -webkit-tap-highlight-color: transparent; font-family: inherit;
+  min-height: 56px;
 }
 .bn i { font-size: 22px; }
 .bn.on { color: var(--navy); }
@@ -136,10 +143,12 @@ body {
 /* ─── BUTTONS ─── */
 .btn {
   display: flex; align-items: center; justify-content: center; gap: 8px;
-  padding: 15px 20px; border-radius: var(--r); border: none; cursor: pointer;
-  font-size: 16px; font-weight: 700; width: 100%; transition: all .15s;
+  padding: 16px 20px; border-radius: var(--r); border: none; cursor: pointer;
+  font-size: 16px; font-weight: 700; width: 100%;
+  transition: background .15s, border-color .15s, transform 100ms ease-out;
   -webkit-tap-highlight-color: transparent; font-family: inherit;
 }
+.btn:active:not(:disabled) { transform: scale(0.97); }
 .btn i { font-size: 18px; }
 .btn-primary { background: var(--navy); color: #fff; }
 .btn-primary:hover { background: var(--navy-2); }
@@ -227,23 +236,28 @@ body {
 .spec-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
 .spec-card {
   background: var(--surface); border: 1.5px solid var(--border);
-  border-radius: var(--r); padding: 16px 12px; text-align: center;
-  cursor: pointer; transition: all .15s; -webkit-tap-highlight-color: transparent;
+  border-radius: var(--r); padding: 18px 12px; text-align: center;
+  cursor: pointer;
+  transition: border-color .15s, background .15s, transform 100ms ease-out;
+  -webkit-tap-highlight-color: transparent;
 }
+.spec-card:active { transform: scale(0.96); }
 .spec-card:hover  { border-color: var(--navy); }
 .spec-card.sel    { border-color: var(--navy); background: var(--navy-3); }
 .spec-icon { font-size: 28px; color: var(--navy); display: block; margin-bottom: 7px; }
-.spec-name { font-size: 13px; font-weight: 700; color: var(--text); }
+.spec-name { font-size: 14px; font-weight: 700; color: var(--text); line-height: 1.3; }
 
 /* ─── CALENDAR ─── */
 .cal-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; }
 .cal-nav {
-  width: 36px; height: 36px; border-radius: var(--r-sm);
+  width: 44px; height: 44px; border-radius: var(--r-sm);
   border: 1px solid var(--border); background: var(--surface);
   cursor: pointer; display: flex; align-items: center; justify-content: center;
-  color: var(--navy); font-size: 17px; transition: background .15s;
+  color: var(--navy); font-size: 18px;
+  transition: background .15s, transform 100ms ease-out;
   -webkit-tap-highlight-color: transparent;
 }
+.cal-nav:active { transform: scale(0.92); }
 .cal-nav:hover { background: var(--bg); }
 .cal-month-label { font-size: 17px; font-weight: 800; }
 .cal-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 0; }
@@ -361,9 +375,11 @@ body {
   background: var(--surface); border-radius: var(--r);
   border: 1px solid var(--border); padding: 14px 16px;
   display: flex; align-items: center; gap: 12px; cursor: pointer;
-  margin-bottom: 10px; transition: border-color .15s;
+  margin-bottom: 10px;
+  transition: border-color .15s, transform 100ms ease-out;
 }
-.hist-item:hover { border-color: var(--navy); }
+.hist-item:hover  { border-color: var(--navy); }
+.hist-item:active { transform: scale(0.98); }
 .hist-icon {
   width: 44px; height: 44px; border-radius: var(--r-sm);
   background: var(--navy-3); display: flex; align-items: center; justify-content: center;
@@ -376,9 +392,11 @@ body {
   background: var(--surface); border-radius: var(--r);
   border: 1px solid var(--border); padding: 14px 16px;
   display: flex; align-items: center; gap: 12px; cursor: pointer;
-  margin-bottom: 10px; transition: border-color .15s;
+  margin-bottom: 10px;
+  transition: border-color .15s, transform 100ms ease-out;
 }
-.rel-item:hover { border-color: var(--navy); }
+.rel-item:hover  { border-color: var(--navy); }
+.rel-item:active { transform: scale(0.98); }
 .rel-avatar {
   width: 44px; height: 44px; border-radius: 50%;
   background: var(--navy); color: #fff; font-size: 17px; font-weight: 800;
@@ -403,7 +421,8 @@ body {
 
 /* ─── LOGIN ─── */
 .login-top {
-  background: var(--navy); padding: 52px 24px 36px;
+  background: var(--navy);
+  padding: calc(52px + env(safe-area-inset-top)) 24px 36px;
   text-align: center; color: #fff;
 }
 .login-top img { height: 44px; margin-bottom: 16px; display: block; margin-left: auto; margin-right: auto; }
@@ -412,19 +431,24 @@ body {
 
 /* ─── HOME HEADER ─── */
 .home-topbar {
-  background: var(--navy); padding: 0 16px;
-  display: flex; align-items: center; justify-content: space-between;
-  height: 56px; position: sticky; top: 0; z-index: 90;
+  background: var(--navy);
+  padding: env(safe-area-inset-top) 16px 0;
+  min-height: calc(56px + env(safe-area-inset-top));
+  display: flex; align-items: flex-end; justify-content: space-between;
+  padding-bottom: 10px;
+  position: sticky; top: 0; z-index: 90;
 }
 .home-topbar img { height: 28px; }
 .htb-actions { display: flex; align-items: center; gap: 8px; }
 .htb-btn {
-  width: 36px; height: 36px; border-radius: var(--r-sm);
+  width: 44px; height: 44px; border-radius: var(--r-sm);
   border: none; background: rgba(255,255,255,.12); color: #fff;
   font-size: 18px; cursor: pointer; display: flex; align-items: center; justify-content: center;
   -webkit-tap-highlight-color: transparent; position: relative;
+  transition: background .15s, transform 100ms ease-out;
 }
 .htb-btn:hover { background: rgba(255,255,255,.2); }
+.htb-btn:active { transform: scale(0.92); }
 
 .home-hero {
   background: var(--navy); padding: 16px 16px 24px; color: #fff;
@@ -457,9 +481,11 @@ body {
   border: 1px solid var(--border); transition: all .15s;
   -webkit-tap-highlight-color: transparent;
 }
-.qa-item:hover { border-color: var(--navy); transform: translateY(-1px); box-shadow: 0 2px 8px rgba(0,43,92,.1); }
+.qa-item { transition: border-color .15s, transform 100ms ease-out, box-shadow .15s; }
+.qa-item:hover { border-color: var(--navy); box-shadow: 0 2px 8px rgba(0,43,92,.1); }
+.qa-item:active { transform: scale(0.94); }
 .qa-icon { font-size: 22px; color: var(--navy); display: block; margin-bottom: 5px; }
-.qa-label { font-size: 11px; font-weight: 700; color: var(--text); }
+.qa-label { font-size: 13px; font-weight: 700; color: var(--text); }
 
 /* ─── MODAL ─── */
 .moverlay {
@@ -470,11 +496,16 @@ body {
 .moverlay.open { display: flex; }
 .msheet {
   background: var(--surface); border-radius: 20px 20px 0 0;
-  padding: 16px 20px 40px; width: 100%; max-width: 430px;
+  padding: 16px 20px calc(32px + env(safe-area-inset-bottom));
+  width: 100%; max-width: 430px;
   max-height: 90vh; overflow-y: auto;
-  animation: sheetUp .25s ease;
+  animation: sheetUp .32s var(--ease-drawer);
 }
-@keyframes sheetUp { from{transform:translateY(100%)} to{transform:translateY(0)} }
+#m-hist .msheet { max-height: 68vh; }
+@keyframes sheetUp {
+  from { transform: translateY(100%); opacity: 0.6; }
+  to   { transform: translateY(0);    opacity: 1;   }
+}
 .mhandle { width: 36px; height: 4px; background: var(--border); border-radius: 100px; margin: 0 auto 18px; }
 
 /* ─── SECTION ROW ─── */
@@ -544,9 +575,23 @@ body {
 }
 .mclose:hover { background: var(--border); }
 
+/* ─── STAGGER ANIMATION ─── */
+.si {
+  opacity: 0;
+  transform: translateY(10px);
+  animation: staggerIn 300ms var(--ease-out) forwards;
+}
+@keyframes staggerIn {
+  to { opacity: 1; transform: translateY(0); }
+}
+
 /* accessibility */
-*:focus-visible { outline: 3px solid var(--navy); outline-offset: 2px; border-radius: 4px; }
-@media(prefers-reduced-motion:reduce){*{animation-duration:.01ms!important;transition-duration:.01ms!important}}
+*:focus-visible { outline: 3px solid var(--navy); outline-offset: 3px; border-radius: 5px; box-shadow: 0 0 0 6px rgba(0,43,92,.12); }
+@media(prefers-reduced-motion:reduce){
+  .view.slide-in,.view.slide-out{animation:none!important}
+  .msheet{animation:none!important}
+  .si{animation:none!important;opacity:1!important;transform:none!important}
+}
 
 /* tablet: slightly wider */
 @media(min-width:600px){
@@ -1083,7 +1128,7 @@ function renderNextAppt(){
 function renderHomeHist(){
   const el=document.getElementById('home-hist');
   el.innerHTML=HIST.slice(0,2).map((h,i)=>`
-  <div class="hist-item" onclick="showHistDetail(${i})">
+  <div class="hist-item si" onclick="showHistDetail(${i})" style="animation-delay:${i*70}ms">
     <div class="hist-icon"><i class="bi ${h.icon}"></i></div>
     <div style="flex:1">
       <div class="h3" style="font-size:15px">${h.spec}</div>
@@ -1106,8 +1151,8 @@ function reagendarAlerta(){const a=S.appts.find(x=>x.status==='cancelled-by-doct
 function goStep1(){S.spec=null;renderSpecs('');document.getElementById('search-spec').value='';document.getElementById('btn1').disabled=true;showView('view-step1')}
 function renderSpecs(q){
   const f=q?SPECS.filter(s=>s.kw.some(k=>k.includes(q.toLowerCase()))||s.name.toLowerCase().includes(q.toLowerCase())):SPECS;
-  document.getElementById('spec-grid').innerHTML=f.map(s=>`
-  <div class="spec-card ${S.spec?.id===s.id?'sel':''}" onclick="selSpec('${s.id}')">
+  document.getElementById('spec-grid').innerHTML=f.map((s,i)=>`
+  <div class="spec-card si ${S.spec?.id===s.id?'sel':''}" onclick="selSpec('${s.id}')" style="animation-delay:${i*30}ms">
     <i class="bi ${s.icon} spec-icon"></i>
     <div class="spec-name">${s.name}</div>
   </div>`).join('');
@@ -1231,8 +1276,8 @@ function renderAppts(){
   const list=document.getElementById('appts-list');
   if(!up.length){empty.style.display='block';list.innerHTML='';return;}
   empty.style.display='none';
-  list.innerHTML=`<div class="h3" style="margin-bottom:12px">Citas programadas</div>`+up.map(a=>`
-  <div class="appt-item">
+  list.innerHTML=`<div class="h3" style="margin-bottom:12px">Citas programadas</div>`+up.map((a,i)=>`
+  <div class="appt-item si" style="animation-delay:${i*70}ms">
     <div class="appt-item-head">
       <div><div style="font-size:15px;font-weight:800"><i class="bi ${a.specIcon}" style="margin-right:6px"></i>${a.spec}</div><div style="font-size:12px;opacity:.65;margin-top:2px">${a.date}</div></div>
       <span class="chip chip-green" style="font-size:12px"><i class="bi bi-check-circle"></i> Confirmada</span>
@@ -1291,14 +1336,14 @@ function renderQueue(){
 // ─── HISTORY ───
 function renderHist(){
   document.getElementById('hist-list').innerHTML=HIST.map((h,i)=>`
-  <div class="hist-item" onclick="showHistDetail(${i})">
+  <div class="hist-item si" onclick="showHistDetail(${i})" style="animation-delay:${i*70}ms">
     <div class="hist-icon"><i class="bi ${h.icon}"></i></div>
     <div style="flex:1">
       <div style="display:flex;align-items:center;gap:6px;margin-bottom:3px">
         <span class="h3" style="font-size:15px">${h.spec}</span>
       </div>
-      <div class="sub" style="font-size:13px">${h.date} · ${h.doc}</div>
-      <div class="sub" style="font-size:12px">${h.center}</div>
+      <div class="sub" style="font-size:14px">${h.date} · ${h.doc}</div>
+      <div class="sub" style="font-size:13px">${h.center}</div>
     </div>
     <i class="bi bi-chevron-right hist-arr"></i>
   </div>`).join('');
@@ -1328,10 +1373,10 @@ function showHistDetail(i){
 function renderRels(){
   const el=document.getElementById('rel-list');
   if(!S.relatives.length){el.innerHTML=`<div class="empty"><i class="bi bi-person-plus"></i><div class="empty-t">Sin familiares guardados</div><div class="empty-s">Agregue familiares para gestionar sus citas sin que ellos necesiten el teléfono.</div></div>`;return;}
-  el.innerHTML=S.relatives.map(r=>`
-  <div class="rel-item" onclick="bookForRel('${r.dui}')">
+  el.innerHTML=S.relatives.map((r,i)=>`
+  <div class="rel-item si" onclick="bookForRel('${r.dui}')" style="animation-delay:${i*60}ms">
     <div class="rel-avatar">${r.name.charAt(0).toUpperCase()}</div>
-    <div style="flex:1"><div class="h3" style="font-size:15px">${r.name}</div><div class="sub" style="font-size:13px">${r.relation} · DUI: ${r.dui}</div></div>
+    <div style="flex:1"><div class="h3" style="font-size:15px">${r.name}</div><div class="sub" style="font-size:14px">${r.relation} · DUI: ${r.dui}</div></div>
     <i class="bi bi-chevron-right rel-arr"></i>
   </div>`).join('');
 }
