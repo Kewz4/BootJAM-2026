@@ -263,15 +263,18 @@ body {
 .cal-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 0; }
 .cal-dn { text-align: center; font-size: 12px; font-weight: 700; color: var(--muted); padding: 6px 0 8px; }
 .cal-d {
-  height: 44px; /* fixed height — no aspect-ratio issues */
+  height: 44px;
   display: flex; align-items: center; justify-content: center;
-  border-radius: 50%; font-size: 14px; font-weight: 600;
-  cursor: pointer; transition: all .15s; position: relative;
-  -webkit-tap-highlight-color: transparent;
+  border-radius: 50%; font-size: 15px; font-weight: 600;
+  cursor: pointer;
+  transition: background .15s, color .15s, transform 100ms ease-out;
+  position: relative; -webkit-tap-highlight-color: transparent;
 }
-.cal-d.empty { pointer-events: none; }
-.cal-d.past  { color: #C5CDD8; pointer-events: none; }
-.cal-d.avail:hover { background: var(--navy-3); color: var(--navy); }
+.cal-d.empty   { pointer-events: none; }
+.cal-d.past    { color: #C5CDD8; pointer-events: none; cursor: default; }
+.cal-d.no-slot { color: #C5CDD8; pointer-events: none; cursor: default; }
+.cal-d.avail:hover  { background: var(--navy-3); color: var(--navy); }
+.cal-d.avail:active { transform: scale(0.85); }
 .cal-d.sel   { background: var(--navy) !important; color: #fff; border-radius: 50%; }
 .cal-d.today { border: 2px solid var(--navy); color: var(--navy); font-weight: 900; }
 .cal-d.sel.today { border-color: transparent; }
@@ -284,11 +287,13 @@ body {
 /* ─── TIME SLOTS ─── */
 .tslots { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
 .tslot {
-  padding: 12px 6px; border-radius: var(--r-sm); border: 1.5px solid var(--border);
+  padding: 14px 6px; border-radius: var(--r-sm); border: 1.5px solid var(--border);
   text-align: center; cursor: pointer; font-size: 14px; font-weight: 700;
-  background: var(--surface); transition: all .15s;
+  background: var(--surface);
+  transition: border-color .15s, background .15s, color .15s, transform 100ms ease-out;
   -webkit-tap-highlight-color: transparent; font-family: inherit;
 }
+.tslot:not(.taken):active { transform: scale(0.95); }
 .tslot:hover  { border-color: var(--navy); color: var(--navy); background: var(--navy-3); }
 .tslot.sel    { border-color: var(--navy); background: var(--navy); color: #fff; }
 .tslot.taken  { background: var(--bg); color: #C5CDD8; border-color: transparent; cursor: not-allowed; font-size: 12px; }
@@ -417,6 +422,36 @@ body {
   background: var(--green-bg); border: 3px solid var(--green);
   display: flex; align-items: center; justify-content: center;
   margin: 0 auto 14px; color: var(--green); font-size: 40px;
+}
+
+/* ─── CONFIRMATION ANIMATION ─── */
+@keyframes successPop {
+  0%   { transform: scale(0.3); opacity: 0; }
+  60%  { transform: scale(1.18); }
+  80%  { transform: scale(0.95); }
+  100% { transform: scale(1); opacity: 1; }
+}
+@keyframes ticketRise {
+  from { transform: translateY(28px); opacity: 0; }
+  to   { transform: translateY(0);    opacity: 1; }
+}
+#view-ticket.active .success-ring {
+  animation: successPop 0.55s var(--ease-out) both 0.06s;
+}
+#view-ticket.active .success-wrap .h2 {
+  opacity: 0; animation: staggerIn 0.38s var(--ease-out) both 0.24s;
+}
+#view-ticket.active .success-wrap .sub {
+  opacity: 0; animation: staggerIn 0.38s var(--ease-out) both 0.32s;
+}
+#view-ticket.active .ticket {
+  opacity: 0; animation: ticketRise 0.5s var(--ease-out) both 0.4s;
+}
+#view-ticket.active > .scroll > .alert {
+  opacity: 0; animation: staggerIn 0.38s var(--ease-out) both 0.56s;
+}
+#view-ticket.active > .scroll > div:last-child {
+  opacity: 0; animation: staggerIn 0.38s var(--ease-out) both 0.64s;
 }
 
 /* ─── LOGIN ─── */
@@ -1040,7 +1075,7 @@ const SPECS = [
   {id:'gastro',icon:'bi-droplet-fill',     name:'Gastroenterología',   kw:['estomago','intestino','digestion','colitis','gastro','reflujo']},
   {id:'psiq',  icon:'bi-chat-heart',       name:'Psiquiatría',         kw:['mental','ansiedad','depresion','mente','psiq','estres']},
   {id:'urol',  icon:'bi-droplet-half',     name:'Urología',            kw:['rinon','urinario','vejiga','urol','prostata']},
-  {id:'dental',icon:'bi-tooth',            name:'Odontología',         kw:['diente','muela','dental','boca','odonto','encía']},
+  {id:'dental',icon:'bi-brush',             name:'Odontología',         kw:['diente','muela','dental','boca','odonto','encía']},
 ];
 
 const CENTERS = [
@@ -1148,17 +1183,17 @@ function cerrarAlerta(){document.getElementById('alert-doctor-cancel').style.dis
 function reagendarAlerta(){const a=S.appts.find(x=>x.status==='cancelled-by-doctor');if(a)a.status='upcoming';save();cerrarAlerta();goStep1()}
 
 // ─── STEP 1 ───
-function goStep1(){S.spec=null;renderSpecs('');document.getElementById('search-spec').value='';document.getElementById('btn1').disabled=true;showView('view-step1')}
-function renderSpecs(q){
+function goStep1(){S.spec=null;renderSpecs('',true);document.getElementById('search-spec').value='';document.getElementById('btn1').disabled=true;showView('view-step1')}
+function renderSpecs(q,animate){
   const f=q?SPECS.filter(s=>s.kw.some(k=>k.includes(q.toLowerCase()))||s.name.toLowerCase().includes(q.toLowerCase())):SPECS;
   document.getElementById('spec-grid').innerHTML=f.map((s,i)=>`
-  <div class="spec-card si ${S.spec?.id===s.id?'sel':''}" onclick="selSpec('${s.id}')" style="animation-delay:${i*30}ms">
+  <div class="spec-card${animate?' si':''} ${S.spec?.id===s.id?'sel':''}" onclick="selSpec('${s.id}')"${animate?` style="animation-delay:${i*32}ms"`:''}">
     <i class="bi ${s.icon} spec-icon"></i>
     <div class="spec-name">${s.name}</div>
   </div>`).join('');
 }
-function filterSpecs(){renderSpecs(document.getElementById('search-spec').value)}
-function selSpec(id){S.spec=SPECS.find(s=>s.id===id);renderSpecs(document.getElementById('search-spec').value);document.getElementById('btn1').disabled=false}
+function filterSpecs(){renderSpecs(document.getElementById('search-spec').value,true)}
+function selSpec(id){S.spec=SPECS.find(s=>s.id===id);renderSpecs(document.getElementById('search-spec').value,false);document.getElementById('btn1').disabled=false}
 
 // ─── STEP 2 ───
 function goStep2(){
@@ -1189,7 +1224,16 @@ function selCenter(id){S.center=CENTERS.find(c=>c.id===id);renderCenters();docum
 const MES=['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'];
 const DIA=['Dom','Lun','Mar','Mié','Jue','Vie','Sáb'];
 
-function goStep3(){S.date=null;S.time=null;renderCal();document.getElementById('time-section').style.display='none';document.getElementById('btn3').disabled=true;showView('view-step3')}
+function goStep3(){
+  S.date=null;S.time=null;
+  const today=new Date(); today.setHours(0,0,0,0);
+  const endOfMonth=new Date(S.month.getFullYear(),S.month.getMonth()+1,0);
+  if(endOfMonth.getTime()-today.getTime()<6*864e5) S.month=new Date(today.getFullYear(),today.getMonth()+1,1);
+  renderCal();
+  document.getElementById('time-section').style.display='none';
+  document.getElementById('btn3').disabled=true;
+  showView('view-step3');
+}
 
 function renderCal(){
   const m=S.month;
@@ -1206,8 +1250,8 @@ function renderCal(){
     const isSel=S.date&&S.date.getTime()===date.getTime();
     const isWknd=date.getDay()===0||date.getDay()===6;
     const hasSlot=!isPast&&!isWknd;
-    const cls=['cal-d',isPast?'past':'',isToday&&!isSel?'today':'',isSel?'sel':'',hasSlot?'avail has-slots':''].filter(Boolean).join(' ');
-    html+=`<div class="${cls}" onclick="${hasSlot?`selDate(${d})`:''}" style="${isWknd&&!isPast?'color:#C5CDD8':''}">${d}</div>`;
+    const cls=['cal-d',isPast?'past':'',!isPast&&!hasSlot?'no-slot':'',isToday&&!isSel?'today':'',isSel?'sel':'',hasSlot?'avail has-slots':''].filter(Boolean).join(' ');
+    html+=`<div class="${cls}" onclick="${hasSlot?`selDate(${d})`:''}">${d}</div>`;
   }
   document.getElementById('cal-grid').innerHTML=html;
 }
@@ -1264,6 +1308,12 @@ function confirmAppt(){
   document.getElementById('tk-time').textContent=a.time;
   document.getElementById('tk-code').textContent=code;
   document.getElementById('tk-status-chip').innerHTML=`<span class="chip chip-green"><i class="bi bi-check-circle-fill"></i> Confirmada</span>`;
+  if('Notification' in window && Notification.permission==='granted'){
+    new Notification('ISSS — ¡Cita confirmada! ✓',{
+      body:`${a.spec} • ${a.date} a las ${a.time}\n${a.center} · Código: ${code}`,
+      icon:'https://cdn.brandfetch.io/id8LwMLHOF/w/400/h/400/theme/dark/icon.jpeg?c=1bxid64Mup7aczewSAYMX&t=1771715114286'
+    });
+  }
   showView('view-ticket'); initHome();
 }
 function downloadTicket(){alert('📥 Comprobante guardado.\nCódigo: '+document.getElementById('tk-code').textContent)}
@@ -1459,10 +1509,18 @@ function requestNotifications(){
 function showSmsNotification(pos){
   const now=new Date();
   const t=now.toLocaleTimeString('es-SV',{hour:'2-digit',minute:'2-digit'});
+  const msg=`Estimado asegurado, su turno en DERMATOLOGÍA se acerca. Quedan ${pos} paciente(s) antes que usted. Por favor preséntese al módulo de atención. — ISSS El Salvador`;
   document.getElementById('sms-time').textContent=t;
-  document.getElementById('sms-body').textContent=
-    `Estimado asegurado, su turno en DERMATOLOGÍA se acerca. Quedan ${pos} paciente(s) antes que usted. Preséntese al módulo de atención. — ISSS El Salvador`;
+  document.getElementById('sms-body').textContent=msg;
   document.getElementById('sms-overlay').style.display='flex';
+  if('Notification' in window && Notification.permission==='granted'){
+    new Notification('ISSS Citas — ¡Su turno se acerca!',{
+      body:`Dermatología: quedan ${pos} paciente(s). ¡Preséntese al módulo ahora!`,
+      icon:'https://cdn.brandfetch.io/id8LwMLHOF/w/400/h/400/theme/dark/icon.jpeg?c=1bxid64Mup7aczewSAYMX&t=1771715114286',
+      tag:'isss-turno',
+      requireInteraction:true
+    });
+  }
 }
 function closeSmsOverlay(){
   document.getElementById('sms-overlay').style.display='none';
