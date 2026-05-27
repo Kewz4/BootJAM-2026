@@ -1248,7 +1248,7 @@ function selSpec(id){S.spec=SPECS.find(s=>s.id===id);renderSpecs(document.getEle
 // ─── STEP 2 ───
 function goStep2(){
   if(!S.spec)return;
-  document.getElementById('spec-badge-row').innerHTML=`<span class="chip chip-navy"><i class="bi ${S.spec.icon}"></i> ${S.spec.name}</span>`;
+  document.getElementById('spec-badge-row').innerHTML=`<span class="chip chip-navy">${S.spec.icon==='tooth-emoji'?'🦷':`<i class=\"bi ${S.spec.icon}\"></i>`} ${S.spec.name}</span>`;
   renderCenters(); showView('view-step2');
 }
 function renderCenters(){
@@ -1339,7 +1339,7 @@ function changeMonth(dir){S.month=new Date(S.month.getFullYear(),S.month.getMont
 function goConfirm(){
   if(!S.date||!S.time)return;
   const ds=S.date.toLocaleDateString('es-SV',{weekday:'long',day:'numeric',month:'long',year:'numeric'});
-  document.getElementById('conf-spec-chip').innerHTML=`<span class="chip chip-navy" style="font-size:14px;padding:5px 12px"><i class="bi ${S.spec.icon}"></i> ${S.spec.name}</span>`;
+  document.getElementById('conf-spec-chip').innerHTML=`<span class="chip chip-navy" style="font-size:14px;padding:5px 12px">${S.spec.icon==='tooth-emoji'?'🦷':`<i class=\"bi ${S.spec.icon}\"></i>`} ${S.spec.name}</span>`;
   document.getElementById('cf-center').textContent=S.center.name;
   document.getElementById('cf-date').textContent=ds;
   document.getElementById('cf-time').textContent=S.time;
