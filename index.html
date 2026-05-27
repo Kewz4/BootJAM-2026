@@ -125,7 +125,7 @@ body {
 .bn.on { color: var(--navy); }
 .bn.on::before {
   content: ''; position: absolute; top: 0; left: 50%; transform: translateX(-50%);
-  width: 32px; height: 3px; background: var(--navy); border-radius: 0 0 4px 4px;
+  width: 32px; height: 3px; background: #1f3d63; border-radius: 0 0 4px 4px;
 }
 .bn-dot {
   position: absolute; top: 7px; right: calc(50% - 16px);
@@ -476,7 +476,8 @@ body {
 
 /* ─── HOME HEADER ─── */
 .home-topbar {
-  background: var(--navy);
+  background: #355b88;
+  border-bottom:1px solid rgba(255,255,255,.18);
   padding: env(safe-area-inset-top) 16px 0;
   min-height: calc(56px + env(safe-area-inset-top));
   display: flex; align-items: flex-end; justify-content: space-between;
@@ -496,7 +497,7 @@ body {
 .htb-btn:active { transform: scale(0.92); }
 
 .home-hero {
-  background: var(--navy); padding: 16px 16px 24px; color: #fff;
+  background: #355b88; padding: 16px 16px 24px; color: #fff;
 }
 .home-greet   { font-size: 13px; color: rgba(255,255,255,.6); }
 .home-uname   { font-size: 22px; font-weight: 900; margin-top: 2px; }
@@ -636,7 +637,7 @@ body {
 <!-- ═══════════════════════════ LOGIN ═══════════════════════════ -->
 <div class="view active" id="view-login">
   <div class="login-top">
-    <img src="https://cdn.brandfetch.io/id8LwMLHOF/theme/dark/logo.svg?c=1bxid64Mup7aczewSAYMX&t=1771715114189" alt="ISSS"
+    <img src="https://1rdekw89rj.ucarecd.net/10a0d7a7-5a0a-42fd-9f65-0a64ba5537ab/ISSSLogo.svg" alt="ISSS"
          onerror="this.outerHTML='<span style=\'font-size:22px;font-weight:900;color:#fff\'>ISSS</span>'">
     <div style="font-size:20px;font-weight:800;margin-bottom:8px">Citas Médicas en Línea</div>
     <div class="login-tagline">Reserve su cita desde su teléfono.<br>Sin filas. Sin madrugar.</div>
@@ -708,18 +709,16 @@ body {
 <!-- ═══════════════════════════ HOME ═══════════════════════════ -->
 <div class="view" id="view-home">
   <div class="home-topbar">
-    <img src="https://cdn.brandfetch.io/id8LwMLHOF/theme/dark/logo.svg?c=1bxid64Mup7aczewSAYMX&t=1771715114189" alt="ISSS"
+    <img src="https://1rdekw89rj.ucarecd.net/10a0d7a7-5a0a-42fd-9f65-0a64ba5537ab/ISSSLogo.svg" alt="ISSS"
          onerror="this.outerHTML='<span style=\'color:#fff;font-weight:900\'>ISSS</span>'">
     <div class="htb-actions">
-      <button class="htb-btn" onclick="showView('view-relatives')" title="Familiares"><i class="bi bi-people"></i></button>
-      <button class="htb-btn" id="bell-btn" title="Notificaciones" onclick="requestNotifications()"><i class="bi bi-bell"></i></button>
+            <button class="htb-btn" id="bell-btn" title="Notificaciones" onclick="requestNotifications()"><i class="bi bi-bell"></i></button>
     </div>
   </div>
   <div class="home-hero">
     <div class="home-greet">Bienvenido/a,</div>
     <div class="home-uname" id="home-uname">—</div>
     <div id="next-appt-section"></div>
-    <button class="next-cta" onclick="goStep1()"><i class="bi bi-calendar-plus"></i> Pedir nueva cita</button>
   </div>
 
   <div id="alert-doctor-cancel" class="alert a-err px" style="display:none;margin:14px 16px 0">
@@ -738,8 +737,7 @@ body {
   <div class="qa-grid" style="margin-top:18px">
     <div class="qa-item" onclick="goStep1()"><i class="bi bi-calendar-plus qa-icon"></i><div class="qa-label">Nueva cita</div></div>
     <div class="qa-item" onclick="showView('view-appointments')"><i class="bi bi-calendar2-check qa-icon"></i><div class="qa-label">Mis citas</div></div>
-    <div class="qa-item" onclick="showView('view-queue')"><i class="bi bi-hourglass-split qa-icon"></i><div class="qa-label">Mi turno</div></div>
-    <div class="qa-item" onclick="showView('view-relatives')"><i class="bi bi-people qa-icon"></i><div class="qa-label">Familiares</div></div>
+        <div class="qa-item" onclick="showView('view-relatives')"><i class="bi bi-people qa-icon"></i><div class="qa-label">Familiares</div></div>
   </div>
 
   <!-- Recent history -->
@@ -754,8 +752,7 @@ body {
   <nav class="bnav">
     <button class="bn on" onclick="showView('view-home')"><i class="bi bi-house-fill"></i>Inicio</button>
     <button class="bn" onclick="showView('view-appointments')" style="position:relative"><i class="bi bi-calendar2-check"></i>Citas<span class="bn-dot" id="bn-dot" style="display:none"></span></button>
-    <button class="bn" onclick="showView('view-queue')"><i class="bi bi-hourglass-split"></i>Turno</button>
-    <button class="bn" onclick="showView('view-history')"><i class="bi bi-journal-text"></i>Historial</button>
+        <button class="bn" onclick="showView('view-history')"><i class="bi bi-journal-text"></i>Historial</button>
   </nav>
 </div>
 
@@ -764,8 +761,7 @@ body {
   <div class="topbar">
     <button class="back-btn" onclick="showView('view-home')"><i class="bi bi-arrow-left"></i> Inicio</button>
     <div class="topbar-center">
-      <img class="topbar-logo" src="https://cdn.brandfetch.io/id8LwMLHOF/theme/dark/logo.svg?c=1bxid64Mup7aczewSAYMX&t=1771715114189" alt="ISSS" onerror="this.style.display='none'">
-      <span class="sep"></span><span class="topbar-title">Nueva Cita</span>
+<span class="topbar-title">Nueva Cita</span>
     </div>
     <div style="width:70px"></div>
   </div>
@@ -795,8 +791,7 @@ body {
   <div class="topbar">
     <button class="back-btn" onclick="showView('view-step1')"><i class="bi bi-arrow-left"></i> Especialidad</button>
     <div class="topbar-center">
-      <img class="topbar-logo" src="https://cdn.brandfetch.io/id8LwMLHOF/theme/dark/logo.svg?c=1bxid64Mup7aczewSAYMX&t=1771715114189" alt="ISSS" onerror="this.style.display='none'">
-      <span class="sep"></span><span class="topbar-title">Centro</span>
+<span class="topbar-title">Centro</span>
     </div>
     <div style="width:70px"></div>
   </div>
@@ -820,8 +815,7 @@ body {
   <div class="topbar">
     <button class="back-btn" onclick="showView('view-step2')"><i class="bi bi-arrow-left"></i> Centro</button>
     <div class="topbar-center">
-      <img class="topbar-logo" src="https://cdn.brandfetch.io/id8LwMLHOF/theme/dark/logo.svg?c=1bxid64Mup7aczewSAYMX&t=1771715114189" alt="ISSS" onerror="this.style.display='none'">
-      <span class="sep"></span><span class="topbar-title">Fecha y hora</span>
+<span class="topbar-title">Fecha y hora</span>
     </div>
     <div style="width:70px"></div>
   </div>
@@ -854,8 +848,7 @@ body {
   <div class="topbar">
     <button class="back-btn" onclick="showView('view-step3')"><i class="bi bi-arrow-left"></i> Fecha</button>
     <div class="topbar-center">
-      <img class="topbar-logo" src="https://cdn.brandfetch.io/id8LwMLHOF/theme/dark/logo.svg?c=1bxid64Mup7aczewSAYMX&t=1771715114189" alt="ISSS" onerror="this.style.display='none'">
-      <span class="sep"></span><span class="topbar-title">Confirmar</span>
+<span class="topbar-title">Confirmar</span>
     </div>
     <div style="width:70px"></div>
   </div>
@@ -898,8 +891,7 @@ body {
   <div class="topbar">
     <button class="back-btn" onclick="showView('view-home')"><i class="bi bi-house"></i> Inicio</button>
     <div class="topbar-center">
-      <img class="topbar-logo" src="https://cdn.brandfetch.io/id8LwMLHOF/theme/dark/logo.svg?c=1bxid64Mup7aczewSAYMX&t=1771715114189" alt="ISSS" onerror="this.style.display='none'">
-      <span class="sep"></span><span class="topbar-title">Comprobante</span>
+<span class="topbar-title">Comprobante</span>
     </div>
     <button class="tb-btn" onclick="shareTicket()"><i class="bi bi-share"></i></button>
   </div>
@@ -945,8 +937,7 @@ body {
   <div class="topbar">
     <button class="back-btn" onclick="showView('view-home')"><i class="bi bi-arrow-left"></i> Inicio</button>
     <div class="topbar-center">
-      <img class="topbar-logo" src="https://cdn.brandfetch.io/id8LwMLHOF/theme/dark/logo.svg?c=1bxid64Mup7aczewSAYMX&t=1771715114189" alt="ISSS" onerror="this.style.display='none'">
-      <span class="sep"></span><span class="topbar-title">Mis Citas</span>
+<span class="topbar-title">Mis Citas</span>
     </div>
     <button class="tb-btn" onclick="goStep1()"><i class="bi bi-plus-lg"></i></button>
   </div>
@@ -959,8 +950,7 @@ body {
   <nav class="bnav">
     <button class="bn" onclick="showView('view-home')"><i class="bi bi-house"></i>Inicio</button>
     <button class="bn on" onclick="showView('view-appointments')"><i class="bi bi-calendar2-check"></i>Citas</button>
-    <button class="bn" onclick="showView('view-queue')"><i class="bi bi-hourglass-split"></i>Turno</button>
-    <button class="bn" onclick="showView('view-history')"><i class="bi bi-journal-text"></i>Historial</button>
+        <button class="bn" onclick="showView('view-history')"><i class="bi bi-journal-text"></i>Historial</button>
   </nav>
 </div>
 
@@ -969,8 +959,7 @@ body {
   <div class="topbar">
     <button class="back-btn" onclick="showView('view-home')"><i class="bi bi-arrow-left"></i> Inicio</button>
     <div class="topbar-center">
-      <img class="topbar-logo" src="https://cdn.brandfetch.io/id8LwMLHOF/theme/dark/logo.svg?c=1bxid64Mup7aczewSAYMX&t=1771715114189" alt="ISSS" onerror="this.style.display='none'">
-      <span class="sep"></span><span class="topbar-title">Turno en Vivo</span>
+<span class="topbar-title">Turno en Vivo</span>
     </div>
     <button class="tb-btn" onclick="renderQueue()"><i class="bi bi-arrow-clockwise"></i></button>
   </div>
@@ -978,8 +967,7 @@ body {
   <nav class="bnav">
     <button class="bn" onclick="showView('view-home')"><i class="bi bi-house"></i>Inicio</button>
     <button class="bn" onclick="showView('view-appointments')"><i class="bi bi-calendar2-check"></i>Citas</button>
-    <button class="bn on" onclick="showView('view-queue')"><i class="bi bi-hourglass-split"></i>Turno</button>
-    <button class="bn" onclick="showView('view-history')"><i class="bi bi-journal-text"></i>Historial</button>
+        <button class="bn" onclick="showView('view-history')"><i class="bi bi-journal-text"></i>Historial</button>
   </nav>
 </div>
 
@@ -988,8 +976,7 @@ body {
   <div class="topbar">
     <button class="back-btn" onclick="showView('view-home')"><i class="bi bi-arrow-left"></i> Inicio</button>
     <div class="topbar-center">
-      <img class="topbar-logo" src="https://cdn.brandfetch.io/id8LwMLHOF/theme/dark/logo.svg?c=1bxid64Mup7aczewSAYMX&t=1771715114189" alt="ISSS" onerror="this.style.display='none'">
-      <span class="sep"></span><span class="topbar-title">Historial</span>
+<span class="topbar-title">Historial</span>
     </div>
     <div style="width:38px"></div>
   </div>
@@ -1000,8 +987,7 @@ body {
   <nav class="bnav">
     <button class="bn" onclick="showView('view-home')"><i class="bi bi-house"></i>Inicio</button>
     <button class="bn" onclick="showView('view-appointments')"><i class="bi bi-calendar2-check"></i>Citas</button>
-    <button class="bn" onclick="showView('view-queue')"><i class="bi bi-hourglass-split"></i>Turno</button>
-    <button class="bn on" onclick="showView('view-history')"><i class="bi bi-journal-text"></i>Historial</button>
+        <button class="bn on" onclick="showView('view-history')"><i class="bi bi-journal-text"></i>Historial</button>
   </nav>
 </div>
 
@@ -1010,8 +996,7 @@ body {
   <div class="topbar">
     <button class="back-btn" onclick="showView('view-home')"><i class="bi bi-arrow-left"></i> Inicio</button>
     <div class="topbar-center">
-      <img class="topbar-logo" src="https://cdn.brandfetch.io/id8LwMLHOF/theme/dark/logo.svg?c=1bxid64Mup7aczewSAYMX&t=1771715114189" alt="ISSS" onerror="this.style.display='none'">
-      <span class="sep"></span><span class="topbar-title">Familiares</span>
+<span class="topbar-title">Familiares</span>
     </div>
     <button class="tb-btn" onclick="openAddRel()"><i class="bi bi-plus-lg"></i></button>
   </div>
@@ -1027,8 +1012,7 @@ body {
   <div class="topbar">
     <button class="back-btn" id="detail-back"><i class="bi bi-arrow-left"></i> Volver</button>
     <div class="topbar-center">
-      <img class="topbar-logo" src="https://cdn.brandfetch.io/id8LwMLHOF/theme/dark/logo.svg?c=1bxid64Mup7aczewSAYMX&t=1771715114189" alt="ISSS" onerror="this.style.display='none'">
-      <span class="sep"></span><span class="topbar-title">Detalle</span>
+<span class="topbar-title">Detalle</span>
     </div>
     <div style="width:70px"></div>
   </div>
@@ -1113,7 +1097,7 @@ const HIST = [
 let S = {
   users:[], user:null, spec:null, center:null, date:null, time:null,
   month: new Date(), appts:[], relatives:[],
-  cancelId:null, queuePos:8, queueTotal:30, queueTimer:null
+  cancelId:null, queuePos:8, queueTotal:30, queueTimer:null, rescheduleId:null, bookingForRelative:null
 };
 
 function save(){try{localStorage.setItem('isss_a',JSON.stringify(S.appts));localStorage.setItem('isss_r',JSON.stringify(S.relatives));localStorage.setItem('isss_u',JSON.stringify(S.user));localStorage.setItem('isss_us',JSON.stringify(S.users));}catch(e){}}
@@ -1190,21 +1174,34 @@ function initHome(){
   }
 }
 
+
+function parseApptDate(dateStr){
+  const m=(dateStr||'').match(/(\d{1,2})\s+([a-záéíóúñ]+)\s+(\d{4})/i);
+  if(!m)return null;
+  const months={enero:0,febrero:1,marzo:2,abril:3,mayo:4,junio:5,julio:6,agosto:7,septiembre:8,octubre:9,noviembre:10,diciembre:11};
+  const mon=months[m[2].toLowerCase()]; if(mon==null)return null;
+  return new Date(Number(m[3]),mon,Number(m[1]));
+}
+function isApptToday(a){
+  const d=parseApptDate(a?.date||''); if(!d)return false; const n=new Date();
+  return d.getFullYear()===n.getFullYear() && d.getMonth()===n.getMonth() && d.getDate()===n.getDate();
+}
+
 function renderNextAppt(){
   const sec=document.getElementById('next-appt-section');
-  const a=S.appts.find(x=>x.status==='upcoming');
+  const a=S.appts.find(x=>x.status==='upcoming' && isApptToday(x));
   if(!a){sec.innerHTML='';return;}
   sec.innerHTML=`
   <div class="home-next-label"><i class="bi bi-calendar-event" style="margin-right:4px"></i>Próxima cita</div>
   <div class="next-card" onclick="openDetail('${a.id}','view-home')">
     <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px">
       <div class="next-spec"><i class="bi ${a.specIcon}" style="margin-right:6px"></i>${a.spec}</div>
-      <span class="chip chip-green"><i class="bi bi-check-circle"></i> Confirmada</span>
+      <span class="chip chip-green"><i class="bi bi-check-circle"></i> ${isApptToday(a)?'Hoy':'Confirmada'}</span>
     </div>
     <div class="next-meta"><i class="bi bi-hospital"></i>${a.center}</div>
     <div class="next-meta" style="margin-top:4px"><i class="bi bi-calendar3"></i>${a.date} &nbsp;·&nbsp; <i class="bi bi-clock"></i> ${a.time}</div>
     <div style="margin-top:10px;display:flex;gap:8px">
-      <button class="btn btn-ghost btn-sm" style="color:#fff;background:rgba(255,255,255,.18);border-color:rgba(255,255,255,.3);font-size:13px" onclick="event.stopPropagation();showView('view-queue')"><i class="bi bi-hourglass-split"></i> Ver turno</button>
+      ${isApptToday(a)?`<button class=\"btn btn-ghost btn-sm\" style=\"color:#fff;background:rgba(255,255,255,.18);border-color:rgba(255,255,255,.3);font-size:13px\" onclick=\"event.stopPropagation();showView('view-queue')\"><i class=\"bi bi-hourglass-split\"></i> Ver turno</button>`:''}
       <button class="btn btn-ghost btn-sm" style="color:#FCA5A5;background:rgba(255,255,255,.1);border-color:rgba(255,255,255,.2);font-size:13px" onclick="event.stopPropagation();openCancel('${a.id}')"><i class="bi bi-x-circle"></i> Cancelar</button>
     </div>
   </div>`;
@@ -1357,14 +1354,14 @@ function confirmAppt(){
   const ds=S.date.toLocaleDateString('es-SV',{weekday:'long',day:'numeric',month:'long',year:'numeric'});
   const code='ISSS-'+Math.random().toString(36).slice(2,8).toUpperCase();
   const a={id:Date.now().toString(),spec:S.spec.name,specIcon:S.spec.icon,center:S.center.name,date:ds,time:S.time,code,status:'upcoming',doctor:'Por asignar'};
-  S.appts.unshift(a); save();
+  if(S.rescheduleId){const ix=S.appts.findIndex(x=>x.id===S.rescheduleId);if(ix>=0)S.appts[ix]=a;S.rescheduleId=null;}else{S.appts.unshift(a);} save();
   document.getElementById('tk-spec').textContent=`${a.spec}`;
   document.getElementById('tk-center').textContent=a.center;
   document.getElementById('tk-date').textContent=a.date;
   document.getElementById('tk-time').textContent=a.time;
   document.getElementById('tk-code').textContent=code;
   document.getElementById('tk-qr').src=`https://api.qrserver.com/v1/create-qr-code/?size=160x160&data=ISSS%3A${code}&color=002B5C&bgcolor=FFFFFF&margin=3`;
-  document.getElementById('tk-status-chip').innerHTML=`<span class="chip chip-green"><i class="bi bi-check-circle-fill"></i> Confirmada</span>`;
+  document.getElementById('tk-status-chip').innerHTML=`<span class="chip chip-green"><i class="bi bi-check-circle-fill"></i> ${isApptToday(a)?"Hoy":"Confirmada"}</span>`;
   if('Notification' in window && Notification.permission==='granted'){
     new Notification('ISSS — ¡Cita confirmada! ✓',{
       body:`${a.spec} • ${a.date} a las ${a.time}\n${a.center} · Código: ${code}`,
@@ -1387,14 +1384,14 @@ function renderAppts(){
   <div class="appt-item si" style="animation-delay:${i*70}ms">
     <div class="appt-item-head">
       <div><div style="font-size:15px;font-weight:800"><i class="bi ${a.specIcon}" style="margin-right:6px"></i>${a.spec}</div><div style="font-size:12px;opacity:.65;margin-top:2px">${a.date}</div></div>
-      <span class="chip chip-green" style="font-size:12px"><i class="bi bi-check-circle"></i> Confirmada</span>
+      <span class="chip chip-green" style="font-size:12px"><i class="bi bi-check-circle"></i> ${isApptToday(a)?"Hoy":"Confirmada"}</span>
     </div>
     <div class="appt-item-body">
       <div class="appt-row"><i class="bi bi-hospital"></i>${a.center}</div>
       <div class="appt-row"><i class="bi bi-clock"></i>${a.time}</div>
       <div class="appt-row"><i class="bi bi-upc-scan"></i><strong>${a.code}</strong></div>
       <div style="margin-top:10px;display:flex;gap:8px;flex-wrap:wrap">
-        <button class="btn btn-primary btn-sm" onclick="showView('view-queue')"><i class="bi bi-hourglass-split"></i> Ver turno</button>
+        ${isApptToday(a)?`<button class="btn btn-primary btn-sm" onclick="showView('view-queue')"><i class="bi bi-hourglass-split"></i> Ver turno</button>`:""}
         <button class="btn btn-danger btn-sm" onclick="openCancel('${a.id}')"><i class="bi bi-x-circle"></i> Cancelar</button>
       </div>
     </div>
@@ -1402,13 +1399,13 @@ function renderAppts(){
 }
 function openCancel(id){S.cancelId=id;document.getElementById('m-cancel').classList.add('open')}
 function cancelAppt(){S.appts=S.appts.filter(a=>a.id!==S.cancelId);save();closeModal('m-cancel');renderAppts();renderNextAppt()}
-function rescheduleAppt(){S.appts=S.appts.filter(a=>a.id!==S.cancelId);save();closeModal('m-cancel');goStep1()}
+function rescheduleAppt(){S.rescheduleId=S.cancelId;save();closeModal('m-cancel');goStep2()}
 
 // ─── QUEUE ───
 function renderQueue(){
   const el=document.getElementById('queue-content');
-  const a=S.appts.find(x=>x.status==='upcoming');
-  if(!a){el.innerHTML=`<div class="empty"><i class="bi bi-hourglass"></i><div class="empty-t">Sin cita activa</div><div class="empty-s">Reserve una cita para ver su turno en tiempo real.</div><button class="btn btn-primary" onclick="goStep1()"><i class="bi bi-calendar-plus"></i> Reservar cita</button></div>`;return}
+  const a=S.appts.find(x=>x.status==='upcoming' && isApptToday(x));
+  if(!a){el.innerHTML=`<div class="empty"><i class="bi bi-hourglass"></i><div class="empty-t">Sin cita activa</div><div class="empty-s">No hay turnos para hoy. Reserve una cita para ver su turno en tiempo real.</div><button class="btn btn-primary" onclick="goStep1()"><i class="bi bi-calendar-plus"></i> Reservar cita</button></div>`;return}
   const pos=S.queuePos,tot=S.queueTotal,pct=Math.max(4,Math.round(((tot-pos)/tot)*100));
   el.innerHTML=`
   <div class="q-card">
