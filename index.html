@@ -2,769 +2,874 @@
 <html lang="es">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <meta name="theme-color" content="#002B5C">
-<link rel="icon" type="image/jpeg" href="https://cdn.brandfetch.io/id8LwMLHOF/w/400/h/400/theme/dark/icon.jpeg?c=1bxid64Mup7aczewSAYMX&t=1771715114286">
-<title>ISSS Citas — Citas Médicas en Línea</title>
+<link rel="icon" href="https://cdn.brandfetch.io/id8LwMLHOF/w/400/h/400/theme/dark/icon.jpeg?c=1bxid64Mup7aczewSAYMX&t=1771715114286">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+<title>ISSS Citas</title>
 <style>
+/* ─── TOKENS ─── */
 :root {
   --navy:      #002B5C;
-  --navy-deep: #001A3D;
-  --navy-mid:  #003F85;
+  --navy-2:    #003F85;
+  --navy-3:    #EBF2FA;
   --accent:    #D63B0A;
-  --green:     #1A6E40;
-  --red:       #B91C1C;
-  --yellow:    #B45309;
-  --bg:        #F2F5FA;
-  --white:     #FFFFFF;
+  --green:     #059669;
+  --green-bg:  #ECFDF5;
+  --red:       #DC2626;
+  --red-bg:    #FEF2F2;
+  --yellow:    #D97706;
+  --yel-bg:    #FFFBEB;
+  --sky:       #0EA5E9;
+  --sky-bg:    #F0F9FF;
+  --bg:        #F1F5FB;
+  --surface:   #FFFFFF;
+  --border:    #E2E8F0;
   --text:      #0D1B2A;
-  --muted:     #4A5568;
-  --border:    #CBD5E1;
-  --shadow-sm: 0 1px 3px rgba(0,43,92,.08);
-  --shadow:    0 4px 16px rgba(0,43,92,.10);
-  --r:         12px;
-  --r-sm:      8px;
-  --sidebar:   256px;
+  --muted:     #64748B;
+  --r:         14px;
+  --r-sm:      9px;
+  --r-lg:      20px;
 }
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
-body{font-family:'Segoe UI',system-ui,-apple-system,sans-serif;font-size:17px;color:var(--text);background:var(--bg);min-height:100vh;-webkit-font-smoothing:antialiased}
 
-/* ── SHELL ── */
-.shell{display:flex;min-height:100vh}
-
-/* ── SIDEBAR (desktop only) ── */
-.sidebar{
-  width:var(--sidebar);background:var(--navy);color:#fff;
-  flex-direction:column;position:fixed;left:0;top:0;bottom:0;
-  z-index:300;display:none;overflow-y:auto;
+body {
+  font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+  font-size: 16px; line-height: 1.5;
+  color: var(--text); background: var(--bg);
+  min-height: 100vh; -webkit-font-smoothing: antialiased;
+  overscroll-behavior: none;
 }
-.sb-brand{padding:26px 20px 20px;border-bottom:1px solid rgba(255,255,255,.1)}
-.sb-brand img{height:34px;width:auto}
-.sb-user{padding:16px 20px;background:rgba(255,255,255,.06);border-bottom:1px solid rgba(255,255,255,.08)}
-.sb-user-name{font-size:15px;font-weight:700}
-.sb-user-dui{font-size:12px;opacity:.55;margin-top:3px}
-.sb-nav{padding:12px 10px;flex:1}
-.sb-item{
-  display:flex;align-items:center;gap:10px;
-  padding:12px 10px;border-radius:var(--r-sm);
-  cursor:pointer;border:none;background:transparent;
-  color:rgba(255,255,255,.65);font-size:15px;font-weight:600;
-  width:100%;text-align:left;transition:all .15s;font-family:inherit;
+
+/* ─── APP SHELL ─── */
+.app {
+  max-width: 430px; margin: 0 auto;
+  min-height: 100vh; background: var(--bg);
+  position: relative; overflow-x: hidden;
 }
-.sb-item:hover{background:rgba(255,255,255,.1);color:#fff}
-.sb-item.active{background:rgba(255,255,255,.15);color:#fff}
-.sb-item .ico{font-size:19px;width:24px;flex-shrink:0}
-.sb-cta{
-  margin:4px 10px 14px;background:var(--accent);color:#fff;
-  padding:13px;border-radius:var(--r-sm);border:none;cursor:pointer;
-  font-size:15px;font-weight:700;width:calc(100% - 20px);
-  display:flex;align-items:center;justify-content:center;gap:7px;
-  transition:background .15s;font-family:inherit;
+
+/* ─── VIEWS ─── */
+.view { display: none; flex-direction: column; min-height: 100vh; }
+.view.active { display: flex; }
+
+/* slide transition */
+.view.slide-in  { animation: slideIn .22s ease both; }
+.view.slide-out { animation: slideOut .18s ease both; }
+@keyframes slideIn  { from{transform:translateX(100%);opacity:.3} to{transform:translateX(0);opacity:1} }
+@keyframes slideOut { from{transform:translateX(0);opacity:1} to{transform:translateX(-30%);opacity:0} }
+
+/* ─── TOPBAR ─── */
+.topbar {
+  background: var(--surface);
+  border-bottom: 1px solid var(--border);
+  padding: 0 16px;
+  height: 56px;
+  display: flex; align-items: center; justify-content: space-between;
+  position: sticky; top: 0; z-index: 90;
+  flex-shrink: 0;
 }
-.sb-cta:hover{background:#B33008}
-.sb-foot{padding:14px 20px;border-top:1px solid rgba(255,255,255,.1)}
-.sb-logout{background:none;border:none;color:rgba(255,255,255,.45);font-size:14px;cursor:pointer;display:flex;align-items:center;gap:7px;font-family:inherit}
-.sb-logout:hover{color:#fff}
-
-/* ── MAIN WRAP ── */
-.main-wrap{flex:1;display:flex;flex-direction:column;min-height:100vh}
-
-/* ── APP ── */
-.app{flex:1;display:flex;flex-direction:column;max-width:560px;margin:0 auto;width:100%;position:relative;background:var(--white)}
-
-/* ── VIEWS ── */
-.view{display:none;flex-direction:column;flex:1;min-height:100vh}
-.view.active{display:flex}
-
-/* ── TOPBAR ── */
-.topbar{
-  display:flex;align-items:center;justify-content:space-between;
-  padding:0 16px;height:58px;
-  background:var(--white);border-bottom:2px solid var(--border);
-  position:sticky;top:0;z-index:100;
+.topbar-logo { height: 26px; width: auto; }
+.topbar-center { display: flex; align-items: center; gap: 8px; }
+.topbar-title { font-size: 16px; font-weight: 700; color: var(--muted); }
+.sep { width: 1px; height: 20px; background: var(--border); }
+.tb-btn {
+  width: 38px; height: 38px; border-radius: var(--r-sm);
+  border: 1px solid var(--border); background: var(--surface);
+  cursor: pointer; display: flex; align-items: center; justify-content: center;
+  color: var(--text); font-size: 18px; transition: background .15s;
+  -webkit-tap-highlight-color: transparent;
 }
-.topbar-left{display:flex;align-items:center;gap:12px}
-.tb-logo{height:26px;width:auto}
-.tb-sep{width:1px;height:22px;background:var(--border)}
-.tb-title{font-size:15px;font-weight:700;color:var(--muted)}
-.back-link{
-  display:inline-flex;align-items:center;gap:5px;
-  color:var(--navy);font-size:15px;font-weight:700;
-  background:none;border:none;cursor:pointer;padding:6px 0;
-  font-family:inherit;-webkit-tap-highlight-color:transparent;
+.tb-btn:hover { background: var(--bg); }
+.back-btn {
+  display: flex; align-items: center; gap: 5px;
+  background: none; border: none; cursor: pointer;
+  color: var(--navy); font-size: 15px; font-weight: 700;
+  padding: 6px 0; font-family: inherit;
+  -webkit-tap-highlight-color: transparent;
 }
-.back-link:hover{color:var(--navy-mid)}
-.back-link .arr{font-size:18px;font-weight:400}
-.btn-ico{
-  width:36px;height:36px;border-radius:var(--r-sm);
-  border:1px solid var(--border);background:var(--white);cursor:pointer;
-  display:flex;align-items:center;justify-content:center;font-size:17px;color:var(--text);
-  transition:background .15s;
+.back-btn:hover { color: var(--navy-2); }
+
+/* ─── SCROLL ─── */
+.scroll { flex: 1; padding: 0 0 88px; overflow-y: auto; }
+.px { padding-left: 16px; padding-right: 16px; }
+
+/* ─── BOTTOM NAV ─── */
+.bnav {
+  position: fixed; bottom: 0; left: 50%; transform: translateX(-50%);
+  width: 100%; max-width: 430px;
+  background: var(--surface); z-index: 80;
+  border-top: 1px solid var(--border);
+  display: grid; grid-template-columns: repeat(4, 1fr);
+  padding-bottom: env(safe-area-inset-bottom);
 }
-.btn-ico:hover{background:var(--bg)}
-
-/* ── SCROLL ── */
-.scroll{flex:1;padding:20px;padding-bottom:88px}
-
-/* ── BOTTOM NAV ── */
-.bnav{
-  position:fixed;bottom:0;left:0;right:0;
-  background:var(--white);border-top:2px solid var(--border);
-  display:flex;z-index:200;box-shadow:0 -2px 10px rgba(0,0,0,.07);
+.bn {
+  display: flex; flex-direction: column; align-items: center;
+  padding: 8px 6px 6px; cursor: pointer; border: none; background: none;
+  color: var(--muted); font-size: 11px; font-weight: 600;
+  position: relative; gap: 3px; transition: color .2s;
+  -webkit-tap-highlight-color: transparent; font-family: inherit;
 }
-.nav-btn{
-  flex:1;display:flex;flex-direction:column;align-items:center;
-  padding:9px 4px 7px;cursor:pointer;border:none;background:none;
-  color:var(--muted);font-size:11px;font-weight:600;transition:color .2s;
-  -webkit-tap-highlight-color:transparent;font-family:inherit;position:relative;
+.bn i { font-size: 22px; }
+.bn.on { color: var(--navy); }
+.bn.on::before {
+  content: ''; position: absolute; top: 0; left: 50%; transform: translateX(-50%);
+  width: 32px; height: 3px; background: var(--navy); border-radius: 0 0 4px 4px;
 }
-.nav-btn .ni{font-size:23px;margin-bottom:2px}
-.nav-btn.active{color:var(--navy)}
-.nav-btn:hover{color:var(--navy)}
-.notif-dot{position:absolute;top:7px;right:calc(50% - 14px);width:8px;height:8px;background:var(--accent);border-radius:50%;border:2px solid var(--white)}
-
-/* ── BUTTONS ── */
-.btn{
-  display:flex;align-items:center;justify-content:center;gap:9px;
-  padding:15px 22px;border-radius:var(--r);border:none;cursor:pointer;
-  font-size:17px;font-weight:700;width:100%;transition:all .15s;
-  -webkit-tap-highlight-color:transparent;font-family:inherit;
+.bn-dot {
+  position: absolute; top: 7px; right: calc(50% - 16px);
+  width: 8px; height: 8px; background: var(--accent); border-radius: 50%;
+  border: 2px solid var(--surface);
 }
-.btn-navy{background:var(--navy);color:#fff}
-.btn-navy:hover{background:var(--navy-deep)}
-.btn-navy:disabled{background:var(--border);color:var(--muted);cursor:not-allowed}
-.btn-cta{background:var(--accent);color:#fff}
-.btn-cta:hover{background:#B33008}
-.btn-ghost{background:var(--bg);color:var(--navy);border:2px solid var(--border)}
-.btn-ghost:hover{border-color:var(--navy);background:#EBF2FA}
-.btn-danger{background:#FEF2F2;color:var(--red);border:2px solid var(--red)}
-.btn-danger:hover{background:#FEE2E2}
-.btn-sm{padding:10px 16px;font-size:15px;border-radius:var(--r-sm);width:auto}
 
-/* ── INPUTS ── */
-.fg{margin-bottom:18px}
-.fl{display:block;font-size:13px;font-weight:700;color:var(--muted);margin-bottom:6px;text-transform:uppercase;letter-spacing:.5px}
-.fi{
-  width:100%;padding:14px 16px;border:2px solid var(--border);border-radius:var(--r);
-  font-size:18px;font-family:inherit;color:var(--text);background:#fff;transition:border-color .2s;outline:none;
+/* ─── TYPOGRAPHY ─── */
+.h1  { font-size: 24px; font-weight: 800; color: var(--text); }
+.h2  { font-size: 20px; font-weight: 800; color: var(--text); }
+.h3  { font-size: 17px; font-weight: 700; color: var(--text); }
+.sub { font-size: 14px; color: var(--muted); line-height: 1.5; }
+.label { font-size: 12px; font-weight: 700; color: var(--muted); text-transform: uppercase; letter-spacing: .5px; }
+
+/* ─── BUTTONS ─── */
+.btn {
+  display: flex; align-items: center; justify-content: center; gap: 8px;
+  padding: 15px 20px; border-radius: var(--r); border: none; cursor: pointer;
+  font-size: 16px; font-weight: 700; width: 100%; transition: all .15s;
+  -webkit-tap-highlight-color: transparent; font-family: inherit;
 }
-.fi:focus{border-color:var(--navy)}
-.fi::placeholder{color:#B0B8C8}
+.btn i { font-size: 18px; }
+.btn-primary { background: var(--navy); color: #fff; }
+.btn-primary:hover { background: var(--navy-2); }
+.btn-primary:disabled { background: var(--border); color: var(--muted); cursor: not-allowed; }
+.btn-accent  { background: var(--accent); color: #fff; }
+.btn-accent:hover { background: #B33008; }
+.btn-outline { background: var(--surface); color: var(--navy); border: 2px solid var(--navy); }
+.btn-outline:hover { background: var(--navy-3); }
+.btn-ghost  { background: var(--bg); color: var(--text); border: 1px solid var(--border); }
+.btn-ghost:hover { background: var(--border); }
+.btn-danger { background: var(--red-bg); color: var(--red); border: 1px solid #FECACA; }
+.btn-danger:hover { background: #FEE2E2; }
+.btn-sm { padding: 10px 14px; font-size: 14px; border-radius: var(--r-sm); width: auto; }
 
-/* ── CARDS ── */
-.card{background:#fff;border-radius:var(--r);padding:18px;margin-bottom:12px;box-shadow:var(--shadow-sm);border:1px solid var(--border)}
-.card-l{border-left:4px solid var(--navy)}
-.card-l-green{border-left:4px solid var(--green)}
-.card-l-red{border-left:4px solid var(--red)}
-
-/* ── SECTION ── */
-.st{font-size:19px;font-weight:800;color:var(--text);margin-bottom:12px}
-.ss{font-size:15px;color:var(--muted);margin-bottom:16px;line-height:1.5}
-.divider{height:1px;background:var(--border);margin:12px 0}
-
-/* ── BADGE ── */
-.badge{display:inline-flex;align-items:center;gap:4px;padding:3px 10px;border-radius:100px;font-size:13px;font-weight:700}
-.b-navy{background:#DDE8F4;color:var(--navy)}
-.b-green{background:#DCFCE7;color:var(--green)}
-.b-red{background:#FEE2E2;color:var(--red)}
-.b-orange{background:#FFEDD5;color:var(--accent)}
-.b-yellow{background:#FEF9C3;color:var(--yellow)}
-
-/* ── STEPS ── */
-.steps{display:flex;align-items:center;margin-bottom:22px}
-.step-dot{width:30px;height:30px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:800;background:var(--border);color:var(--muted);flex-shrink:0;transition:all .2s}
-.step-dot.on{background:var(--navy);color:#fff}
-.step-dot.ok{background:var(--green);color:#fff}
-.step-line{flex:1;height:2px;background:var(--border);margin:0 3px}
-.step-line.ok{background:var(--green)}
-
-/* ── SPECIALTY ── */
-.spec-grid{display:grid;grid-template-columns:1fr 1fr;gap:9px}
-.spec-item{
-  background:#fff;border:2px solid var(--border);border-radius:var(--r);
-  padding:14px 10px;cursor:pointer;text-align:center;transition:all .15s;
-  -webkit-tap-highlight-color:transparent;
+/* ─── INPUT ─── */
+.fg { margin-bottom: 16px; }
+.fl { display: block; margin-bottom: 6px; }
+.fi {
+  width: 100%; padding: 14px 16px; border-radius: var(--r);
+  border: 1.5px solid var(--border); font-size: 17px;
+  font-family: inherit; color: var(--text); background: var(--surface);
+  outline: none; transition: border-color .2s;
 }
-.spec-item:hover{border-color:var(--navy);box-shadow:0 0 0 3px rgba(0,43,92,.07)}
-.spec-item.sel{border-color:var(--navy);background:#EBF2FA}
-.spec-icon{font-size:30px;margin-bottom:5px;display:block}
-.spec-name{font-size:13px;font-weight:700;color:var(--text)}
+.fi:focus { border-color: var(--navy); }
+.fi::placeholder { color: #B0BAC8; }
+.input-wrap { position: relative; }
+.input-icon { position: absolute; left: 14px; top: 50%; transform: translateY(-50%); color: var(--muted); font-size: 18px; pointer-events: none; }
+.fi.with-icon { padding-left: 42px; }
 
-/* ── CALENDAR ── */
-.cal-nav{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px}
-.cal-nav-btn{background:none;border:1px solid var(--border);border-radius:var(--r-sm);padding:6px 14px;cursor:pointer;font-size:14px;font-weight:700;color:var(--navy);transition:background .15s;font-family:inherit}
-.cal-nav-btn:hover{background:var(--bg)}
-.cal-month{font-size:17px;font-weight:800}
-.cal-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:3px}
-.cal-dn{text-align:center;font-size:12px;font-weight:700;color:var(--muted);padding:5px 0}
-.cal-d{aspect-ratio:1;display:flex;align-items:center;justify-content:center;border-radius:50%;font-size:14px;font-weight:600;cursor:pointer;transition:all .15s;position:relative;-webkit-tap-highlight-color:transparent}
-.cal-d.empty,.cal-d.past{pointer-events:none}
-.cal-d.past{color:#C5CDD8}
-.cal-d.avail:hover{background:#DDE8F4;color:var(--navy)}
-.cal-d.sel{background:var(--navy);color:#fff}
-.cal-d.today{border:2px solid var(--navy);color:var(--navy);font-weight:900}
-.cal-d.sel.today{border-color:transparent}
-.cal-d.has-slots::after{content:'';position:absolute;bottom:3px;left:50%;transform:translateX(-50%);width:4px;height:4px;background:var(--green);border-radius:50%}
-
-/* ── TIME SLOTS ── */
-.tslots{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
-.tslot{padding:13px 6px;border-radius:var(--r-sm);border:2px solid var(--border);text-align:center;cursor:pointer;font-size:15px;font-weight:700;transition:all .15s;background:#fff;font-family:inherit}
-.tslot:hover{border-color:var(--navy);background:#EBF2FA;color:var(--navy)}
-.tslot.sel{border-color:var(--navy);background:var(--navy);color:#fff}
-.tslot.taken{background:var(--bg);color:var(--muted);cursor:not-allowed;border-color:transparent;font-size:13px}
-
-/* ── QR ── */
-.qr-wrap{display:flex;justify-content:center;padding:18px 0}
-.qr-box{width:164px;height:164px;background:repeating-linear-gradient(0deg,#000 0,#000 4px,#fff 4px,#fff 8px),repeating-linear-gradient(90deg,#000 0,#000 4px,#fff 4px,#fff 8px);background-blend-mode:multiply;border-radius:8px;display:flex;align-items:center;justify-content:center;border:4px solid var(--navy)}
-.qr-inner{width:42px;height:42px;background:#fff;border-radius:4px;display:flex;align-items:center;justify-content:center}
-
-/* ── QUEUE ── */
-.q-num{font-size:80px;font-weight:900;color:var(--navy);text-align:center;line-height:1}
-.q-label{font-size:16px;color:var(--muted);text-align:center;margin:4px 0 14px}
-.prog-wrap{background:var(--border);border-radius:100px;height:10px;overflow:hidden;margin:6px 0}
-.prog-fill{height:100%;background:var(--navy);border-radius:100px;transition:width 1s}
-
-/* ── APPT CARD ── */
-.ac{background:#fff;border-radius:var(--r);border:1px solid var(--border);overflow:hidden;margin-bottom:12px;box-shadow:var(--shadow-sm)}
-.ac-head{background:var(--navy);color:#fff;padding:13px 16px}
-.ac-spec{font-size:17px;font-weight:800}
-.ac-sub{font-size:12px;opacity:.75;margin-top:2px}
-.ac-body{padding:13px 16px}
-.ac-row{display:flex;align-items:center;gap:9px;margin-bottom:7px;font-size:15px}
-.ac-row .ic{font-size:18px;width:22px;flex-shrink:0}
-
-/* ── ALERTS ── */
-.al{border-radius:var(--r-sm);padding:13px 15px;display:flex;align-items:flex-start;gap:11px;margin-bottom:12px;font-size:16px}
-.al-ic{font-size:21px;flex-shrink:0;margin-top:1px}
-.al-ok{background:#F0FDF4;border-left:4px solid var(--green)}
-.al-err{background:#FEF2F2;border-left:4px solid var(--red)}
-.al-info{background:#EBF2FA;border-left:4px solid var(--navy)}
-.al-warn{background:#FFFBEB;border-left:4px solid var(--yellow)}
-
-/* ── LOGIN ── */
-.login-shell{display:flex;flex-direction:column;min-height:100vh}
-.login-left{background:var(--navy);padding:40px 28px;color:#fff;text-align:center}
-.login-logo{margin-bottom:20px}
-.login-logo img{height:46px}
-.login-title{font-size:22px;font-weight:800;margin-bottom:8px}
-.login-sub{font-size:16px;color:rgba(255,255,255,.6);line-height:1.6}
-.login-stats{display:flex;gap:10px;margin-top:24px;flex-wrap:wrap;justify-content:center}
-.ls{background:rgba(255,255,255,.1);border-radius:var(--r-sm);padding:10px 14px;text-align:center;flex:1;min-width:80px}
-.ls-num{font-size:22px;font-weight:900;display:block}
-.ls-lbl{font-size:11px;opacity:.65;margin-top:2px;display:block;line-height:1.3}
-.login-right{padding:32px 28px;background:#fff;flex:1}
-.login-help{font-size:15px;color:var(--muted);text-align:center;margin-top:16px;line-height:1.5}
-.login-help a{color:var(--navy);font-weight:700;text-decoration:none}
-
-/* ── HOME ── */
-.home-top{background:var(--navy);padding:16px 20px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100}
-.home-top img{height:30px}
-.home-top-btn{background:rgba(255,255,255,.13);border:none;border-radius:var(--r-sm);padding:8px 12px;color:#fff;font-size:14px;font-weight:700;cursor:pointer;display:flex;align-items:center;gap:6px;font-family:inherit}
-.home-top-btn:hover{background:rgba(255,255,255,.22)}
-.home-welcome{background:var(--navy);padding:6px 20px 24px;color:#fff}
-.home-greet{font-size:14px;opacity:.65}
-.home-name{font-size:22px;font-weight:900;margin-top:3px}
-.home-cta-btn{
-  background:#fff;color:var(--navy);border:none;border-radius:var(--r);
-  padding:14px 20px;font-size:16px;font-weight:800;width:100%;
-  display:flex;align-items:center;justify-content:center;gap:8px;
-  margin-top:16px;cursor:pointer;transition:background .15s;font-family:inherit;
+/* ─── CARDS ─── */
+.card {
+  background: var(--surface); border-radius: var(--r);
+  border: 1px solid var(--border); overflow: hidden;
+  box-shadow: 0 1px 4px rgba(0,43,92,.06);
 }
-.home-cta-btn:hover{background:#E8F0FA}
+.card-p { padding: 16px; }
 
-/* ── QUICK ACTIONS ── */
-.qa-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:18px}
-.qa{background:#fff;border-radius:var(--r);padding:15px 12px;text-align:center;cursor:pointer;border:1px solid var(--border);box-shadow:var(--shadow-sm);transition:all .15s;-webkit-tap-highlight-color:transparent}
-.qa:hover{border-color:var(--navy);transform:translateY(-1px);box-shadow:var(--shadow)}
-.qa-icon{font-size:26px;margin-bottom:5px}
-.qa-label{font-size:13px;font-weight:700;color:var(--text)}
+/* ─── BADGE / CHIP ─── */
+.chip {
+  display: inline-flex; align-items: center; gap: 4px;
+  padding: 3px 10px; border-radius: 100px;
+  font-size: 12px; font-weight: 700;
+}
+.chip i { font-size: 13px; }
+.chip-navy   { background: var(--navy-3); color: var(--navy); }
+.chip-green  { background: var(--green-bg); color: var(--green); }
+.chip-red    { background: var(--red-bg); color: var(--red); }
+.chip-orange { background: #FFF7ED; color: var(--accent); }
+.chip-yellow { background: var(--yel-bg); color: var(--yellow); }
+.chip-sky    { background: var(--sky-bg); color: var(--sky); }
 
-/* ── HIST ── */
-.hi{background:#fff;border-radius:var(--r-sm);padding:13px 15px;margin-bottom:9px;border:1px solid var(--border);box-shadow:var(--shadow-sm);display:flex;align-items:center;gap:11px;cursor:pointer;transition:border-color .15s}
-.hi:hover{border-color:var(--navy)}
-.hi-icon{font-size:26px;flex-shrink:0}
-.hi-spec{font-size:15px;font-weight:800}
-.hi-date{font-size:13px;color:var(--muted);margin-top:2px}
-.hi-arr{margin-left:auto;color:var(--muted);font-size:16px}
+/* ─── ALERT ─── */
+.alert {
+  border-radius: var(--r-sm); padding: 12px 14px;
+  display: flex; align-items: flex-start; gap: 10px;
+  font-size: 15px; line-height: 1.4; margin-bottom: 12px;
+}
+.alert i { font-size: 18px; flex-shrink: 0; margin-top: 1px; }
+.a-ok   { background: var(--green-bg); border-left: 3px solid var(--green); color: #065F46; }
+.a-err  { background: var(--red-bg);   border-left: 3px solid var(--red);   color: #991B1B; }
+.a-info { background: var(--navy-3);   border-left: 3px solid var(--navy);  color: var(--navy); }
+.a-warn { background: var(--yel-bg);   border-left: 3px solid var(--yellow);color: #92400E; }
 
-/* ── RELATIVE ── */
-.ri{background:#fff;border-radius:var(--r);padding:14px 16px;margin-bottom:9px;border:1px solid var(--border);box-shadow:var(--shadow-sm);display:flex;align-items:center;gap:12px;cursor:pointer;transition:border-color .15s}
-.ri:hover{border-color:var(--navy)}
-.ri-av{width:46px;height:46px;border-radius:50%;background:var(--navy);color:#fff;display:flex;align-items:center;justify-content:center;font-size:18px;font-weight:800;flex-shrink:0}
-.ri-name{font-size:15px;font-weight:800}
-.ri-sub{font-size:13px;color:var(--muted);margin-top:2px}
-.ri-arr{margin-left:auto;color:var(--muted);font-size:16px}
+/* ─── DIVIDER ─── */
+.divider { height: 1px; background: var(--border); margin: 14px 0; }
+.section-gap { height: 20px; }
 
-/* ── MODAL ── */
-.moverlay{display:none;position:fixed;inset:0;background:rgba(0,27,61,.55);z-index:500;align-items:flex-end;justify-content:center}
-.moverlay.open{display:flex}
-.msheet{background:#fff;border-radius:20px 20px 0 0;padding:20px 22px 36px;width:100%;max-width:520px;max-height:92vh;overflow-y:auto;animation:up .25s ease}
-@keyframes up{from{transform:translateY(100%);opacity:0}to{transform:translateY(0);opacity:1}}
-.mhandle{width:38px;height:4px;background:var(--border);border-radius:100px;margin:0 auto 16px}
+/* ─── STEP INDICATOR ─── */
+.steps {
+  display: flex; align-items: center; padding: 0 16px; margin-bottom: 20px;
+}
+.sd {
+  width: 28px; height: 28px; border-radius: 50%; flex-shrink: 0;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 12px; font-weight: 800; transition: all .2s;
+  background: var(--border); color: var(--muted);
+}
+.sd.on { background: var(--navy); color: #fff; }
+.sd.ok { background: var(--green); color: #fff; }
+.sd.ok::before { content: none; }
+.sl { flex: 1; height: 2px; background: var(--border); margin: 0 4px; }
+.sl.ok { background: var(--green); }
 
-/* ── EMPTY ── */
-.empty{text-align:center;padding:40px 16px}
-.empty-icon{font-size:52px;margin-bottom:12px}
-.empty-t{font-size:19px;font-weight:800;margin-bottom:8px}
-.empty-s{font-size:15px;color:var(--muted);margin-bottom:18px;line-height:1.5}
+/* ─── SPECIALTY ─── */
+.spec-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.spec-card {
+  background: var(--surface); border: 1.5px solid var(--border);
+  border-radius: var(--r); padding: 16px 12px; text-align: center;
+  cursor: pointer; transition: all .15s; -webkit-tap-highlight-color: transparent;
+}
+.spec-card:hover  { border-color: var(--navy); }
+.spec-card.sel    { border-color: var(--navy); background: var(--navy-3); }
+.spec-icon { font-size: 28px; color: var(--navy); display: block; margin-bottom: 7px; }
+.spec-name { font-size: 13px; font-weight: 700; color: var(--text); }
 
-/* ── SUCCESS ── */
-.success-c{width:84px;height:84px;border-radius:50%;background:var(--green);display:flex;align-items:center;justify-content:center;margin:0 auto 14px;font-size:42px;color:#fff}
+/* ─── CALENDAR ─── */
+.cal-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; }
+.cal-nav {
+  width: 36px; height: 36px; border-radius: var(--r-sm);
+  border: 1px solid var(--border); background: var(--surface);
+  cursor: pointer; display: flex; align-items: center; justify-content: center;
+  color: var(--navy); font-size: 17px; transition: background .15s;
+  -webkit-tap-highlight-color: transparent;
+}
+.cal-nav:hover { background: var(--bg); }
+.cal-month-label { font-size: 17px; font-weight: 800; }
+.cal-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 0; }
+.cal-dn { text-align: center; font-size: 12px; font-weight: 700; color: var(--muted); padding: 6px 0 8px; }
+.cal-d {
+  height: 44px; /* fixed height — no aspect-ratio issues */
+  display: flex; align-items: center; justify-content: center;
+  border-radius: 50%; font-size: 14px; font-weight: 600;
+  cursor: pointer; transition: all .15s; position: relative;
+  -webkit-tap-highlight-color: transparent;
+}
+.cal-d.empty { pointer-events: none; }
+.cal-d.past  { color: #C5CDD8; pointer-events: none; }
+.cal-d.avail:hover { background: var(--navy-3); color: var(--navy); }
+.cal-d.sel   { background: var(--navy) !important; color: #fff; border-radius: 50%; }
+.cal-d.today { border: 2px solid var(--navy); color: var(--navy); font-weight: 900; }
+.cal-d.sel.today { border-color: transparent; }
+.cal-d.has-slots::after {
+  content: ''; position: absolute; bottom: 4px; left: 50%; transform: translateX(-50%);
+  width: 4px; height: 4px; background: var(--green); border-radius: 50%;
+}
+.cal-d.sel::after { background: rgba(255,255,255,.7); }
 
-/* ── ACCESSIBILITY ── */
-*:focus-visible{outline:3px solid var(--navy);outline-offset:2px}
+/* ─── TIME SLOTS ─── */
+.tslots { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
+.tslot {
+  padding: 12px 6px; border-radius: var(--r-sm); border: 1.5px solid var(--border);
+  text-align: center; cursor: pointer; font-size: 14px; font-weight: 700;
+  background: var(--surface); transition: all .15s;
+  -webkit-tap-highlight-color: transparent; font-family: inherit;
+}
+.tslot:hover  { border-color: var(--navy); color: var(--navy); background: var(--navy-3); }
+.tslot.sel    { border-color: var(--navy); background: var(--navy); color: #fff; }
+.tslot.taken  { background: var(--bg); color: #C5CDD8; border-color: transparent; cursor: not-allowed; font-size: 12px; }
+
+/* ─── CENTER CARD ─── */
+.center-card {
+  background: var(--surface); border-radius: var(--r);
+  border: 1.5px solid var(--border); padding: 14px 16px;
+  cursor: pointer; margin-bottom: 10px; transition: all .15s;
+}
+.center-card:hover { border-color: var(--navy); }
+.center-card.sel   { border-color: var(--navy); background: var(--navy-3); }
+.center-name  { font-size: 16px; font-weight: 800; margin-bottom: 4px; }
+.center-meta  { font-size: 13px; color: var(--muted); display: flex; flex-direction: column; gap: 3px; }
+.center-meta span { display: flex; align-items: center; gap: 5px; }
+.center-meta i { font-size: 14px; }
+.center-avail { margin-top: 8px; display: flex; gap: 6px; flex-wrap: wrap; }
+
+/* ─── QR ─── */
+.qr-wrap { display: flex; justify-content: center; padding: 20px 0; }
+.qr-box {
+  width: 160px; height: 160px;
+  background: repeating-linear-gradient(0deg,#000 0,#000 4px,#fff 4px,#fff 8px),
+              repeating-linear-gradient(90deg,#000 0,#000 4px,#fff 4px,#fff 8px);
+  background-blend-mode: multiply;
+  border-radius: 10px; display: flex; align-items: center; justify-content: center;
+  border: 3px solid var(--navy);
+}
+.qr-inner { width: 40px; height: 40px; background: #fff; border-radius: 4px; display: flex; align-items: center; justify-content: center; overflow: hidden; }
+
+/* ─── TICKET ─── */
+.ticket {
+  background: var(--surface); border-radius: var(--r-lg);
+  border: 1px solid var(--border); overflow: hidden; margin: 0 0 16px;
+  box-shadow: 0 4px 24px rgba(0,43,92,.10);
+}
+.ticket-head {
+  background: var(--navy); color: #fff;
+  padding: 20px 20px 16px;
+}
+.ticket-sep {
+  display: flex; align-items: center; margin: 0;
+  position: relative; height: 0;
+}
+.ticket-sep::before,.ticket-sep::after {
+  content: ''; width: 20px; height: 20px; background: var(--bg);
+  border-radius: 50%; position: absolute; top: -10px;
+  border: 1px solid var(--border);
+}
+.ticket-sep::before { left: -10px; }
+.ticket-sep::after  { right: -10px; }
+.ticket-line { flex: 1; border: none; border-top: 2px dashed var(--border); margin: 0 14px; }
+.ticket-body { padding: 16px 20px; }
+
+/* ─── APPT CARD ─── */
+.appt-item {
+  background: var(--surface); border-radius: var(--r);
+  border: 1px solid var(--border); margin-bottom: 12px; overflow: hidden;
+  box-shadow: 0 1px 4px rgba(0,43,92,.06);
+}
+.appt-item-head {
+  background: var(--navy); color: #fff;
+  padding: 12px 16px; display: flex; align-items: center; justify-content: space-between;
+}
+.appt-item-body { padding: 12px 16px; }
+.appt-row { display: flex; align-items: center; gap: 9px; font-size: 15px; margin-bottom: 6px; color: var(--text); }
+.appt-row i { font-size: 16px; color: var(--muted); width: 18px; flex-shrink: 0; }
+
+/* ─── QUEUE ─── */
+.q-card {
+  background: var(--navy); border-radius: var(--r-lg);
+  padding: 28px 24px; text-align: center; margin-bottom: 14px;
+  color: #fff;
+}
+.q-label { font-size: 13px; font-weight: 700; opacity: .6; text-transform: uppercase; letter-spacing: .5px; margin-bottom: 6px; }
+.q-number { font-size: 88px; font-weight: 900; line-height: 1; margin-bottom: 4px; }
+.q-of { font-size: 15px; opacity: .65; }
+.prog-wrap { background: rgba(255,255,255,.2); border-radius: 100px; height: 8px; overflow: hidden; margin: 16px 0 8px; }
+.prog-fill { height: 100%; background: #fff; border-radius: 100px; transition: width 1s ease; }
+.q-pct { font-size: 13px; opacity: .65; }
+
+/* ─── HISTORY ─── */
+.hist-item {
+  background: var(--surface); border-radius: var(--r);
+  border: 1px solid var(--border); padding: 14px 16px;
+  display: flex; align-items: center; gap: 12px; cursor: pointer;
+  margin-bottom: 10px; transition: border-color .15s;
+}
+.hist-item:hover { border-color: var(--navy); }
+.hist-icon {
+  width: 44px; height: 44px; border-radius: var(--r-sm);
+  background: var(--navy-3); display: flex; align-items: center; justify-content: center;
+  color: var(--navy); font-size: 20px; flex-shrink: 0;
+}
+.hist-arr { margin-left: auto; color: var(--muted); font-size: 16px; }
+
+/* ─── RELATIVES ─── */
+.rel-item {
+  background: var(--surface); border-radius: var(--r);
+  border: 1px solid var(--border); padding: 14px 16px;
+  display: flex; align-items: center; gap: 12px; cursor: pointer;
+  margin-bottom: 10px; transition: border-color .15s;
+}
+.rel-item:hover { border-color: var(--navy); }
+.rel-avatar {
+  width: 44px; height: 44px; border-radius: 50%;
+  background: var(--navy); color: #fff; font-size: 17px; font-weight: 800;
+  display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+}
+.rel-arr { margin-left: auto; color: var(--muted); font-size: 16px; }
+
+/* ─── EMPTY STATE ─── */
+.empty { text-align: center; padding: 48px 20px; }
+.empty i { font-size: 56px; color: var(--border); display: block; margin-bottom: 14px; }
+.empty-t { font-size: 18px; font-weight: 800; margin-bottom: 8px; }
+.empty-s { font-size: 15px; color: var(--muted); margin-bottom: 20px; line-height: 1.5; }
+
+/* ─── SUCCESS ─── */
+.success-wrap { text-align: center; padding: 16px 0 8px; }
+.success-ring {
+  width: 80px; height: 80px; border-radius: 50%;
+  background: var(--green-bg); border: 3px solid var(--green);
+  display: flex; align-items: center; justify-content: center;
+  margin: 0 auto 14px; color: var(--green); font-size: 40px;
+}
+
+/* ─── LOGIN ─── */
+.login-top {
+  background: var(--navy); padding: 52px 24px 36px;
+  text-align: center; color: #fff;
+}
+.login-top img { height: 44px; margin-bottom: 16px; display: block; margin-left: auto; margin-right: auto; }
+.login-tagline { font-size: 14px; color: rgba(255,255,255,.6); line-height: 1.6; }
+.login-bottom { padding: 28px 20px 40px; background: var(--surface); flex: 1; }
+
+/* ─── HOME HEADER ─── */
+.home-topbar {
+  background: var(--navy); padding: 0 16px;
+  display: flex; align-items: center; justify-content: space-between;
+  height: 56px; position: sticky; top: 0; z-index: 90;
+}
+.home-topbar img { height: 28px; }
+.htb-actions { display: flex; align-items: center; gap: 8px; }
+.htb-btn {
+  width: 36px; height: 36px; border-radius: var(--r-sm);
+  border: none; background: rgba(255,255,255,.12); color: #fff;
+  font-size: 18px; cursor: pointer; display: flex; align-items: center; justify-content: center;
+  -webkit-tap-highlight-color: transparent; position: relative;
+}
+.htb-btn:hover { background: rgba(255,255,255,.2); }
+
+.home-hero {
+  background: var(--navy); padding: 16px 16px 24px; color: #fff;
+}
+.home-greet   { font-size: 13px; color: rgba(255,255,255,.6); }
+.home-uname   { font-size: 22px; font-weight: 900; margin-top: 2px; }
+.home-next-label { font-size: 12px; font-weight: 700; opacity: .55; text-transform: uppercase; letter-spacing: .5px; margin: 16px 0 8px; }
+.next-card {
+  background: rgba(255,255,255,.1); border-radius: var(--r);
+  padding: 14px 16px; border: 1px solid rgba(255,255,255,.15); cursor: pointer;
+}
+.next-card:hover { background: rgba(255,255,255,.15); }
+.next-spec { font-size: 16px; font-weight: 800; }
+.next-meta { font-size: 13px; opacity: .7; margin-top: 3px; display: flex; align-items: center; gap: 6px; }
+.next-cta {
+  background: #fff; color: var(--navy);
+  border: none; border-radius: var(--r); padding: 13px 18px;
+  font-size: 15px; font-weight: 800; width: 100%; margin-top: 14px;
+  cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 7px;
+  transition: background .15s; font-family: inherit;
+}
+.next-cta:hover { background: var(--navy-3); }
+.next-cta i { font-size: 17px; }
+
+/* ─── QUICK ACTIONS ─── */
+.qa-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; padding: 0 16px; margin: 18px 0 20px; }
+.qa-item {
+  background: var(--surface); border-radius: var(--r);
+  padding: 14px 6px; text-align: center; cursor: pointer;
+  border: 1px solid var(--border); transition: all .15s;
+  -webkit-tap-highlight-color: transparent;
+}
+.qa-item:hover { border-color: var(--navy); transform: translateY(-1px); box-shadow: 0 2px 8px rgba(0,43,92,.1); }
+.qa-icon { font-size: 22px; color: var(--navy); display: block; margin-bottom: 5px; }
+.qa-label { font-size: 11px; font-weight: 700; color: var(--text); }
+
+/* ─── MODAL ─── */
+.moverlay {
+  display: none; position: fixed; inset: 0;
+  background: rgba(0,27,61,.5); z-index: 500;
+  align-items: flex-end; justify-content: center;
+}
+.moverlay.open { display: flex; }
+.msheet {
+  background: var(--surface); border-radius: 20px 20px 0 0;
+  padding: 16px 20px 40px; width: 100%; max-width: 430px;
+  max-height: 90vh; overflow-y: auto;
+  animation: sheetUp .25s ease;
+}
+@keyframes sheetUp { from{transform:translateY(100%)} to{transform:translateY(0)} }
+.mhandle { width: 36px; height: 4px; background: var(--border); border-radius: 100px; margin: 0 auto 18px; }
+
+/* ─── SECTION ROW ─── */
+.section-row { display: flex; align-items: center; justify-content: space-between; padding: 0 16px; margin-bottom: 10px; }
+.section-link { font-size: 14px; font-weight: 700; color: var(--navy); background: none; border: none; cursor: pointer; font-family: inherit; }
+
+/* ─── INFO ROW ─── */
+.info-row { display: flex; align-items: center; gap: 10px; padding: 10px 0; border-bottom: 1px solid var(--border); font-size: 15px; }
+.info-row:last-child { border-bottom: none; }
+.info-row i { font-size: 17px; color: var(--muted); width: 20px; flex-shrink: 0; }
+.info-label { font-size: 12px; color: var(--muted); }
+.info-val { font-weight: 700; font-size: 15px; }
+
+/* accessibility */
+*:focus-visible { outline: 3px solid var(--navy); outline-offset: 2px; border-radius: 4px; }
 @media(prefers-reduced-motion:reduce){*{animation-duration:.01ms!important;transition-duration:.01ms!important}}
 
-/* ════════════ RESPONSIVE ════════════ */
-
-/* TABLET 768+ */
-@media(min-width:768px){
-  body{background:#E4EBF5}
-  .app{max-width:680px;box-shadow:0 0 32px rgba(0,0,0,.10)}
-  .spec-grid{grid-template-columns:1fr 1fr 1fr}
-  .tslots{grid-template-columns:repeat(4,1fr)}
-  .qa-grid{grid-template-columns:repeat(4,1fr)}
-  /* Login split */
-  .login-shell{flex-direction:row;min-height:100vh}
-  .login-left{flex:0 0 340px;display:flex;flex-direction:column;justify-content:center;min-height:100vh;padding:48px 36px}
-  .login-right{flex:1;display:flex;flex-direction:column;justify-content:center;padding:48px 40px;min-height:100vh}
-  .login-logo img{height:56px}
-  .login-title{font-size:28px}
-  .login-sub{font-size:17px}
-  .scroll{padding-bottom:88px}
-}
-
-/* DESKTOP 1024+ */
-@media(min-width:1024px){
-  body{background:#D8E3F0}
-  .sidebar{display:flex}
-  .main-wrap{margin-left:var(--sidebar)}
-  .app{max-width:none;width:100%;box-shadow:none;border-right:1px solid var(--border)}
-  .bnav{display:none!important}
-  .scroll{padding-bottom:40px;max-width:800px}
-  /* Login: wider left panel */
-  .login-left{flex:0 0 420px;padding:60px 48px}
-  .login-right{padding:60px 52px;max-width:560px}
-  /* Topbar stays white */
-  .topbar{border-bottom:1px solid var(--border)}
-  /* Home top: hide on desktop (sidebar handles nav) */
-  .home-top{display:none}
-  .home-welcome{padding:28px 28px 28px;border-bottom:1px solid rgba(255,255,255,.1)}
-  .spec-grid{grid-template-columns:repeat(4,1fr)}
-  .tslots{grid-template-columns:repeat(5,1fr)}
-  .qa-grid{grid-template-columns:repeat(4,1fr)}
-  /* Modal: centered */
-  .moverlay{align-items:center}
-  .msheet{border-radius:16px;max-width:480px;margin:auto}
-  /* Scroll wider area */
-  .app .scroll{padding:28px 32px 40px;max-width:none}
+/* tablet: slightly wider */
+@media(min-width:600px){
+  .app{max-width:430px;box-shadow:0 0 40px rgba(0,0,0,.12);margin:0 auto}
+  body{background:#D8E3F0;display:flex;align-items:flex-start;justify-content:center;padding:20px}
+  .app{border-radius:24px;overflow:hidden;min-height:calc(100vh - 40px)}
+  .bnav{border-radius:0 0 24px 24px}
 }
 </style>
 </head>
 <body>
-
-<div class="shell">
-
-<!-- ═══════════════ SIDEBAR ═══════════════ -->
-<aside class="sidebar" id="sidebar">
-  <div class="sb-brand">
-    <img src="https://cdn.brandfetch.io/id8LwMLHOF/theme/dark/logo.svg?c=1bxid64Mup7aczewSAYMX&t=1771715114189" alt="ISSS" onerror="this.outerHTML='<span style=\'font-size:20px;font-weight:900;color:#fff\'>ISSS</span>'">
-  </div>
-  <div class="sb-user" id="sb-user">
-    <div class="sb-user-name" id="sb-name">—</div>
-    <div class="sb-user-dui" id="sb-dui">—</div>
-  </div>
-  <div class="sb-nav">
-    <button class="sb-item active" id="sbi-home" onclick="showView('view-home');setSbActive('sbi-home')"><span class="ico">🏠</span>Inicio</button>
-    <button class="sb-item" id="sbi-appts" onclick="showView('view-appointments');setSbActive('sbi-appts')"><span class="ico">📋</span>Mis Citas</button>
-    <button class="sb-item" id="sbi-queue" onclick="showView('view-queue');setSbActive('sbi-queue')"><span class="ico">🔢</span>Turno en Vivo</button>
-    <button class="sb-item" id="sbi-hist" onclick="showView('view-history');setSbActive('sbi-hist')"><span class="ico">🗂️</span>Historial</button>
-    <button class="sb-item" id="sbi-rel" onclick="showView('view-relatives');setSbActive('sbi-rel')"><span class="ico">👨‍👩‍👧</span>Familiares</button>
-  </div>
-  <button class="sb-cta" onclick="goStep1()">📅 Nueva cita</button>
-  <div class="sb-foot">
-    <button class="sb-logout" onclick="doLogout()">← Cerrar sesión</button>
-  </div>
-</aside>
-
-<!-- ═══════════════ MAIN ═══════════════ -->
-<div class="main-wrap">
 <div class="app" id="app">
 
-<!-- ═══ VIEW: LOGIN ═══ -->
+<!-- ═══════════════════════════ LOGIN ═══════════════════════════ -->
 <div class="view active" id="view-login">
-  <div class="login-shell">
-    <div class="login-left">
-      <div class="login-logo">
-        <img src="https://cdn.brandfetch.io/id8LwMLHOF/theme/dark/logo.svg?c=1bxid64Mup7aczewSAYMX&t=1771715114189" alt="ISSS" onerror="this.outerHTML='<span style=\'font-size:24px;font-weight:900;color:#fff\'>ISSS</span>'">
-      </div>
-      <div class="login-title">Citas Médicas en Línea</div>
-      <div class="login-sub">Reserve su cita desde casa.<br>Sin filas. Sin madrugar.</div>
-      <div class="login-stats">
-        <div class="ls"><span class="ls-num">4M+</span><span class="ls-lbl">cotizantes activos</span></div>
-        <div class="ls"><span class="ls-num">0</span><span class="ls-lbl">apps oficiales antes</span></div>
-        <div class="ls"><span class="ls-num">2.5h</span><span class="ls-lbl">de fila evitadas</span></div>
+  <div class="login-top">
+    <img src="https://cdn.brandfetch.io/id8LwMLHOF/theme/dark/logo.svg?c=1bxid64Mup7aczewSAYMX&t=1771715114189" alt="ISSS"
+         onerror="this.outerHTML='<span style=\'font-size:22px;font-weight:900;color:#fff\'>ISSS</span>'">
+    <div style="font-size:20px;font-weight:800;margin-bottom:8px">Citas Médicas en Línea</div>
+    <div class="login-tagline">Reserve su cita desde su teléfono.<br>Sin filas. Sin madrugar.</div>
+  </div>
+  <div class="login-bottom">
+    <div class="h3" style="margin-bottom:4px">Ingrese con su DUI</div>
+    <div class="sub" style="margin-bottom:20px">No necesita contraseña. Solo su número de identificación.</div>
+    <div class="fg">
+      <label class="fl label" for="dui-in">Número de DUI</label>
+      <div class="input-wrap">
+        <i class="bi bi-shield-lock input-icon"></i>
+        <input class="fi with-icon" id="dui-in" type="text" placeholder="00000000-0" maxlength="10" inputmode="numeric" autocomplete="off">
       </div>
     </div>
-    <div class="login-right">
-      <div class="st" style="margin-bottom:6px">Ingrese su DUI</div>
-      <div class="ss">No necesita contraseña. Solo su número de identificación.</div>
-      <div class="fg">
-        <label class="fl" for="dui-in">Número de DUI</label>
-        <input class="fi" id="dui-in" type="text" placeholder="00000000-0" maxlength="10" inputmode="numeric" autocomplete="off">
-      </div>
-      <div id="login-err" style="color:var(--red);font-size:15px;margin-bottom:12px;display:none">⚠️ DUI inválido. Formato: 00000000-0</div>
-      <button class="btn btn-navy" onclick="doLogin()">🔐 Ingresar</button>
-      <div class="login-help" style="margin-top:20px">¿Problemas para ingresar? Llame al ISSS: <a href="tel:132">132</a></div>
+    <div id="login-err" style="color:var(--red);font-size:14px;margin-bottom:12px;display:none;display:flex;align-items:center;gap:6px">
+      <i class="bi bi-exclamation-circle"></i> DUI inválido. Use el formato 00000000-0
+    </div>
+    <button class="btn btn-primary" onclick="doLogin()"><i class="bi bi-box-arrow-in-right"></i> Ingresar</button>
+    <div style="text-align:center;margin-top:20px">
+      <div class="sub">¿Necesita ayuda?</div>
+      <a href="tel:132" style="color:var(--navy);font-weight:700;font-size:15px;text-decoration:none;display:flex;align-items:center;justify-content:center;gap:6px;margin-top:4px"><i class="bi bi-telephone"></i> Llamar al ISSS: 132</a>
     </div>
   </div>
 </div>
 
-<!-- ═══ VIEW: HOME ═══ -->
+<!-- ═══════════════════════════ HOME ═══════════════════════════ -->
 <div class="view" id="view-home">
-  <div class="home-top" id="home-top-bar">
-    <img src="https://cdn.brandfetch.io/id8LwMLHOF/theme/dark/logo.svg?c=1bxid64Mup7aczewSAYMX&t=1771715114189" alt="ISSS" onerror="this.style.display='none'">
-    <button class="home-top-btn" onclick="showView('view-relatives')">👨‍👩‍👧 Familiares</button>
+  <div class="home-topbar">
+    <img src="https://cdn.brandfetch.io/id8LwMLHOF/theme/dark/logo.svg?c=1bxid64Mup7aczewSAYMX&t=1771715114189" alt="ISSS"
+         onerror="this.outerHTML='<span style=\'color:#fff;font-weight:900\'>ISSS</span>'">
+    <div class="htb-actions">
+      <button class="htb-btn" onclick="showView('view-relatives')" title="Familiares"><i class="bi bi-people"></i></button>
+      <button class="htb-btn" id="bell-btn" title="Notificaciones"><i class="bi bi-bell"></i></button>
+    </div>
   </div>
-  <div class="home-welcome">
+  <div class="home-hero">
     <div class="home-greet">Bienvenido/a,</div>
-    <div class="home-name" id="home-name">—</div>
-    <button class="home-cta-btn" onclick="goStep1()">📅 Pedir nueva cita</button>
+    <div class="home-uname" id="home-uname">—</div>
+    <div id="next-appt-section"></div>
+    <button class="next-cta" onclick="goStep1()"><i class="bi bi-calendar-plus"></i> Pedir nueva cita</button>
   </div>
-  <div class="scroll">
-    <div id="alert-cancel" class="al al-err" style="display:none">
-      <span class="al-ic">🚨</span>
-      <div>
-        <strong>El médico canceló su cita</strong><br>
-        Cita de <span id="al-spec"></span> — <span id="al-date"></span>. Reagende sin costo.
-        <div style="margin-top:10px;display:flex;gap:8px;flex-wrap:wrap">
-          <button class="btn btn-navy btn-sm" onclick="reagendarAlerta()">Reagendar ahora</button>
-          <button class="btn btn-ghost btn-sm" onclick="cerrarAlerta()">Cerrar</button>
-        </div>
+
+  <div id="alert-doctor-cancel" class="alert a-err px" style="display:none;margin:14px 16px 0">
+    <i class="bi bi-exclamation-triangle-fill"></i>
+    <div>
+      <strong>Su médico canceló la cita</strong><br>
+      <span id="alert-spec-text"></span> — <span id="alert-date-text"></span>
+      <div style="margin-top:8px;display:flex;gap:7px;flex-wrap:wrap">
+        <button class="btn btn-primary btn-sm" onclick="reagendarAlerta()"><i class="bi bi-calendar2"></i> Reagendar</button>
+        <button class="btn btn-ghost btn-sm" onclick="cerrarAlerta()">Cerrar</button>
       </div>
     </div>
-    <div id="proxima-cita"></div>
-    <div class="st">¿Qué necesita hoy?</div>
-    <div class="qa-grid">
-      <div class="qa" onclick="goStep1()"><div class="qa-icon">🩺</div><div class="qa-label">Nueva cita</div></div>
-      <div class="qa" onclick="showView('view-appointments')"><div class="qa-icon">📋</div><div class="qa-label">Mis citas</div></div>
-      <div class="qa" onclick="showView('view-queue')"><div class="qa-icon">🔢</div><div class="qa-label">Turno en vivo</div></div>
-      <div class="qa" onclick="showView('view-relatives')"><div class="qa-icon">👨‍👩‍👧</div><div class="qa-label">Familiares</div></div>
-    </div>
-    <div class="st">Consultas recientes</div>
-    <div id="home-hist"></div>
   </div>
+
+  <!-- Quick actions -->
+  <div class="qa-grid" style="margin-top:18px">
+    <div class="qa-item" onclick="goStep1()"><i class="bi bi-calendar-plus qa-icon"></i><div class="qa-label">Nueva cita</div></div>
+    <div class="qa-item" onclick="showView('view-appointments')"><i class="bi bi-calendar2-check qa-icon"></i><div class="qa-label">Mis citas</div></div>
+    <div class="qa-item" onclick="showView('view-queue')"><i class="bi bi-hourglass-split qa-icon"></i><div class="qa-label">Mi turno</div></div>
+    <div class="qa-item" onclick="showView('view-relatives')"><i class="bi bi-people qa-icon"></i><div class="qa-label">Familiares</div></div>
+  </div>
+
+  <!-- Recent history -->
+  <div class="section-row">
+    <div class="h3">Consultas recientes</div>
+    <button class="section-link" onclick="showView('view-history')">Ver todo</button>
+  </div>
+  <div id="home-hist" class="px"></div>
+
+  <div class="scroll" style="padding-top:0;padding-bottom:88px"></div>
+
   <nav class="bnav">
-    <button class="nav-btn active" onclick="showView('view-home')"><span class="ni">🏠</span>Inicio</button>
-    <button class="nav-btn" onclick="showView('view-appointments')" style="position:relative"><span class="ni">📋</span>Mis Citas<span class="notif-dot" id="notif-dot" style="display:none"></span></button>
-    <button class="nav-btn" onclick="showView('view-queue')"><span class="ni">🔢</span>Turno</button>
-    <button class="nav-btn" onclick="showView('view-history')"><span class="ni">🗂️</span>Historial</button>
+    <button class="bn on" onclick="showView('view-home')"><i class="bi bi-house-fill"></i>Inicio</button>
+    <button class="bn" onclick="showView('view-appointments')" style="position:relative"><i class="bi bi-calendar2-check"></i>Citas<span class="bn-dot" id="bn-dot" style="display:none"></span></button>
+    <button class="bn" onclick="showView('view-queue')"><i class="bi bi-hourglass-split"></i>Turno</button>
+    <button class="bn" onclick="showView('view-history')"><i class="bi bi-journal-text"></i>Historial</button>
   </nav>
 </div>
 
-<!-- ═══ VIEW: STEP 1 — ESPECIALIDAD ═══ -->
+<!-- ═══ STEP 1 — ESPECIALIDAD ═══ -->
 <div class="view" id="view-step1">
   <div class="topbar">
-    <div class="topbar-left">
-      <button class="back-link" onclick="showView('view-home')"><span class="arr">←</span> Inicio</button>
+    <button class="back-btn" onclick="showView('view-home')"><i class="bi bi-arrow-left"></i> Inicio</button>
+    <div class="topbar-center">
+      <img class="topbar-logo" src="https://cdn.brandfetch.io/id8LwMLHOF/theme/dark/logo.svg?c=1bxid64Mup7aczewSAYMX&t=1771715114189" alt="ISSS" onerror="this.style.display='none'">
+      <span class="sep"></span><span class="topbar-title">Nueva Cita</span>
     </div>
-    <div class="topbar-left">
-      <img class="tb-logo" src="https://cdn.brandfetch.io/id8LwMLHOF/theme/dark/logo.svg?c=1bxid64Mup7aczewSAYMX&t=1771715114189" alt="ISSS" onerror="this.style.display='none'">
-      <span class="tb-sep"></span>
-      <span class="tb-title">Nueva Cita</span>
-    </div>
-    <div style="width:80px"></div>
+    <div style="width:70px"></div>
   </div>
-  <div class="scroll">
-    <div class="steps">
-      <div class="step-dot on">1</div><div class="step-line"></div>
-      <div class="step-dot">2</div><div class="step-line"></div>
-      <div class="step-dot">3</div><div class="step-line"></div>
-      <div class="step-dot">✓</div>
+  <div class="scroll px" style="padding-top:16px">
+    <div class="steps" style="padding:0">
+      <div class="sd on">1</div><div class="sl"></div>
+      <div class="sd">2</div><div class="sl"></div>
+      <div class="sd">3</div><div class="sl"></div>
+      <div class="sd"><i class="bi bi-check"></i></div>
     </div>
-    <div class="st">¿Qué tipo de atención necesita?</div>
-    <div class="ss">Seleccione la especialidad o escriba su síntoma</div>
-    <div class="fg"><input class="fi" id="search-spec" type="text" placeholder="🔍  Ej: corazón, ojos, huesos..." oninput="filterSpecs()" autocomplete="off"></div>
+    <div class="h3" style="margin-bottom:4px">Especialidad</div>
+    <div class="sub" style="margin-bottom:14px">Seleccione o busque por síntoma</div>
+    <div class="fg">
+      <div class="input-wrap">
+        <i class="bi bi-search input-icon"></i>
+        <input class="fi with-icon" id="search-spec" type="text" placeholder="Ej: corazón, ojos, huesos…" oninput="filterSpecs()" autocomplete="off">
+      </div>
+    </div>
     <div class="spec-grid" id="spec-grid"></div>
     <div style="height:16px"></div>
-    <button class="btn btn-navy" id="btn1" onclick="goStep2()" disabled>Continuar →</button>
+    <button class="btn btn-primary" id="btn1" onclick="goStep2()" disabled><i class="bi bi-arrow-right"></i> Continuar</button>
   </div>
 </div>
 
-<!-- ═══ VIEW: STEP 2 — CENTRO ═══ -->
+<!-- ═══ STEP 2 — CENTRO ═══ -->
 <div class="view" id="view-step2">
   <div class="topbar">
-    <div class="topbar-left">
-      <button class="back-link" onclick="showView('view-step1')"><span class="arr">←</span> Especialidad</button>
+    <button class="back-btn" onclick="showView('view-step1')"><i class="bi bi-arrow-left"></i> Especialidad</button>
+    <div class="topbar-center">
+      <img class="topbar-logo" src="https://cdn.brandfetch.io/id8LwMLHOF/theme/dark/logo.svg?c=1bxid64Mup7aczewSAYMX&t=1771715114189" alt="ISSS" onerror="this.style.display='none'">
+      <span class="sep"></span><span class="topbar-title">Centro</span>
     </div>
-    <div class="topbar-left">
-      <img class="tb-logo" src="https://cdn.brandfetch.io/id8LwMLHOF/theme/dark/logo.svg?c=1bxid64Mup7aczewSAYMX&t=1771715114189" alt="ISSS" onerror="this.style.display='none'">
-      <span class="tb-sep"></span>
-      <span class="tb-title">Elegir Centro</span>
-    </div>
-    <div style="width:80px"></div>
+    <div style="width:70px"></div>
   </div>
-  <div class="scroll">
-    <div class="steps">
-      <div class="step-dot ok">✓</div><div class="step-line ok"></div>
-      <div class="step-dot on">2</div><div class="step-line"></div>
-      <div class="step-dot">3</div><div class="step-line"></div>
-      <div class="step-dot">✓</div>
+  <div class="scroll px" style="padding-top:16px">
+    <div class="steps" style="padding:0">
+      <div class="sd ok"><i class="bi bi-check"></i></div><div class="sl ok"></div>
+      <div class="sd on">2</div><div class="sl"></div>
+      <div class="sd">3</div><div class="sl"></div>
+      <div class="sd"><i class="bi bi-check"></i></div>
     </div>
-    <div class="st">¿A qué centro desea ir?</div>
-    <div id="spec-badge" style="margin-bottom:14px"></div>
+    <div class="h3" style="margin-bottom:4px">Centro médico</div>
+    <div id="spec-badge-row" style="margin-bottom:14px"></div>
     <div id="centers-list"></div>
     <div style="height:16px"></div>
-    <button class="btn btn-navy" id="btn2" onclick="goStep3()" disabled>Continuar →</button>
+    <button class="btn btn-primary" id="btn2" onclick="goStep3()" disabled><i class="bi bi-arrow-right"></i> Continuar</button>
   </div>
 </div>
 
-<!-- ═══ VIEW: STEP 3 — FECHA / HORA ═══ -->
+<!-- ═══ STEP 3 — FECHA / HORA ═══ -->
 <div class="view" id="view-step3">
   <div class="topbar">
-    <div class="topbar-left">
-      <button class="back-link" onclick="showView('view-step2')"><span class="arr">←</span> Centro</button>
+    <button class="back-btn" onclick="showView('view-step2')"><i class="bi bi-arrow-left"></i> Centro</button>
+    <div class="topbar-center">
+      <img class="topbar-logo" src="https://cdn.brandfetch.io/id8LwMLHOF/theme/dark/logo.svg?c=1bxid64Mup7aczewSAYMX&t=1771715114189" alt="ISSS" onerror="this.style.display='none'">
+      <span class="sep"></span><span class="topbar-title">Fecha y hora</span>
     </div>
-    <div class="topbar-left">
-      <img class="tb-logo" src="https://cdn.brandfetch.io/id8LwMLHOF/theme/dark/logo.svg?c=1bxid64Mup7aczewSAYMX&t=1771715114189" alt="ISSS" onerror="this.style.display='none'">
-      <span class="tb-sep"></span>
-      <span class="tb-title">Fecha y Hora</span>
-    </div>
-    <div style="width:80px"></div>
+    <div style="width:70px"></div>
   </div>
-  <div class="scroll">
-    <div class="steps">
-      <div class="step-dot ok">✓</div><div class="step-line ok"></div>
-      <div class="step-dot ok">✓</div><div class="step-line ok"></div>
-      <div class="step-dot on">3</div><div class="step-line"></div>
-      <div class="step-dot">✓</div>
+  <div class="scroll px" style="padding-top:16px">
+    <div class="steps" style="padding:0">
+      <div class="sd ok"><i class="bi bi-check"></i></div><div class="sl ok"></div>
+      <div class="sd ok"><i class="bi bi-check"></i></div><div class="sl ok"></div>
+      <div class="sd on">3</div><div class="sl"></div>
+      <div class="sd"><i class="bi bi-check"></i></div>
     </div>
-    <div class="card">
-      <div class="cal-nav">
-        <button class="cal-nav-btn" onclick="changeMonth(-1)">← Ant.</button>
-        <span class="cal-month" id="cal-month"></span>
-        <button class="cal-nav-btn" onclick="changeMonth(1)">Sig. →</button>
+    <div class="card card-p" style="margin-bottom:14px">
+      <div class="cal-header">
+        <button class="cal-nav" onclick="changeMonth(-1)"><i class="bi bi-chevron-left"></i></button>
+        <span class="cal-month-label" id="cal-month"></span>
+        <button class="cal-nav" onclick="changeMonth(1)"><i class="bi bi-chevron-right"></i></button>
       </div>
       <div class="cal-grid" id="cal-grid"></div>
     </div>
-    <div id="time-sec" style="display:none">
-      <div class="st">Horarios disponibles</div>
-      <div class="tslots" id="tslots"></div>
+    <div id="time-section" style="display:none">
+      <div class="h3" style="margin-bottom:10px">Horarios disponibles</div>
+      <div class="tslots" id="tslots-grid"></div>
     </div>
     <div style="height:16px"></div>
-    <button class="btn btn-navy" id="btn3" onclick="goConfirm()" disabled>Ver resumen →</button>
+    <button class="btn btn-primary" id="btn3" onclick="goConfirm()" disabled><i class="bi bi-arrow-right"></i> Ver resumen</button>
   </div>
 </div>
 
-<!-- ═══ VIEW: CONFIRMACIÓN ═══ -->
+<!-- ═══ CONFIRMACIÓN ═══ -->
 <div class="view" id="view-confirm">
   <div class="topbar">
-    <div class="topbar-left">
-      <button class="back-link" onclick="showView('view-step3')"><span class="arr">←</span> Fecha</button>
+    <button class="back-btn" onclick="showView('view-step3')"><i class="bi bi-arrow-left"></i> Fecha</button>
+    <div class="topbar-center">
+      <img class="topbar-logo" src="https://cdn.brandfetch.io/id8LwMLHOF/theme/dark/logo.svg?c=1bxid64Mup7aczewSAYMX&t=1771715114189" alt="ISSS" onerror="this.style.display='none'">
+      <span class="sep"></span><span class="topbar-title">Confirmar</span>
     </div>
-    <div class="topbar-left">
-      <img class="tb-logo" src="https://cdn.brandfetch.io/id8LwMLHOF/theme/dark/logo.svg?c=1bxid64Mup7aczewSAYMX&t=1771715114189" alt="ISSS" onerror="this.style.display='none'">
-      <span class="tb-sep"></span>
-      <span class="tb-title">Confirmación</span>
-    </div>
-    <div style="width:80px"></div>
+    <div style="width:70px"></div>
   </div>
-  <div class="scroll">
-    <div class="steps">
-      <div class="step-dot ok">✓</div><div class="step-line ok"></div>
-      <div class="step-dot ok">✓</div><div class="step-line ok"></div>
-      <div class="step-dot ok">✓</div><div class="step-line"></div>
-      <div class="step-dot on">✓</div>
+  <div class="scroll px" style="padding-top:16px">
+    <div class="steps" style="padding:0">
+      <div class="sd ok"><i class="bi bi-check"></i></div><div class="sl ok"></div>
+      <div class="sd ok"><i class="bi bi-check"></i></div><div class="sl ok"></div>
+      <div class="sd ok"><i class="bi bi-check"></i></div><div class="sl"></div>
+      <div class="sd on"><i class="bi bi-check"></i></div>
     </div>
-    <div class="card card-l">
-      <div class="st" style="margin-bottom:4px">Resumen de su cita</div>
-      <div class="ss" style="margin-bottom:12px">Revise los datos antes de confirmar</div>
-      <div class="divider"></div>
-      <div class="ac-row"><span class="ic">🩺</span><strong id="cf-spec"></strong></div>
-      <div class="ac-row"><span class="ic">🏥</span><span id="cf-center"></span></div>
-      <div class="ac-row"><span class="ic">📅</span><span id="cf-date"></span></div>
-      <div class="ac-row"><span class="ic">🕐</span><span id="cf-time"></span></div>
-      <div class="ac-row"><span class="ic">👤</span><span id="cf-name"></span></div>
+    <div class="h3" style="margin-bottom:14px">Resumen de su cita</div>
+    <div class="card card-p" style="margin-bottom:12px">
+      <div id="conf-spec-chip" style="margin-bottom:12px"></div>
+      <div class="info-row"><i class="bi bi-hospital"></i><div><div class="info-label">Centro</div><div class="info-val" id="cf-center">—</div></div></div>
+      <div class="info-row"><i class="bi bi-calendar3"></i><div><div class="info-label">Fecha</div><div class="info-val" id="cf-date">—</div></div></div>
+      <div class="info-row"><i class="bi bi-clock"></i><div><div class="info-label">Hora</div><div class="info-val" id="cf-time">—</div></div></div>
+      <div class="info-row"><i class="bi bi-person-badge"></i><div><div class="info-label">Paciente</div><div class="info-val" id="cf-name">—</div></div></div>
     </div>
-    <div class="al al-info"><span class="al-ic">🔔</span><div>Le enviaremos un recordatorio <strong>24 horas antes</strong> de su cita.</div></div>
-    <!-- Familiar section -->
-    <div class="card" style="border:2px dashed #CBD5E1">
-      <div style="display:flex;align-items:center;gap:10px;cursor:pointer" onclick="toggleFamiliar()">
-        <span style="font-size:26px">👨‍👩‍👧</span>
-        <div style="flex:1"><div style="font-size:16px;font-weight:800">¿Es para un familiar?</div><div style="font-size:14px;color:var(--muted)">Puede agendar en su nombre</div></div>
-        <span id="fam-ico" style="font-size:18px;color:var(--navy)">＋</span>
+    <div class="alert a-info"><i class="bi bi-bell"></i><div>Recibirá un recordatorio <strong>24 horas antes</strong> de su cita.</div></div>
+    <!-- Familiar -->
+    <div class="card card-p" style="border:1.5px dashed var(--border);margin-bottom:12px">
+      <div style="display:flex;align-items:center;gap:10px;cursor:pointer" onclick="toggleFam()">
+        <div style="width:38px;height:38px;background:var(--navy-3);border-radius:var(--r-sm);display:flex;align-items:center;justify-content:center;color:var(--navy);font-size:20px;flex-shrink:0"><i class="bi bi-people"></i></div>
+        <div style="flex:1"><div style="font-size:15px;font-weight:800">¿Es para un familiar?</div><div class="sub">Agéndelo en su nombre</div></div>
+        <i class="bi bi-plus-circle" id="fam-toggle-ico" style="color:var(--navy);font-size:20px"></i>
       </div>
-      <div id="fam-sec" style="display:none;margin-top:14px">
-        <div class="fg" style="margin-bottom:10px"><label class="fl">DUI del familiar</label><input class="fi" id="fam-dui" type="text" placeholder="00000000-0" inputmode="numeric"></div>
-        <div class="fg" style="margin-bottom:0"><label class="fl">Parentesco</label>
-          <select class="fi" id="fam-rel"><option value="">Seleccione...</option><option>Madre / Padre</option><option>Hijo / Hija</option><option>Abuelo / Abuela</option><option>Cónyuge</option><option>Otro familiar</option></select>
+      <div id="fam-form" style="display:none;margin-top:14px">
+        <div class="fg" style="margin-bottom:10px"><label class="fl label">DUI del familiar</label><input class="fi" id="fam-dui" type="text" placeholder="00000000-0" inputmode="numeric"></div>
+        <div class="fg" style="margin-bottom:0"><label class="fl label">Parentesco</label>
+          <select class="fi" id="fam-rel"><option value="">Seleccione…</option><option>Madre / Padre</option><option>Hijo / Hija</option><option>Abuelo / Abuela</option><option>Cónyuge</option><option>Otro familiar</option></select>
         </div>
       </div>
     </div>
-    <button class="btn btn-cta" onclick="confirmAppt()">✅ Confirmar cita</button>
+    <button class="btn btn-accent" onclick="confirmAppt()"><i class="bi bi-check-circle"></i> Confirmar cita</button>
   </div>
 </div>
 
-<!-- ═══ VIEW: COMPROBANTE ═══ -->
+<!-- ═══ COMPROBANTE ═══ -->
 <div class="view" id="view-ticket">
   <div class="topbar">
-    <div class="topbar-left">
-      <button class="back-link" onclick="showView('view-home')"><span class="arr">🏠</span> Inicio</button>
+    <button class="back-btn" onclick="showView('view-home')"><i class="bi bi-house"></i> Inicio</button>
+    <div class="topbar-center">
+      <img class="topbar-logo" src="https://cdn.brandfetch.io/id8LwMLHOF/theme/dark/logo.svg?c=1bxid64Mup7aczewSAYMX&t=1771715114189" alt="ISSS" onerror="this.style.display='none'">
+      <span class="sep"></span><span class="topbar-title">Comprobante</span>
     </div>
-    <div class="topbar-left">
-      <img class="tb-logo" src="https://cdn.brandfetch.io/id8LwMLHOF/theme/dark/logo.svg?c=1bxid64Mup7aczewSAYMX&t=1771715114189" alt="ISSS" onerror="this.style.display='none'">
-      <span class="tb-sep"></span>
-      <span class="tb-title">Comprobante</span>
-    </div>
-    <button class="btn-ico" onclick="shareTicket()" title="Compartir">📤</button>
+    <button class="tb-btn" onclick="shareTicket()"><i class="bi bi-share"></i></button>
   </div>
-  <div class="scroll" style="text-align:center">
-    <div class="success-c">✓</div>
-    <div class="st">¡Cita confirmada!</div>
-    <div class="ss">Su cita ha sido registrada exitosamente</div>
-    <div class="qr-wrap">
-      <div class="qr-box"><div class="qr-inner"><img src="https://cdn.brandfetch.io/id8LwMLHOF/w/400/h/400/theme/dark/icon.jpeg?c=1bxid64Mup7aczewSAYMX&t=1771715114286" alt="ISSS" style="width:36px;height:36px;border-radius:3px;object-fit:cover"></div></div>
+  <div class="scroll px" style="padding-top:20px">
+    <div class="success-wrap">
+      <div class="success-ring"><i class="bi bi-check-lg"></i></div>
+      <div class="h2" style="margin-bottom:4px">¡Cita confirmada!</div>
+      <div class="sub" style="margin-bottom:20px">Guarde su comprobante</div>
     </div>
-    <div id="tk-code" style="font-size:20px;font-weight:900;color:var(--navy);margin-bottom:4px"></div>
-    <div style="font-size:14px;color:var(--muted);margin-bottom:20px">Código de comprobante</div>
-    <div class="card" style="text-align:left">
-      <div class="ac-row"><span class="ic">🩺</span><strong id="tk-spec"></strong></div>
-      <div class="ac-row"><span class="ic">🏥</span><span id="tk-center"></span></div>
-      <div class="ac-row"><span class="ic">📅</span><span id="tk-date"></span></div>
-      <div class="ac-row"><span class="ic">🕐</span><span id="tk-time"></span></div>
+    <div class="ticket">
+      <div class="ticket-head">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px">
+          <div><div class="label" style="color:rgba(255,255,255,.5)">ESPECIALIDAD</div><div style="font-size:18px;font-weight:800;margin-top:2px" id="tk-spec">—</div></div>
+          <div id="tk-status-chip"></div>
+        </div>
+        <div class="info-row" style="border:none;padding:4px 0;color:rgba(255,255,255,.8)"><i class="bi bi-geo-alt" style="color:rgba(255,255,255,.5)"></i><div><div style="font-size:12px;opacity:.5">Centro</div><div style="font-weight:700;font-size:14px" id="tk-center">—</div></div></div>
+        <div style="display:flex;gap:16px;margin-top:4px">
+          <div class="info-row" style="border:none;padding:4px 0;color:rgba(255,255,255,.8);flex:1"><i class="bi bi-calendar3" style="color:rgba(255,255,255,.5)"></i><div><div style="font-size:12px;opacity:.5">Fecha</div><div style="font-weight:700;font-size:14px" id="tk-date">—</div></div></div>
+          <div class="info-row" style="border:none;padding:4px 0;color:rgba(255,255,255,.8)"><i class="bi bi-clock" style="color:rgba(255,255,255,.5)"></i><div><div style="font-size:12px;opacity:.5">Hora</div><div style="font-weight:700;font-size:18px" id="tk-time">—</div></div></div>
+        </div>
+      </div>
+      <div class="ticket-sep"><hr class="ticket-line"></div>
+      <div class="ticket-body">
+        <div class="qr-wrap" style="padding:8px 0 12px">
+          <div class="qr-box"><div class="qr-inner"><img src="https://cdn.brandfetch.io/id8LwMLHOF/w/400/h/400/theme/dark/icon.jpeg?c=1bxid64Mup7aczewSAYMX&t=1771715114286" style="width:36px;height:36px;object-fit:cover;border-radius:3px"></div></div>
+        </div>
+        <div style="text-align:center">
+          <div id="tk-code" style="font-size:22px;font-weight:900;color:var(--navy);letter-spacing:2px">—</div>
+          <div class="sub" style="margin-top:3px">Código de comprobante</div>
+        </div>
+      </div>
     </div>
-    <div class="al al-ok" style="text-align:left"><span class="al-ic">🔔</span><div>Recibirá un recordatorio el día anterior a su cita.</div></div>
+    <div class="alert a-ok"><i class="bi bi-bell-fill"></i><div>Le avisaremos el día anterior. Guarde o comparta su comprobante.</div></div>
     <div style="display:flex;flex-direction:column;gap:10px">
-      <button class="btn btn-navy" onclick="downloadTicket()">⬇️ Guardar comprobante</button>
-      <button class="btn btn-ghost" onclick="showView('view-home')">Ir al inicio</button>
+      <button class="btn btn-primary" onclick="downloadTicket()"><i class="bi bi-download"></i> Guardar comprobante</button>
+      <button class="btn btn-ghost" onclick="showView('view-home')"><i class="bi bi-house"></i> Ir al inicio</button>
     </div>
   </div>
 </div>
 
-<!-- ═══ VIEW: MIS CITAS ═══ -->
+<!-- ═══ MIS CITAS ═══ -->
 <div class="view" id="view-appointments">
   <div class="topbar">
-    <div class="topbar-left">
-      <button class="back-link" onclick="showView('view-home')"><span class="arr">←</span> Inicio</button>
+    <button class="back-btn" onclick="showView('view-home')"><i class="bi bi-arrow-left"></i> Inicio</button>
+    <div class="topbar-center">
+      <img class="topbar-logo" src="https://cdn.brandfetch.io/id8LwMLHOF/theme/dark/logo.svg?c=1bxid64Mup7aczewSAYMX&t=1771715114189" alt="ISSS" onerror="this.style.display='none'">
+      <span class="sep"></span><span class="topbar-title">Mis Citas</span>
     </div>
-    <div class="topbar-left">
-      <img class="tb-logo" src="https://cdn.brandfetch.io/id8LwMLHOF/theme/dark/logo.svg?c=1bxid64Mup7aczewSAYMX&t=1771715114189" alt="ISSS" onerror="this.style.display='none'">
-      <span class="tb-sep"></span>
-      <span class="tb-title">Mis Citas</span>
-    </div>
-    <button class="btn-ico" onclick="goStep1()" title="Nueva cita">＋</button>
+    <button class="tb-btn" onclick="goStep1()"><i class="bi bi-plus-lg"></i></button>
   </div>
-  <div class="scroll">
+  <div class="scroll px" style="padding-top:16px">
     <div id="appts-list"></div>
     <div id="appts-empty" style="display:none">
-      <div class="empty"><div class="empty-icon">📭</div><div class="empty-t">Sin citas programadas</div><div class="empty-s">Reserve su primera cita médica en línea.</div><button class="btn btn-navy" onclick="goStep1()">Reservar cita</button></div>
+      <div class="empty"><i class="bi bi-calendar-x"></i><div class="empty-t">Sin citas programadas</div><div class="empty-s">Reserve su cita médica en línea y evite las filas.</div><button class="btn btn-primary" onclick="goStep1()"><i class="bi bi-calendar-plus"></i> Reservar ahora</button></div>
     </div>
   </div>
   <nav class="bnav">
-    <button class="nav-btn" onclick="showView('view-home')"><span class="ni">🏠</span>Inicio</button>
-    <button class="nav-btn active" onclick="showView('view-appointments')"><span class="ni">📋</span>Mis Citas</button>
-    <button class="nav-btn" onclick="showView('view-queue')"><span class="ni">🔢</span>Turno</button>
-    <button class="nav-btn" onclick="showView('view-history')"><span class="ni">🗂️</span>Historial</button>
+    <button class="bn" onclick="showView('view-home')"><i class="bi bi-house"></i>Inicio</button>
+    <button class="bn on" onclick="showView('view-appointments')"><i class="bi bi-calendar2-check"></i>Citas</button>
+    <button class="bn" onclick="showView('view-queue')"><i class="bi bi-hourglass-split"></i>Turno</button>
+    <button class="bn" onclick="showView('view-history')"><i class="bi bi-journal-text"></i>Historial</button>
   </nav>
 </div>
 
-<!-- ═══ VIEW: TURNO EN VIVO ═══ -->
+<!-- ═══ TURNO EN VIVO ═══ -->
 <div class="view" id="view-queue">
   <div class="topbar">
-    <div class="topbar-left">
-      <button class="back-link" onclick="showView('view-home')"><span class="arr">←</span> Inicio</button>
+    <button class="back-btn" onclick="showView('view-home')"><i class="bi bi-arrow-left"></i> Inicio</button>
+    <div class="topbar-center">
+      <img class="topbar-logo" src="https://cdn.brandfetch.io/id8LwMLHOF/theme/dark/logo.svg?c=1bxid64Mup7aczewSAYMX&t=1771715114189" alt="ISSS" onerror="this.style.display='none'">
+      <span class="sep"></span><span class="topbar-title">Turno en Vivo</span>
     </div>
-    <div class="topbar-left">
-      <img class="tb-logo" src="https://cdn.brandfetch.io/id8LwMLHOF/theme/dark/logo.svg?c=1bxid64Mup7aczewSAYMX&t=1771715114189" alt="ISSS" onerror="this.style.display='none'">
-      <span class="tb-sep"></span>
-      <span class="tb-title">Turno en Vivo</span>
-    </div>
-    <div style="width:80px"></div>
+    <button class="tb-btn" onclick="renderQueue()"><i class="bi bi-arrow-clockwise"></i></button>
   </div>
-  <div class="scroll"><div id="queue-content"></div></div>
+  <div class="scroll px" style="padding-top:16px"><div id="queue-content"></div></div>
   <nav class="bnav">
-    <button class="nav-btn" onclick="showView('view-home')"><span class="ni">🏠</span>Inicio</button>
-    <button class="nav-btn" onclick="showView('view-appointments')"><span class="ni">📋</span>Mis Citas</button>
-    <button class="nav-btn active" onclick="showView('view-queue')"><span class="ni">🔢</span>Turno</button>
-    <button class="nav-btn" onclick="showView('view-history')"><span class="ni">🗂️</span>Historial</button>
+    <button class="bn" onclick="showView('view-home')"><i class="bi bi-house"></i>Inicio</button>
+    <button class="bn" onclick="showView('view-appointments')"><i class="bi bi-calendar2-check"></i>Citas</button>
+    <button class="bn on" onclick="showView('view-queue')"><i class="bi bi-hourglass-split"></i>Turno</button>
+    <button class="bn" onclick="showView('view-history')"><i class="bi bi-journal-text"></i>Historial</button>
   </nav>
 </div>
 
-<!-- ═══ VIEW: HISTORIAL ═══ -->
+<!-- ═══ HISTORIAL ═══ -->
 <div class="view" id="view-history">
   <div class="topbar">
-    <div class="topbar-left">
-      <button class="back-link" onclick="showView('view-home')"><span class="arr">←</span> Inicio</button>
+    <button class="back-btn" onclick="showView('view-home')"><i class="bi bi-arrow-left"></i> Inicio</button>
+    <div class="topbar-center">
+      <img class="topbar-logo" src="https://cdn.brandfetch.io/id8LwMLHOF/theme/dark/logo.svg?c=1bxid64Mup7aczewSAYMX&t=1771715114189" alt="ISSS" onerror="this.style.display='none'">
+      <span class="sep"></span><span class="topbar-title">Historial</span>
     </div>
-    <div class="topbar-left">
-      <img class="tb-logo" src="https://cdn.brandfetch.io/id8LwMLHOF/theme/dark/logo.svg?c=1bxid64Mup7aczewSAYMX&t=1771715114189" alt="ISSS" onerror="this.style.display='none'">
-      <span class="tb-sep"></span>
-      <span class="tb-title">Historial</span>
-    </div>
-    <div style="width:80px"></div>
+    <div style="width:38px"></div>
   </div>
-  <div class="scroll">
-    <div class="st">Consultas anteriores</div>
+  <div class="scroll px" style="padding-top:16px">
+    <div class="h3" style="margin-bottom:12px">Consultas anteriores</div>
     <div id="hist-list"></div>
   </div>
   <nav class="bnav">
-    <button class="nav-btn" onclick="showView('view-home')"><span class="ni">🏠</span>Inicio</button>
-    <button class="nav-btn" onclick="showView('view-appointments')"><span class="ni">📋</span>Mis Citas</button>
-    <button class="nav-btn" onclick="showView('view-queue')"><span class="ni">🔢</span>Turno</button>
-    <button class="nav-btn active" onclick="showView('view-history')"><span class="ni">🗂️</span>Historial</button>
+    <button class="bn" onclick="showView('view-home')"><i class="bi bi-house"></i>Inicio</button>
+    <button class="bn" onclick="showView('view-appointments')"><i class="bi bi-calendar2-check"></i>Citas</button>
+    <button class="bn" onclick="showView('view-queue')"><i class="bi bi-hourglass-split"></i>Turno</button>
+    <button class="bn on" onclick="showView('view-history')"><i class="bi bi-journal-text"></i>Historial</button>
   </nav>
 </div>
 
-<!-- ═══ VIEW: FAMILIARES ═══ -->
+<!-- ═══ FAMILIARES ═══ -->
 <div class="view" id="view-relatives">
   <div class="topbar">
-    <div class="topbar-left">
-      <button class="back-link" onclick="showView('view-home')"><span class="arr">←</span> Inicio</button>
+    <button class="back-btn" onclick="showView('view-home')"><i class="bi bi-arrow-left"></i> Inicio</button>
+    <div class="topbar-center">
+      <img class="topbar-logo" src="https://cdn.brandfetch.io/id8LwMLHOF/theme/dark/logo.svg?c=1bxid64Mup7aczewSAYMX&t=1771715114189" alt="ISSS" onerror="this.style.display='none'">
+      <span class="sep"></span><span class="topbar-title">Familiares</span>
     </div>
-    <div class="topbar-left">
-      <img class="tb-logo" src="https://cdn.brandfetch.io/id8LwMLHOF/theme/dark/logo.svg?c=1bxid64Mup7aczewSAYMX&t=1771715114189" alt="ISSS" onerror="this.style.display='none'">
-      <span class="tb-sep"></span>
-      <span class="tb-title">Familiares</span>
-    </div>
-    <button class="btn-ico" onclick="openAddRel()" title="Agregar">＋</button>
+    <button class="tb-btn" onclick="openAddRel()"><i class="bi bi-plus-lg"></i></button>
   </div>
-  <div class="scroll">
-    <div class="al al-info"><span class="al-ic">💡</span><div>Puede agendar citas a nombre de sus familiares. Ellos solo deben presentarse a la hora.</div></div>
+  <div class="scroll px" style="padding-top:16px">
+    <div class="alert a-info"><i class="bi bi-info-circle"></i><div>Agende citas a nombre de sus familiares. Ellos solo deben presentarse a la hora indicada.</div></div>
     <div id="rel-list"></div>
-    <button class="btn btn-ghost" onclick="openAddRel()" style="margin-top:6px">＋ Agregar familiar</button>
+    <button class="btn btn-outline" onclick="openAddRel()" style="margin-top:4px"><i class="bi bi-person-plus"></i> Agregar familiar</button>
   </div>
 </div>
 
-<!-- ═══ VIEW: DETALLE CITA ═══ -->
+<!-- ═══ DETALLE CITA ═══ -->
 <div class="view" id="view-detail">
   <div class="topbar">
-    <div class="topbar-left">
-      <button class="back-link" id="detail-back"><span class="arr">←</span> Volver</button>
+    <button class="back-btn" id="detail-back"><i class="bi bi-arrow-left"></i> Volver</button>
+    <div class="topbar-center">
+      <img class="topbar-logo" src="https://cdn.brandfetch.io/id8LwMLHOF/theme/dark/logo.svg?c=1bxid64Mup7aczewSAYMX&t=1771715114189" alt="ISSS" onerror="this.style.display='none'">
+      <span class="sep"></span><span class="topbar-title">Detalle</span>
     </div>
-    <div class="topbar-left">
-      <img class="tb-logo" src="https://cdn.brandfetch.io/id8LwMLHOF/theme/dark/logo.svg?c=1bxid64Mup7aczewSAYMX&t=1771715114189" alt="ISSS" onerror="this.style.display='none'">
-      <span class="tb-sep"></span>
-      <span class="tb-title">Detalle de Cita</span>
-    </div>
-    <div style="width:80px"></div>
+    <div style="width:70px"></div>
   </div>
-  <div class="scroll" id="detail-content"></div>
+  <div class="scroll px" style="padding-top:16px" id="detail-content"></div>
 </div>
 
 </div><!-- .app -->
-</div><!-- .main-wrap -->
-</div><!-- .shell -->
 
-<!-- ═══════════ MODALS ═══════════ -->
+<!-- ═══════════════ MODALS ═══════════════ -->
 <div class="moverlay" id="m-cancel">
   <div class="msheet">
     <div class="mhandle"></div>
-    <div class="st">¿Qué desea hacer?</div>
-    <div class="ss">Seleccione una opción para esta cita</div>
-    <div style="display:flex;flex-direction:column;gap:10px;margin-top:4px">
-      <button class="btn btn-navy" onclick="rescheduleAppt()">📅 Reagendar</button>
-      <button class="btn btn-danger" onclick="cancelAppt()">🗑️ Cancelar definitivamente</button>
-      <button class="btn btn-ghost" onclick="closeModal('m-cancel')">Volver</button>
+    <div class="h3" style="margin-bottom:4px">Gestionar cita</div>
+    <div class="sub" style="margin-bottom:16px">¿Qué desea hacer?</div>
+    <div style="display:flex;flex-direction:column;gap:10px">
+      <button class="btn btn-primary" onclick="rescheduleAppt()"><i class="bi bi-calendar2-x"></i> Reagendar</button>
+      <button class="btn btn-danger" onclick="cancelAppt()"><i class="bi bi-trash"></i> Cancelar definitivamente</button>
+      <button class="btn btn-ghost" onclick="closeModal('m-cancel')">Volver sin cambios</button>
     </div>
   </div>
 </div>
@@ -772,66 +877,69 @@ body{font-family:'Segoe UI',system-ui,-apple-system,sans-serif;font-size:17px;co
 <div class="moverlay" id="m-add-rel">
   <div class="msheet">
     <div class="mhandle"></div>
-    <div class="st">Agregar familiar</div>
-    <div class="fg"><label class="fl">Nombre completo</label><input class="fi" id="rel-name" type="text" placeholder="Nombre del familiar"></div>
-    <div class="fg"><label class="fl">DUI del familiar</label><input class="fi" id="rel-dui" type="text" placeholder="00000000-0" inputmode="numeric"></div>
-    <div class="fg"><label class="fl">Parentesco</label>
-      <select class="fi" id="rel-rel"><option value="">Seleccione...</option><option>Madre</option><option>Padre</option><option>Hijo / Hija</option><option>Abuelo / Abuela</option><option>Cónyuge</option><option>Otro familiar</option></select>
+    <div class="h3" style="margin-bottom:16px">Agregar familiar</div>
+    <div class="fg"><label class="fl label">Nombre completo</label><input class="fi" id="rel-name" type="text" placeholder="Nombre del familiar"></div>
+    <div class="fg"><label class="fl label">DUI del familiar</label><input class="fi" id="rel-dui" type="text" placeholder="00000000-0" inputmode="numeric"></div>
+    <div class="fg"><label class="fl label">Parentesco</label>
+      <select class="fi" id="rel-rel"><option value="">Seleccione…</option><option>Madre</option><option>Padre</option><option>Hijo / Hija</option><option>Abuelo / Abuela</option><option>Cónyuge</option><option>Otro familiar</option></select>
     </div>
     <div style="display:flex;flex-direction:column;gap:10px">
-      <button class="btn btn-navy" onclick="saveRel()">Guardar familiar</button>
+      <button class="btn btn-primary" onclick="saveRel()"><i class="bi bi-person-check"></i> Guardar</button>
       <button class="btn btn-ghost" onclick="closeModal('m-add-rel')">Cancelar</button>
     </div>
   </div>
 </div>
 
-<div class="moverlay" id="m-hist-detail">
+<div class="moverlay" id="m-hist">
   <div class="msheet">
     <div class="mhandle"></div>
-    <div id="hist-modal-content"></div>
-    <button class="btn btn-ghost" onclick="closeModal('m-hist-detail')" style="margin-top:12px">Cerrar</button>
+    <div id="hist-modal"></div>
+    <button class="btn btn-ghost" onclick="closeModal('m-hist')" style="margin-top:14px">Cerrar</button>
   </div>
 </div>
 
 <script>
-// ── DATA ──
+// ─── DATA ───
 const SPECS = [
-  {id:'med-gen', name:'Medicina General', icon:'🩺', kw:['general','fiebre','gripe','dolor','malestar','tos']},
-  {id:'cardio',  name:'Cardiología',      icon:'❤️', kw:['corazón','pecho','presión','cardio','corazon']},
-  {id:'oftalmol',name:'Oftalmología',     icon:'👁️', kw:['ojos','vista','lentes']},
-  {id:'ortoped', name:'Ortopedia',        icon:'🦴', kw:['huesos','rodilla','columna','fractura','cadera']},
-  {id:'ginecol', name:'Ginecología',      icon:'🌸', kw:['gineco','mujer','embarazo','utero']},
-  {id:'pediatr', name:'Pediatría',        icon:'👶', kw:['niño','bebe','infante','pediatr']},
-  {id:'dermat',  name:'Dermatología',     icon:'🧴', kw:['piel','acne','mancha','erupcion']},
-  {id:'neurol',  name:'Neurología',       icon:'🧠', kw:['cabeza','cerebro','migraña','epilepsia']},
-  {id:'gastro',  name:'Gastroenterología',icon:'🫁', kw:['estomago','intestino','digestion','colitis']},
-  {id:'psiq',    name:'Psiquiatría',      icon:'💆', kw:['mental','ansiedad','depresion','mente']},
-  {id:'urol',    name:'Urología',         icon:'💧', kw:['rinon','urinario','vejiga']},
-  {id:'odontol', name:'Odontología',      icon:'🦷', kw:['diente','muela','dental','boca']},
+  {id:'gen',   icon:'bi-clipboard2-pulse', name:'Medicina General',    kw:['general','fiebre','gripe','dolor','malestar','tos','resfrio']},
+  {id:'cardio',icon:'bi-heart-pulse',      name:'Cardiología',         kw:['corazón','pecho','presión','cardio','corazon','hipertension']},
+  {id:'ojos',  icon:'bi-eye',              name:'Oftalmología',        kw:['ojos','vista','lentes','oftalmol','retina']},
+  {id:'huesos',icon:'bi-bandaid',          name:'Ortopedia',           kw:['huesos','rodilla','columna','fractura','cadera','espalda']},
+  {id:'gineco',icon:'bi-gender-female',    name:'Ginecología',         kw:['gineco','mujer','embarazo','utero','menstruacion']},
+  {id:'ninos', icon:'bi-balloon',          name:'Pediatría',           kw:['niño','bebe','infante','pediatr','menor']},
+  {id:'piel',  icon:'bi-droplet',          name:'Dermatología',        kw:['piel','acne','mancha','erupcion','dermat','alergia']},
+  {id:'neuro', icon:'bi-cpu',              name:'Neurología',          kw:['cabeza','cerebro','migraña','epilepsia','mareo','neurol']},
+  {id:'gastro',icon:'bi-thermometer',      name:'Gastroenterología',   kw:['estomago','intestino','digestion','colitis','gastro','reflujo']},
+  {id:'psiq',  icon:'bi-chat-heart',       name:'Psiquiatría',         kw:['mental','ansiedad','depresion','mente','psiq','estres']},
+  {id:'urol',  icon:'bi-droplet-half',     name:'Urología',            kw:['rinon','urinario','vejiga','urol','prostata']},
+  {id:'dental',icon:'bi-emoji-smile',      name:'Odontología',         kw:['diente','muela','dental','boca','odonto','encía']},
 ];
 
 const CENTERS = [
-  {id:'zacamil',    name:'ISSS Zacamil',       addr:'Col. Zacamil, San Salvador',    wait:'~45 min', slots:8},
-  {id:'policlinica',name:'Policlínica Arce',   addr:'2ª C. Pte., San Salvador',      wait:'~30 min', slots:12},
-  {id:'san-marcos', name:'ISSS San Marcos',    addr:'Av. Circunvalación, San Marcos', wait:'~60 min', slots:5},
-  {id:'santa-ana',  name:'ISSS Santa Ana',     addr:'Av. Independencia, Santa Ana',   wait:'~20 min', slots:15},
-  {id:'soyapango',  name:'ISSS Soyapango',     addr:'Blvd. Del Ejército, Soyapango', wait:'~50 min', slots:6},
+  {id:'zacamil',    name:'ISSS Zacamil',     addr:'Col. Zacamil, San Salvador',    wait:'~45 min', slots:8,  rating:4.2},
+  {id:'policlinica',name:'Policlínica Arce', addr:'2ª C. Pte., San Salvador',      wait:'~30 min', slots:12, rating:4.5},
+  {id:'san-marcos', name:'ISSS San Marcos',  addr:'Av. Circunvalación, San Marcos', wait:'~60 min', slots:5,  rating:3.8},
+  {id:'santa-ana',  name:'ISSS Santa Ana',   addr:'Av. Independencia, Santa Ana',   wait:'~20 min', slots:15, rating:4.6},
+  {id:'soyapango',  name:'ISSS Soyapango',   addr:'Blvd. Del Ejército, Soyapango', wait:'~50 min', slots:6,  rating:4.0},
 ];
 
 const HIST = [
-  {spec:'Medicina General', icon:'🩺', date:'12 marzo 2026',   doc:'Dr. Martínez', center:'ISSS Zacamil',   notes:'Control de presión arterial. Continuar tratamiento.', rx:'Enalapril 10mg — 1 vez al día'},
-  {spec:'Cardiología',      icon:'❤️', date:'5 febrero 2026',  doc:'Dra. López',   center:'Policlínica Arce',notes:'Electrocardiograma normal. Seguimiento en 6 meses.',  rx:'Aspirina 100mg — 1 vez al día'},
-  {spec:'Oftalmología',     icon:'👁️', date:'18 enero 2026',   doc:'Dr. García',   center:'ISSS Zacamil',   notes:'Miopía leve. Se recomienda usar lentes.',             rx:'Receta óptica adjunta'},
+  {spec:'Medicina General', icon:'bi-clipboard2-pulse', date:'12 mar 2026', fullDate:'12 marzo 2026', doc:'Dr. Carlos Martínez', center:'ISSS Zacamil',   notes:'Control de presión arterial. Valores normales. Continuar tratamiento actual.', rx:'Enalapril 10mg — 1 vez al día en ayunas.', diag:'Hipertensión arterial controlada'},
+  {spec:'Cardiología',      icon:'bi-heart-pulse',      date:'5 feb 2026',  fullDate:'5 febrero 2026', doc:'Dra. Patricia López',center:'Policlínica Arce',notes:'Electrocardiograma dentro de parámetros normales. Control en 6 meses.',         rx:'Aspirina 100mg — 1 vez al día con alimentos.', diag:'Cardiopatía isquémica estable'},
+  {spec:'Oftalmología',     icon:'bi-eye',              date:'18 ene 2026', fullDate:'18 enero 2026',  doc:'Dr. Roberto García', center:'ISSS Zacamil',   notes:'Miopía leve bilateral. Se recomienda uso de lentes correctivos.', rx:'Receta óptica: OD -0.75 OS -1.00', diag:'Miopía leve'},
 ];
 
-// ── STATE ──
-let S = {user:null, spec:null, center:null, date:null, time:null, month:new Date(), appts:[], relatives:[], cancelId:null, queuePos:8, queueTotal:30, queueTimer:null};
+// ─── STATE ───
+let S = {
+  user:null, spec:null, center:null, date:null, time:null,
+  month: new Date(), appts:[], relatives:[],
+  cancelId:null, queuePos:8, queueTotal:30, queueTimer:null
+};
 
-// ── PERSIST ──
 function save(){try{localStorage.setItem('isss_a',JSON.stringify(S.appts));localStorage.setItem('isss_r',JSON.stringify(S.relatives));localStorage.setItem('isss_u',JSON.stringify(S.user));}catch(e){}}
 function load(){try{const a=localStorage.getItem('isss_a'),r=localStorage.getItem('isss_r'),u=localStorage.getItem('isss_u');if(a)S.appts=JSON.parse(a);if(r)S.relatives=JSON.parse(r);if(u)S.user=JSON.parse(u);}catch(e){}}
 
-// ── LOGIN ──
+// ─── LOGIN ───
 function fmtDui(e){let v=e.target.value.replace(/[^0-9]/g,'');if(v.length>9)v=v.slice(0,9);if(v.length>8)v=v.slice(0,8)+'-'+v.slice(8);e.target.value=v}
 document.getElementById('dui-in').addEventListener('input',fmtDui);
 document.getElementById('dui-in').addEventListener('keypress',e=>{if(e.key==='Enter')doLogin()});
@@ -839,281 +947,342 @@ document.getElementById('dui-in').addEventListener('keypress',e=>{if(e.key==='En
 function doLogin(){
   const dui=document.getElementById('dui-in').value.trim();
   const err=document.getElementById('login-err');
-  if(!/^\d{8}-\d$/.test(dui)){err.style.display='block';return;}
+  if(!/^\d{8}-\d$/.test(dui)){err.style.display='flex';return;}
   err.style.display='none';
   const names=['María José García','Carlos Alberto Flores','Ana Cecilia López','José Manuel Rodríguez','Rosa Elena Martínez'];
-  S.user={dui,name:names[Math.floor(Math.random()*names.length)]};
-  save();initHome();showView('view-home');
+  S.user={dui, name:names[Math.floor(Math.random()*names.length)]};
+  save(); initHome(); showView('view-home');
 }
 
-function doLogout(){S.user=null;save();showView('view-login')}
-
-// ── VIEW ROUTER ──
+// ─── ROUTER ───
 function showView(id){
   document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));
-  document.getElementById(id).classList.add('active');
+  const el=document.getElementById(id);
+  el.classList.add('active');
   window.scrollTo(0,0);
-  if(id==='view-appointments')renderAppts();
-  if(id==='view-history')renderHist();
-  if(id==='view-queue')renderQueue();
-  if(id==='view-relatives')renderRels();
+  if(id==='view-appointments') renderAppts();
+  if(id==='view-history')      renderHist();
+  if(id==='view-queue')        renderQueue();
+  if(id==='view-relatives')    renderRels();
 }
 
-function setSbActive(id){
-  document.querySelectorAll('.sb-item').forEach(b=>b.classList.remove('active'));
-  document.getElementById(id)?.classList.add('active');
-}
-
-// ── HOME ──
+// ─── HOME ───
 function initHome(){
-  document.getElementById('home-name').textContent=S.user?.name||'';
-  document.getElementById('sb-name').textContent=S.user?.name||'—';
-  document.getElementById('sb-dui').textContent='DUI: '+(S.user?.dui||'—');
-  renderProxima();renderHomeHist();checkAlerts();
-  // Demo appt if empty
-  if(!S.appts.length){S.appts.push({id:'demo1',spec:'Medicina General',specIcon:'🩺',center:'ISSS Zacamil',date:'jueves, 28 mayo 2026',time:'9:00 AM',code:'ISSS-DEMO01',status:'upcoming'});save();renderProxima();}
+  document.getElementById('home-uname').textContent = S.user?.name || '—';
+  renderNextAppt(); renderHomeHist(); checkAlerts();
+  if(!S.appts.length){
+    S.appts.push({id:'demo1',spec:'Medicina General',specIcon:'bi-clipboard2-pulse',center:'ISSS Zacamil',date:'jueves, 29 mayo 2026',time:'9:00 AM',code:'ISSS-DEMO01',status:'upcoming'});
+    save(); renderNextAppt();
+  }
 }
 
-function renderProxima(){
-  const sec=document.getElementById('proxima-cita');
+function renderNextAppt(){
+  const sec=document.getElementById('next-appt-section');
   const a=S.appts.find(x=>x.status==='upcoming');
   if(!a){sec.innerHTML='';return;}
-  sec.innerHTML=`<div class="st">Próxima cita</div>
-  <div class="ac" onclick="openDetail('${a.id}','view-home')" style="cursor:pointer">
-    <div class="ac-head"><div class="ac-spec">${a.specIcon} ${a.spec}</div><div class="ac-sub">${a.date} · ${a.time}</div></div>
-    <div class="ac-body">
-      <div class="ac-row"><span class="ic">🏥</span>${a.center}</div>
-      <div class="ac-row"><span class="ic">🎟️</span>Código: <strong>${a.code}</strong></div>
-      <div style="margin-top:10px;display:flex;gap:8px;flex-wrap:wrap">
-        <button class="btn btn-navy btn-sm" onclick="event.stopPropagation();showView('view-queue')">Ver turno</button>
-        <button class="btn btn-danger btn-sm" onclick="event.stopPropagation();openCancel('${a.id}')">Cancelar / Reagendar</button>
-      </div>
+  sec.innerHTML=`
+  <div class="home-next-label"><i class="bi bi-calendar-event" style="margin-right:4px"></i>Próxima cita</div>
+  <div class="next-card" onclick="openDetail('${a.id}','view-home')">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px">
+      <div class="next-spec"><i class="bi ${a.specIcon}" style="margin-right:6px"></i>${a.spec}</div>
+      <span class="chip chip-green"><i class="bi bi-check-circle"></i> Confirmada</span>
+    </div>
+    <div class="next-meta"><i class="bi bi-hospital"></i>${a.center}</div>
+    <div class="next-meta" style="margin-top:4px"><i class="bi bi-calendar3"></i>${a.date} &nbsp;·&nbsp; <i class="bi bi-clock"></i> ${a.time}</div>
+    <div style="margin-top:10px;display:flex;gap:8px">
+      <button class="btn btn-ghost btn-sm" style="color:var(--navy);background:rgba(255,255,255,.15);border-color:rgba(255,255,255,.3);font-size:13px" onclick="event.stopPropagation();showView('view-queue')"><i class="bi bi-hourglass-split"></i> Ver turno</button>
+      <button class="btn btn-ghost btn-sm" style="color:var(--red);background:rgba(255,255,255,.1);border-color:rgba(255,255,255,.2);font-size:13px" onclick="event.stopPropagation();openCancel('${a.id}')"><i class="bi bi-x-circle"></i> Cancelar</button>
     </div>
   </div>`;
 }
 
 function renderHomeHist(){
   const el=document.getElementById('home-hist');
-  el.innerHTML=HIST.slice(0,2).map((h,i)=>`<div class="hi" onclick="showHistDetail(${i})"><div class="hi-icon">${h.icon}</div><div><div class="hi-spec">${h.spec}</div><div class="hi-date">${h.date} — ${h.center}</div></div><div class="hi-arr">›</div></div>`).join('');
+  el.innerHTML=HIST.slice(0,2).map((h,i)=>`
+  <div class="hist-item" onclick="showHistDetail(${i})">
+    <div class="hist-icon"><i class="bi ${h.icon}"></i></div>
+    <div style="flex:1">
+      <div class="h3" style="font-size:15px">${h.spec}</div>
+      <div class="sub" style="font-size:13px">${h.date} · ${h.center}</div>
+    </div>
+    <i class="bi bi-chevron-right hist-arr"></i>
+  </div>`).join('');
 }
 
 function checkAlerts(){
   const a=S.appts.find(x=>x.status==='cancelled-by-doctor');
-  const el=document.getElementById('alert-cancel');
-  if(a){document.getElementById('al-spec').textContent=a.spec;document.getElementById('al-date').textContent=a.date;el.style.display='flex';}
+  const el=document.getElementById('alert-doctor-cancel');
+  if(a){document.getElementById('alert-spec-text').textContent=a.spec;document.getElementById('alert-date-text').textContent=a.date;el.style.display='flex';}
   else el.style.display='none';
 }
-function cerrarAlerta(){document.getElementById('alert-cancel').style.display='none'}
+function cerrarAlerta(){document.getElementById('alert-doctor-cancel').style.display='none'}
 function reagendarAlerta(){const a=S.appts.find(x=>x.status==='cancelled-by-doctor');if(a)a.status='upcoming';save();cerrarAlerta();goStep1()}
 
-// ── STEP 1 ──
-function goStep1(){renderSpecs('');showView('view-step1')}
+// ─── STEP 1 ───
+function goStep1(){S.spec=null;renderSpecs('');document.getElementById('search-spec').value='';document.getElementById('btn1').disabled=true;showView('view-step1')}
 function renderSpecs(q){
-  const filtered=q?SPECS.filter(s=>s.kw.some(k=>k.includes(q.toLowerCase()))||s.name.toLowerCase().includes(q.toLowerCase())):SPECS;
-  document.getElementById('spec-grid').innerHTML=filtered.map(s=>`<div class="spec-item ${S.spec?.id===s.id?'sel':''}" onclick="selSpec('${s.id}')"><span class="spec-icon">${s.icon}</span><div class="spec-name">${s.name}</div></div>`).join('');
-  const btn=document.getElementById('btn1');btn.disabled=!S.spec;
+  const f=q?SPECS.filter(s=>s.kw.some(k=>k.includes(q.toLowerCase()))||s.name.toLowerCase().includes(q.toLowerCase())):SPECS;
+  document.getElementById('spec-grid').innerHTML=f.map(s=>`
+  <div class="spec-card ${S.spec?.id===s.id?'sel':''}" onclick="selSpec('${s.id}')">
+    <i class="bi ${s.icon} spec-icon"></i>
+    <div class="spec-name">${s.name}</div>
+  </div>`).join('');
 }
 function filterSpecs(){renderSpecs(document.getElementById('search-spec').value)}
 function selSpec(id){S.spec=SPECS.find(s=>s.id===id);renderSpecs(document.getElementById('search-spec').value);document.getElementById('btn1').disabled=false}
 
-// ── STEP 2 ──
+// ─── STEP 2 ───
 function goStep2(){
   if(!S.spec)return;
-  document.getElementById('spec-badge').innerHTML=`<span class="badge b-navy">${S.spec.icon} ${S.spec.name}</span>`;
-  renderCenters();showView('view-step2');
+  document.getElementById('spec-badge-row').innerHTML=`<span class="chip chip-navy"><i class="bi ${S.spec.icon}"></i> ${S.spec.name}</span>`;
+  renderCenters(); showView('view-step2');
 }
 function renderCenters(){
   document.getElementById('centers-list').innerHTML=CENTERS.map(c=>`
-  <div class="card" style="cursor:pointer;border:2px solid ${S.center?.id===c.id?'var(--navy)':'var(--border)'};margin-bottom:10px" onclick="selCenter('${c.id}')">
-    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px">
-      <div style="font-size:16px;font-weight:800">${c.name}</div>
-      <span class="badge b-green">🟢 ${c.slots} cupos</span>
+  <div class="center-card ${S.center?.id===c.id?'sel':''}" onclick="selCenter('${c.id}')">
+    <div style="display:flex;align-items:center;justify-content:space-between">
+      <div class="center-name">${c.name}</div>
+      ${S.center?.id===c.id?`<i class="bi bi-check-circle-fill" style="color:var(--navy);font-size:20px"></i>`:''}
     </div>
-    <div style="font-size:14px;color:var(--muted)">📍 ${c.addr}</div>
-    <div style="font-size:14px;color:var(--accent);margin-top:5px;font-weight:700">⏱ Espera: ${c.wait}</div>
+    <div class="center-meta">
+      <span><i class="bi bi-geo-alt"></i>${c.addr}</span>
+      <span><i class="bi bi-star-fill" style="color:#F59E0B"></i> ${c.rating} · <i class="bi bi-clock"></i> Espera ${c.wait}</span>
+    </div>
+    <div class="center-avail">
+      <span class="chip chip-green"><i class="bi bi-calendar-check"></i> ${c.slots} cupos hoy</span>
+      ${c.slots<7?`<span class="chip chip-orange"><i class="bi bi-exclamation-circle"></i> Pocos cupos</span>`:''}
+    </div>
   </div>`).join('');
 }
 function selCenter(id){S.center=CENTERS.find(c=>c.id===id);renderCenters();document.getElementById('btn2').disabled=false}
 
-// ── STEP 3 ──
-const MONTHS=['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'];
-const DAYS=['Dom','Lun','Mar','Mié','Jue','Vie','Sáb'];
-function goStep3(){S.selectedDate=null;S.time=null;renderCal();showView('view-step3')}
+// ─── STEP 3 ───
+const MES=['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'];
+const DIA=['Dom','Lun','Mar','Mié','Jue','Vie','Sáb'];
+
+function goStep3(){S.date=null;S.time=null;renderCal();document.getElementById('time-section').style.display='none';document.getElementById('btn3').disabled=true;showView('view-step3')}
+
 function renderCal(){
   const m=S.month;
-  document.getElementById('cal-month').textContent=`${MONTHS[m.getMonth()]} ${m.getFullYear()}`;
-  const first=new Date(m.getFullYear(),m.getMonth(),1).getDay();
-  const days=new Date(m.getFullYear(),m.getMonth()+1,0).getDate();
-  const today=new Date();today.setHours(0,0,0,0);
-  let html=DAYS.map(d=>`<div class="cal-dn">${d}</div>`).join('');
-  for(let i=0;i<first;i++)html+=`<div class="cal-d empty"></div>`;
-  for(let d=1;d<=days;d++){
+  document.getElementById('cal-month').textContent=`${MES[m.getMonth()]} ${m.getFullYear()}`;
+  const firstDay=new Date(m.getFullYear(),m.getMonth(),1).getDay();
+  const totalDays=new Date(m.getFullYear(),m.getMonth()+1,0).getDate();
+  const today=new Date(); today.setHours(0,0,0,0);
+  let html=DIA.map(d=>`<div class="cal-dn">${d}</div>`).join('');
+  for(let i=0;i<firstDay;i++) html+=`<div class="cal-d empty"></div>`;
+  for(let d=1;d<=totalDays;d++){
     const date=new Date(m.getFullYear(),m.getMonth(),d);
-    const past=date<today,isToday=date.getTime()===today.getTime();
+    const isPast=date<today;
+    const isToday=date.getTime()===today.getTime();
     const isSel=S.date&&S.date.getTime()===date.getTime();
-    const hasSlot=!past&&date.getDay()!==0&&date.getDay()!==6;
-    const cls=['cal-d',past?'past':'',isToday?'today':'',isSel?'sel':'',hasSlot&&!past?'avail has-slots':''].filter(Boolean).join(' ');
-    html+=`<div class="${cls}" onclick="${!past&&hasSlot?`selDate(${d})`:''}">${d}</div>`;
+    const isWknd=date.getDay()===0||date.getDay()===6;
+    const hasSlot=!isPast&&!isWknd;
+    const cls=['cal-d',isPast?'past':'',isToday&&!isSel?'today':'',isSel?'sel':'',hasSlot?'avail has-slots':''].filter(Boolean).join(' ');
+    html+=`<div class="${cls}" onclick="${hasSlot?`selDate(${d})`:''}" style="${isWknd&&!isPast?'color:#C5CDD8':''}">${d}</div>`;
   }
   document.getElementById('cal-grid').innerHTML=html;
 }
-function selDate(d){S.date=new Date(S.month.getFullYear(),S.month.getMonth(),d);S.time=null;renderCal();renderTSlots();document.getElementById('time-sec').style.display='block';document.getElementById('btn3').disabled=true}
+
+function selDate(d){
+  S.date=new Date(S.month.getFullYear(),S.month.getMonth(),d);
+  S.time=null;
+  renderCal();
+  renderTSlots();
+  document.getElementById('time-section').style.display='block';
+  document.getElementById('btn3').disabled=true;
+  setTimeout(()=>document.getElementById('time-section').scrollIntoView({behavior:'smooth',block:'nearest'}),100);
+}
+
 function renderTSlots(){
   const times=['7:00 AM','7:30 AM','8:00 AM','8:30 AM','9:00 AM','9:30 AM','10:00 AM','10:30 AM','11:00 AM','11:30 AM','2:00 PM','2:30 PM'];
   const taken=[2,5,8];
-  document.getElementById('tslots').innerHTML=times.map((t,i)=>{
-    const tk=taken.includes(i),sel=S.time===t;
-    return`<button class="tslot ${tk?'taken':''} ${sel?'sel':''}" onclick="${!tk?`selTime('${t}')`:''}">${t}${tk?'<br><small style="font-weight:400">Ocupado</small>':''}</button>`;
+  document.getElementById('tslots-grid').innerHTML=times.map((t,i)=>{
+    const tk=taken.includes(i), sel=S.time===t;
+    return`<button class="tslot${tk?' taken':''}${sel?' sel':''}" onclick="${!tk?`selTime('${t}')`:''}">
+      ${t}${tk?'<br><span style="font-size:10px;font-weight:400;color:#C5CDD8">Ocupado</span>':''}
+    </button>`;
   }).join('');
 }
 function selTime(t){S.time=t;renderTSlots();document.getElementById('btn3').disabled=false}
-function changeMonth(dir){S.month=new Date(S.month.getFullYear(),S.month.getMonth()+dir,1);renderCal();document.getElementById('time-sec').style.display='none'}
+function changeMonth(dir){S.month=new Date(S.month.getFullYear(),S.month.getMonth()+dir,1);renderCal();document.getElementById('time-section').style.display='none';S.date=null;S.time=null}
 
-// ── CONFIRM ──
+// ─── CONFIRM ───
 function goConfirm(){
   if(!S.date||!S.time)return;
   const ds=S.date.toLocaleDateString('es-SV',{weekday:'long',day:'numeric',month:'long',year:'numeric'});
-  document.getElementById('cf-spec').textContent=`${S.spec.icon} ${S.spec.name}`;
+  document.getElementById('conf-spec-chip').innerHTML=`<span class="chip chip-navy" style="font-size:14px;padding:5px 12px"><i class="bi ${S.spec.icon}"></i> ${S.spec.name}</span>`;
   document.getElementById('cf-center').textContent=S.center.name;
   document.getElementById('cf-date').textContent=ds;
   document.getElementById('cf-time').textContent=S.time;
-  document.getElementById('cf-name').textContent=S.user?.name||'';
+  document.getElementById('cf-name').textContent=S.user?.name||'—';
   showView('view-confirm');
 }
-function toggleFamiliar(){const s=document.getElementById('fam-sec'),i=document.getElementById('fam-ico'),shown=s.style.display!=='none';s.style.display=shown?'none':'block';i.textContent=shown?'＋':'−'}
-
+function toggleFam(){
+  const f=document.getElementById('fam-form'),i=document.getElementById('fam-toggle-ico');
+  const show=f.style.display==='none'||f.style.display==='';
+  f.style.display=show?'block':'none';
+  i.className=show?'bi bi-dash-circle':'bi bi-plus-circle';
+  i.style.color='var(--navy)';
+}
 function confirmAppt(){
   const ds=S.date.toLocaleDateString('es-SV',{weekday:'long',day:'numeric',month:'long',year:'numeric'});
-  const code='ISSS-'+Math.random().toString(36).substring(2,8).toUpperCase();
-  const a={id:Date.now().toString(),spec:S.spec.name,specIcon:S.spec.icon,center:S.center.name,date:ds,time:S.time,code,status:'upcoming'};
-  S.appts.unshift(a);save();
-  document.getElementById('tk-code').textContent=code;
-  document.getElementById('tk-spec').textContent=`${a.specIcon} ${a.spec}`;
+  const code='ISSS-'+Math.random().toString(36).slice(2,8).toUpperCase();
+  const a={id:Date.now().toString(),spec:S.spec.name,specIcon:S.spec.icon,center:S.center.name,date:ds,time:S.time,code,status:'upcoming',doctor:'Por asignar'};
+  S.appts.unshift(a); save();
+  document.getElementById('tk-spec').textContent=`${a.spec}`;
   document.getElementById('tk-center').textContent=a.center;
   document.getElementById('tk-date').textContent=a.date;
   document.getElementById('tk-time').textContent=a.time;
-  showView('view-ticket');initHome();
+  document.getElementById('tk-code').textContent=code;
+  document.getElementById('tk-status-chip').innerHTML=`<span class="chip chip-green"><i class="bi bi-check-circle-fill"></i> Confirmada</span>`;
+  showView('view-ticket'); initHome();
 }
 function downloadTicket(){alert('📥 Comprobante guardado.\nCódigo: '+document.getElementById('tk-code').textContent)}
-function shareTicket(){const c=document.getElementById('tk-code').textContent;if(navigator.share)navigator.share({title:'ISSS Cita',text:`Mi cita ISSS. Código: ${c}`});else alert('Código: '+c)}
+function shareTicket(){const c=document.getElementById('tk-code').textContent;if(navigator.share)navigator.share({title:'ISSS Cita',text:`Mi cita ISSS — Código: ${c}`});else alert('Código: '+c)}
 
-// ── APPOINTMENTS ──
+// ─── APPOINTMENTS ───
 function renderAppts(){
   const up=S.appts.filter(a=>a.status==='upcoming');
-  document.getElementById('appts-empty').style.display=up.length?'none':'block';
-  document.getElementById('appts-list').innerHTML=up.length?`<div class="st">Citas programadas</div>`+up.map(a=>`
-  <div class="ac">
-    <div class="ac-head"><div class="ac-spec">${a.specIcon} ${a.spec}</div></div>
-    <div class="ac-body">
-      <div class="ac-row"><span class="ic">🏥</span>${a.center}</div>
-      <div class="ac-row"><span class="ic">📅</span>${a.date}</div>
-      <div class="ac-row"><span class="ic">🕐</span>${a.time}</div>
-      <div class="ac-row"><span class="ic">🎟️</span><strong>${a.code}</strong></div>
+  const empty=document.getElementById('appts-empty');
+  const list=document.getElementById('appts-list');
+  if(!up.length){empty.style.display='block';list.innerHTML='';return;}
+  empty.style.display='none';
+  list.innerHTML=`<div class="h3" style="margin-bottom:12px">Citas programadas</div>`+up.map(a=>`
+  <div class="appt-item">
+    <div class="appt-item-head">
+      <div><div style="font-size:15px;font-weight:800"><i class="bi ${a.specIcon}" style="margin-right:6px"></i>${a.spec}</div><div style="font-size:12px;opacity:.65;margin-top:2px">${a.date}</div></div>
+      <span class="chip chip-green" style="font-size:12px"><i class="bi bi-check-circle"></i> Confirmada</span>
+    </div>
+    <div class="appt-item-body">
+      <div class="appt-row"><i class="bi bi-hospital"></i>${a.center}</div>
+      <div class="appt-row"><i class="bi bi-clock"></i>${a.time}</div>
+      <div class="appt-row"><i class="bi bi-upc-scan"></i><strong>${a.code}</strong></div>
       <div style="margin-top:10px;display:flex;gap:8px;flex-wrap:wrap">
-        <button class="btn btn-navy btn-sm" onclick="showView('view-queue')">Ver turno</button>
-        <button class="btn btn-danger btn-sm" onclick="openCancel('${a.id}')">Cancelar / Reagendar</button>
+        <button class="btn btn-primary btn-sm" onclick="showView('view-queue')"><i class="bi bi-hourglass-split"></i> Ver turno</button>
+        <button class="btn btn-danger btn-sm" onclick="openCancel('${a.id}')"><i class="bi bi-x-circle"></i> Cancelar</button>
       </div>
     </div>
-  </div>`).join(''):'';
+  </div>`).join('');
 }
-
 function openCancel(id){S.cancelId=id;document.getElementById('m-cancel').classList.add('open')}
-function cancelAppt(){S.appts=S.appts.filter(a=>a.id!==S.cancelId);save();closeModal('m-cancel');renderAppts();renderProxima()}
+function cancelAppt(){S.appts=S.appts.filter(a=>a.id!==S.cancelId);save();closeModal('m-cancel');renderAppts();renderNextAppt()}
 function rescheduleAppt(){S.appts=S.appts.filter(a=>a.id!==S.cancelId);save();closeModal('m-cancel');goStep1()}
 
-// ── QUEUE ──
+// ─── QUEUE ───
 function renderQueue(){
   const el=document.getElementById('queue-content');
   const a=S.appts.find(x=>x.status==='upcoming');
-  if(!a){el.innerHTML=`<div class="empty"><div class="empty-icon">🔢</div><div class="empty-t">Sin cita activa</div><div class="empty-s">Reserve una cita para ver su turno en tiempo real.</div><button class="btn btn-navy" onclick="goStep1()">Reservar cita</button></div>`;return}
-  const pos=S.queuePos,total=S.queueTotal,pct=Math.max(5,Math.round(((total-pos)/total)*100));
+  if(!a){el.innerHTML=`<div class="empty"><i class="bi bi-hourglass"></i><div class="empty-t">Sin cita activa</div><div class="empty-s">Reserve una cita para ver su turno en tiempo real.</div><button class="btn btn-primary" onclick="goStep1()"><i class="bi bi-calendar-plus"></i> Reservar cita</button></div>`;return}
+  const pos=S.queuePos,tot=S.queueTotal,pct=Math.max(4,Math.round(((tot-pos)/tot)*100));
   el.innerHTML=`
-  <div class="al al-ok"><span class="al-ic">📍</span><div><strong>Está en fila</strong><br>${a.spec} — ${a.center}</div></div>
-  <div class="card card-l" style="text-align:center;padding:26px 18px">
-    <div style="font-size:13px;color:var(--muted);text-transform:uppercase;font-weight:700;margin-bottom:4px;letter-spacing:.5px">Su turno</div>
-    <div class="q-num">${pos}</div>
-    <div class="q-label">de ${total} pacientes</div>
-    <div class="prog-wrap"><div class="prog-fill" style="width:${pct}%"></div></div>
-    <div style="font-size:14px;color:var(--muted);margin-top:6px">Avance: ${pct}%</div>
+  <div class="q-card">
+    <div class="q-label"><i class="bi bi-broadcast" style="margin-right:5px"></i>Su número de turno</div>
+    <div class="q-number">${pos}</div>
+    <div class="q-of">de ${tot} pacientes en fila</div>
+    <div class="prog-wrap"><div class="prog-fill" id="qfill" style="width:${pct}%"></div></div>
+    <div class="q-pct">${pct}% de avance</div>
   </div>
-  <div class="card">
-    <div class="ac-row"><span class="ic">⏱</span>Espera estimada: <strong>~${pos*5} min</strong></div>
-    <div class="ac-row"><span class="ic">🕐</span>Hora de su cita: <strong>${a.time}</strong></div>
-    <div class="ac-row"><span class="ic">🏥</span>${a.center}</div>
+  <div class="card card-p" style="margin-bottom:12px">
+    <div class="info-row"><i class="bi bi-stopwatch"></i><div><div class="info-label">Tiempo estimado de espera</div><div class="info-val">~${pos*5} minutos</div></div></div>
+    <div class="info-row"><i class="bi bi-clock"></i><div><div class="info-label">Hora de su cita</div><div class="info-val">${a.time}</div></div></div>
+    <div class="info-row"><i class="bi bi-hospital"></i><div><div class="info-label">Centro</div><div class="info-val">${a.center}</div></div></div>
+    <div class="info-row"><i class="bi bi-clipboard2-pulse"></i><div><div class="info-label">Especialidad</div><div class="info-val">${a.spec}</div></div></div>
   </div>
-  <div class="al al-info"><span class="al-ic">💡</span><div>Puede retirarse y volver cuando falten 2 turnos.</div></div>
-  <button class="btn btn-ghost" onclick="simQueue()">🔄 Actualizar posición</button>`;
+  <div class="alert a-info"><i class="bi bi-info-circle"></i><div>Puede alejarse y volver <strong>cuando falten 2 turnos</strong>. Le notificaremos con tiempo.</div></div>
+  <div class="alert a-warn" id="q-close-warn" style="display:${pos<=3?'flex':'none'}"><i class="bi bi-exclamation-triangle"></i><div><strong>¡Ya casi es su turno!</strong> Preséntese al módulo de atención.</div></div>`;
   if(S.queueTimer)clearInterval(S.queueTimer);
-  S.queueTimer=setInterval(()=>{if(S.queuePos>1){S.queuePos--;renderQueue()}else clearInterval(S.queueTimer)},8000);
+  S.queueTimer=setInterval(()=>{if(S.queuePos>1){S.queuePos--;renderQueue();}else clearInterval(S.queueTimer)},7000);
 }
-function simQueue(){if(S.queuePos>1){S.queuePos--;renderQueue()}}
 
-// ── HISTORY ──
+// ─── HISTORY ───
 function renderHist(){
-  document.getElementById('hist-list').innerHTML=HIST.map((h,i)=>`<div class="hi" onclick="showHistDetail(${i})"><div class="hi-icon">${h.icon}</div><div style="flex:1"><div class="hi-spec">${h.spec}</div><div class="hi-date">${h.date}</div><div class="hi-date">${h.center} · ${h.doc}</div></div><div class="hi-arr">›</div></div>`).join('');
+  document.getElementById('hist-list').innerHTML=HIST.map((h,i)=>`
+  <div class="hist-item" onclick="showHistDetail(${i})">
+    <div class="hist-icon"><i class="bi ${h.icon}"></i></div>
+    <div style="flex:1">
+      <div style="display:flex;align-items:center;gap:6px;margin-bottom:3px">
+        <span class="h3" style="font-size:15px">${h.spec}</span>
+      </div>
+      <div class="sub" style="font-size:13px">${h.date} · ${h.doc}</div>
+      <div class="sub" style="font-size:12px">${h.center}</div>
+    </div>
+    <i class="bi bi-chevron-right hist-arr"></i>
+  </div>`).join('');
 }
 function showHistDetail(i){
   const h=HIST[i];
-  document.getElementById('hist-modal-content').innerHTML=`
-  <div class="st">${h.icon} ${h.spec}</div>
+  document.getElementById('hist-modal').innerHTML=`
+  <div style="display:flex;align-items:center;gap:10px;margin-bottom:14px">
+    <div style="width:44px;height:44px;background:var(--navy-3);border-radius:var(--r-sm);display:flex;align-items:center;justify-content:center;color:var(--navy);font-size:22px;flex-shrink:0"><i class="bi ${h.icon}"></i></div>
+    <div><div class="h3">${h.spec}</div><div class="sub" style="font-size:13px">${h.fullDate}</div></div>
+  </div>
+  <div class="chip chip-navy" style="margin-bottom:14px"><i class="bi bi-patch-check"></i> ${h.diag}</div>
   <div class="divider"></div>
-  <div class="ac-row"><span class="ic">📅</span>${h.date}</div>
-  <div class="ac-row"><span class="ic">👨‍⚕️</span>${h.doc}</div>
-  <div class="ac-row"><span class="ic">🏥</span>${h.center}</div>
+  <div class="info-row"><i class="bi bi-person-badge"></i><div><div class="info-label">Médico</div><div class="info-val">${h.doc}</div></div></div>
+  <div class="info-row"><i class="bi bi-hospital"></i><div><div class="info-label">Centro</div><div class="info-val">${h.center}</div></div></div>
   <div class="divider"></div>
-  <div style="font-size:15px;font-weight:700;margin-bottom:6px">Notas del médico</div>
-  <div style="font-size:16px;color:var(--muted);line-height:1.6">${h.notes}</div>
+  <div class="label" style="margin-bottom:6px">Notas del médico</div>
+  <div class="sub" style="font-size:15px;line-height:1.6">${h.notes}</div>
   <div class="divider"></div>
-  <div style="font-size:15px;font-weight:700;margin-bottom:6px">💊 Receta</div>
-  <div style="font-size:16px;color:var(--muted)">${h.rx}</div>
-  <button class="btn btn-navy" onclick="alert('📄 Receta de ${h.spec} descargada.')" style="margin-top:14px">⬇️ Descargar receta</button>`;
-  document.getElementById('m-hist-detail').classList.add('open');
+  <div class="label" style="margin-bottom:6px">Receta médica</div>
+  <div class="alert a-info" style="margin-bottom:10px"><i class="bi bi-capsule"></i><div style="font-size:15px">${h.rx}</div></div>
+  <button class="btn btn-primary btn-sm" style="width:auto" onclick="alert('📄 Receta de ${h.spec} descargada.')"><i class="bi bi-download"></i> Descargar receta PDF</button>`;
+  document.getElementById('m-hist').classList.add('open');
 }
 
-// ── RELATIVES ──
+// ─── RELATIVES ───
 function renderRels(){
   const el=document.getElementById('rel-list');
-  if(!S.relatives.length){el.innerHTML=`<div class="empty"><div class="empty-icon">👨‍👩‍👧</div><div class="empty-t">Sin familiares</div><div class="empty-s">Agregue familiares para agendar sus citas sin que ellos usen el teléfono.</div></div>`;return}
-  el.innerHTML=S.relatives.map(r=>`<div class="ri" onclick="bookForRel('${r.dui}')"><div class="ri-av">${r.name.charAt(0)}</div><div style="flex:1"><div class="ri-name">${r.name}</div><div class="ri-sub">${r.relation} · ${r.dui}</div></div><div class="ri-arr">›</div></div>`).join('');
+  if(!S.relatives.length){el.innerHTML=`<div class="empty"><i class="bi bi-person-plus"></i><div class="empty-t">Sin familiares guardados</div><div class="empty-s">Agregue familiares para gestionar sus citas sin que ellos necesiten el teléfono.</div></div>`;return;}
+  el.innerHTML=S.relatives.map(r=>`
+  <div class="rel-item" onclick="bookForRel('${r.dui}')">
+    <div class="rel-avatar">${r.name.charAt(0).toUpperCase()}</div>
+    <div style="flex:1"><div class="h3" style="font-size:15px">${r.name}</div><div class="sub" style="font-size:13px">${r.relation} · DUI: ${r.dui}</div></div>
+    <i class="bi bi-chevron-right rel-arr"></i>
+  </div>`).join('');
 }
 function openAddRel(){document.getElementById('rel-name').value='';document.getElementById('rel-dui').value='';document.getElementById('rel-rel').value='';document.getElementById('m-add-rel').classList.add('open')}
 function saveRel(){
-  const name=document.getElementById('rel-name').value.trim(),dui=document.getElementById('rel-dui').value.trim(),relation=document.getElementById('rel-rel').value;
-  if(!name||!dui||!relation){alert('Complete todos los campos');return}
-  S.relatives.push({name,dui,relation});save();closeModal('m-add-rel');renderRels();
+  const n=document.getElementById('rel-name').value.trim(),d=document.getElementById('rel-dui').value.trim(),r=document.getElementById('rel-rel').value;
+  if(!n||!d||!r){alert('Complete todos los campos');return;}
+  S.relatives.push({name:n,dui:d,relation:r}); save(); closeModal('m-add-rel'); renderRels();
 }
-function bookForRel(dui){const r=S.relatives.find(x=>x.dui===dui);alert(`Agendando para: ${r.name}\n\nSe abrirá el flujo de nueva cita. ${r.name} solo debe presentarse.`);goStep1()}
+function bookForRel(dui){const r=S.relatives.find(x=>x.dui===dui);if(r){alert(`Agendando cita para: ${r.name}\n\nSe abrirá el flujo de nueva cita. ${r.name} solo debe presentarse a la hora.`);goStep1();}}
 
-// ── DETAIL ──
+// ─── DETAIL ───
 function openDetail(id,back){
-  const a=S.appts.find(x=>x.id===id);if(!a)return;
+  const a=S.appts.find(x=>x.id===id); if(!a)return;
   document.getElementById('detail-back').onclick=()=>showView(back);
   document.getElementById('detail-content').innerHTML=`
-  <div style="background:var(--navy);color:#fff;padding:22px 20px;margin:-20px -20px 18px">
-    <div style="font-size:24px;font-weight:900">${a.specIcon} ${a.spec}</div>
-    <div style="font-size:14px;opacity:.75;margin-top:4px">${a.date}</div>
+  <div class="ticket">
+    <div class="ticket-head">
+      <div style="font-size:18px;font-weight:900;margin-bottom:8px"><i class="bi ${a.specIcon}" style="margin-right:7px"></i>${a.spec}</div>
+      <div class="info-row" style="border:none;padding:3px 0;color:rgba(255,255,255,.8)"><i class="bi bi-hospital" style="color:rgba(255,255,255,.5)"></i><div><div style="font-size:12px;opacity:.5">Centro</div><div style="font-weight:700;font-size:14px">${a.center}</div></div></div>
+      <div style="display:flex;gap:16px;margin-top:4px">
+        <div class="info-row" style="border:none;padding:3px 0;color:rgba(255,255,255,.8);flex:1"><i class="bi bi-calendar3" style="color:rgba(255,255,255,.5)"></i><div><div style="font-size:12px;opacity:.5">Fecha</div><div style="font-weight:700;font-size:14px">${a.date}</div></div></div>
+        <div class="info-row" style="border:none;padding:3px 0;color:rgba(255,255,255,.8)"><i class="bi bi-clock" style="color:rgba(255,255,255,.5)"></i><div><div style="font-size:12px;opacity:.5">Hora</div><div style="font-weight:700;font-size:18px">${a.time}</div></div></div>
+      </div>
+    </div>
+    <div class="ticket-sep"><hr class="ticket-line"></div>
+    <div class="ticket-body">
+      <div class="qr-wrap" style="padding:8px 0 10px"><div class="qr-box"><div class="qr-inner"><img src="https://cdn.brandfetch.io/id8LwMLHOF/w/400/h/400/theme/dark/icon.jpeg?c=1bxid64Mup7aczewSAYMX&t=1771715114286" style="width:36px;height:36px;object-fit:cover;border-radius:3px"></div></div></div>
+      <div style="text-align:center"><div style="font-size:20px;font-weight:900;color:var(--navy);letter-spacing:2px">${a.code}</div><div class="sub" style="margin-top:3px">Código de comprobante</div></div>
+    </div>
   </div>
-  <div class="card card-l">
-    <div class="ac-row"><span class="ic">🏥</span>${a.center}</div>
-    <div class="ac-row"><span class="ic">🕐</span>${a.time}</div>
-    <div class="ac-row"><span class="ic">🎟️</span>Código: <strong>${a.code}</strong></div>
-  </div>
-  <div class="qr-wrap"><div class="qr-box"><div class="qr-inner"><img src="https://cdn.brandfetch.io/id8LwMLHOF/w/400/h/400/theme/dark/icon.jpeg?c=1bxid64Mup7aczewSAYMX&t=1771715114286" style="width:36px;height:36px;border-radius:3px;object-fit:cover"></div></div></div>
-  <div style="text-align:center;font-size:18px;font-weight:900;color:var(--navy);margin-bottom:18px">${a.code}</div>
-  <div style="display:flex;flex-direction:column;gap:10px">
-    <button class="btn btn-navy" onclick="showView('view-queue')">Ver turno en vivo</button>
-    <button class="btn btn-danger" onclick="openCancel('${a.id}')">Cancelar / Reagendar</button>
+  <div style="display:flex;flex-direction:column;gap:10px;margin-top:4px">
+    <button class="btn btn-primary" onclick="showView('view-queue')"><i class="bi bi-hourglass-split"></i> Ver turno en vivo</button>
+    <button class="btn btn-danger" onclick="openCancel('${a.id}')"><i class="bi bi-x-circle"></i> Cancelar / Reagendar</button>
   </div>`;
   showView('view-detail');
 }
 
-// ── MODAL ──
+// ─── MODALS ───
 function closeModal(id){document.getElementById(id).classList.remove('open')}
 document.querySelectorAll('.moverlay').forEach(m=>m.addEventListener('click',e=>{if(e.target===m)m.classList.remove('open')}));
 
-// ── INIT ──
+// ─── INIT ───
 load();
-if(S.user){initHome();showView('view-home')}
+if(S.user){ initHome(); showView('view-home'); }
 </script>
 </body>
 </html>
