@@ -1092,7 +1092,7 @@ const SPECS = [
   {id:'gastro',icon:'bi-capsule-pill',     name:'Gastroenterología',   kw:['estomago','intestino','digestion','colitis','gastro','reflujo']},
   {id:'psiq',  icon:'bi-chat-heart',       name:'Psiquiatría',         kw:['mental','ansiedad','depresion','mente','psiq','estres']},
   {id:'urol',  icon:'bi-droplet-half',     name:'Urología',            kw:['rinon','urinario','vejiga','urol','prostata']},
-  {id:'dental',icon:'tooth-emoji',           name:'Odontología',         kw:['diente','muela','dental','boca','odonto','encía']},
+  {id:'dental',icon:'bi-bandaid',            name:'Odontología',         kw:['diente','muela','dental','boca','odonto','encía']},
 ];
 
 const CENTERS = [
@@ -1238,7 +1238,7 @@ function renderSpecs(q,animate){
   const f=q?SPECS.filter(s=>s.kw.some(k=>k.includes(q.toLowerCase()))||s.name.toLowerCase().includes(q.toLowerCase())):SPECS;
   document.getElementById('spec-grid').innerHTML=f.map((s,i)=>`
   <div class="spec-card${animate?' si':''} ${S.spec?.id===s.id?'sel':''}" onclick="selSpec('${s.id}')"${animate?` style="animation-delay:${i*32}ms"`:''}">
-    ${s.icon==='tooth-emoji' ? '<span class="spec-icon" aria-hidden="true">🦷</span>' : `<i class="bi ${s.icon} spec-icon" aria-hidden="true"></i>`}
+    <i class="bi ${s.icon} spec-icon" aria-hidden="true"></i>
     <div class="spec-name">${s.name}</div>
   </div>`).join('');
 }
