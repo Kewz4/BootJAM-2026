@@ -5,1547 +5,1115 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="theme-color" content="#002B5C">
 <link rel="icon" type="image/jpeg" href="https://cdn.brandfetch.io/id8LwMLHOF/w/400/h/400/theme/dark/icon.jpeg?c=1bxid64Mup7aczewSAYMX&t=1771715114286">
-<title>ISSS Citas — Sistema de Citas Médicas</title>
+<title>ISSS Citas — Citas Médicas en Línea</title>
 <style>
-  :root {
-    --primary: #002B5C;
-    --primary-dark: #001A3D;
-    --primary-mid: #003F85;
-    --orange: #E8400C;
-    --teal: #0077B6;
-    --green: #1A7A4A;
-    --red: #C0392B;
-    --yellow: #D97706;
-    --bg: #F4F7FB;
-    --white: #FFFFFF;
-    --text: #0D1B2A;
-    --text-muted: #4A5568;
-    --border: #D1DCE8;
-    --card: #FFFFFF;
-    --shadow: 0 2px 12px rgba(0,43,92,0.10);
-    --radius: 16px;
-    --radius-sm: 10px;
-  }
+:root {
+  --navy:      #002B5C;
+  --navy-deep: #001A3D;
+  --navy-mid:  #003F85;
+  --accent:    #D63B0A;
+  --green:     #1A6E40;
+  --red:       #B91C1C;
+  --yellow:    #B45309;
+  --bg:        #F2F5FA;
+  --white:     #FFFFFF;
+  --text:      #0D1B2A;
+  --muted:     #4A5568;
+  --border:    #CBD5E1;
+  --shadow-sm: 0 1px 3px rgba(0,43,92,.08);
+  --shadow:    0 4px 16px rgba(0,43,92,.10);
+  --r:         12px;
+  --r-sm:      8px;
+  --sidebar:   256px;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Segoe UI',system-ui,-apple-system,sans-serif;font-size:17px;color:var(--text);background:var(--bg);min-height:100vh;-webkit-font-smoothing:antialiased}
 
-  * { box-sizing: border-box; margin: 0; padding: 0; }
+/* ── SHELL ── */
+.shell{display:flex;min-height:100vh}
 
-  body {
-    font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
-    font-size: 18px;
-    color: var(--text);
-    background: var(--bg);
-    min-height: 100vh;
-    -webkit-font-smoothing: antialiased;
-  }
+/* ── SIDEBAR (desktop only) ── */
+.sidebar{
+  width:var(--sidebar);background:var(--navy);color:#fff;
+  flex-direction:column;position:fixed;left:0;top:0;bottom:0;
+  z-index:300;display:none;overflow-y:auto;
+}
+.sb-brand{padding:26px 20px 20px;border-bottom:1px solid rgba(255,255,255,.1)}
+.sb-brand img{height:34px;width:auto}
+.sb-user{padding:16px 20px;background:rgba(255,255,255,.06);border-bottom:1px solid rgba(255,255,255,.08)}
+.sb-user-name{font-size:15px;font-weight:700}
+.sb-user-dui{font-size:12px;opacity:.55;margin-top:3px}
+.sb-nav{padding:12px 10px;flex:1}
+.sb-item{
+  display:flex;align-items:center;gap:10px;
+  padding:12px 10px;border-radius:var(--r-sm);
+  cursor:pointer;border:none;background:transparent;
+  color:rgba(255,255,255,.65);font-size:15px;font-weight:600;
+  width:100%;text-align:left;transition:all .15s;font-family:inherit;
+}
+.sb-item:hover{background:rgba(255,255,255,.1);color:#fff}
+.sb-item.active{background:rgba(255,255,255,.15);color:#fff}
+.sb-item .ico{font-size:19px;width:24px;flex-shrink:0}
+.sb-cta{
+  margin:4px 10px 14px;background:var(--accent);color:#fff;
+  padding:13px;border-radius:var(--r-sm);border:none;cursor:pointer;
+  font-size:15px;font-weight:700;width:calc(100% - 20px);
+  display:flex;align-items:center;justify-content:center;gap:7px;
+  transition:background .15s;font-family:inherit;
+}
+.sb-cta:hover{background:#B33008}
+.sb-foot{padding:14px 20px;border-top:1px solid rgba(255,255,255,.1)}
+.sb-logout{background:none;border:none;color:rgba(255,255,255,.45);font-size:14px;cursor:pointer;display:flex;align-items:center;gap:7px;font-family:inherit}
+.sb-logout:hover{color:#fff}
 
-  /* ===== LAYOUT ===== */
-  .app { max-width: 480px; margin: 0 auto; min-height: 100vh; position: relative; background: var(--bg); }
+/* ── MAIN WRAP ── */
+.main-wrap{flex:1;display:flex;flex-direction:column;min-height:100vh}
 
-  @media (min-width: 768px) {
-    .app { max-width: 768px; background: var(--white); box-shadow: 0 0 40px rgba(0,0,0,0.08); }
-    body { background: #DDE5EF; }
-  }
+/* ── APP ── */
+.app{flex:1;display:flex;flex-direction:column;max-width:560px;margin:0 auto;width:100%;position:relative;background:var(--white)}
 
-  @media (min-width: 1100px) {
-    .app { max-width: 420px; }
-  }
+/* ── VIEWS ── */
+.view{display:none;flex-direction:column;flex:1;min-height:100vh}
+.view.active{display:flex}
 
-  /* ===== VIEWS ===== */
-  .view { display: none; min-height: 100vh; flex-direction: column; }
-  .view.active { display: flex; }
+/* ── TOPBAR ── */
+.topbar{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:0 16px;height:58px;
+  background:var(--white);border-bottom:2px solid var(--border);
+  position:sticky;top:0;z-index:100;
+}
+.topbar-left{display:flex;align-items:center;gap:12px}
+.tb-logo{height:26px;width:auto}
+.tb-sep{width:1px;height:22px;background:var(--border)}
+.tb-title{font-size:15px;font-weight:700;color:var(--muted)}
+.back-link{
+  display:inline-flex;align-items:center;gap:5px;
+  color:var(--navy);font-size:15px;font-weight:700;
+  background:none;border:none;cursor:pointer;padding:6px 0;
+  font-family:inherit;-webkit-tap-highlight-color:transparent;
+}
+.back-link:hover{color:var(--navy-mid)}
+.back-link .arr{font-size:18px;font-weight:400}
+.btn-ico{
+  width:36px;height:36px;border-radius:var(--r-sm);
+  border:1px solid var(--border);background:var(--white);cursor:pointer;
+  display:flex;align-items:center;justify-content:center;font-size:17px;color:var(--text);
+  transition:background .15s;
+}
+.btn-ico:hover{background:var(--bg)}
 
-  /* ===== TOP BAR ===== */
-  .topbar {
-    display: flex; align-items: center; justify-content: space-between;
-    padding: 14px 16px;
-    background: var(--primary);
-    border-bottom: none;
-    position: sticky; top: 0; z-index: 100;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.18);
-  }
-  .topbar-logo { display: flex; align-items: center; gap: 10px; }
-  .topbar-logo img { height: 30px; width: auto; object-fit: contain; }
-  .topbar-title { font-size: 17px; font-weight: 700; color: rgba(255,255,255,0.75); }
-  .btn-icon {
-    width: 44px; height: 44px; border-radius: 50%;
-    border: none; background: rgba(255,255,255,0.12); cursor: pointer;
-    display: flex; align-items: center; justify-content: center;
-    color: #FFFFFF; font-size: 20px;
-  }
-  .btn-icon:hover { background: rgba(255,255,255,0.22); }
+/* ── SCROLL ── */
+.scroll{flex:1;padding:20px;padding-bottom:88px}
 
-  /* ===== SCROLL CONTENT ===== */
-  .scroll-content { flex: 1; overflow-y: auto; padding: 20px; padding-bottom: 100px; }
+/* ── BOTTOM NAV ── */
+.bnav{
+  position:fixed;bottom:0;left:0;right:0;
+  background:var(--white);border-top:2px solid var(--border);
+  display:flex;z-index:200;box-shadow:0 -2px 10px rgba(0,0,0,.07);
+}
+.nav-btn{
+  flex:1;display:flex;flex-direction:column;align-items:center;
+  padding:9px 4px 7px;cursor:pointer;border:none;background:none;
+  color:var(--muted);font-size:11px;font-weight:600;transition:color .2s;
+  -webkit-tap-highlight-color:transparent;font-family:inherit;position:relative;
+}
+.nav-btn .ni{font-size:23px;margin-bottom:2px}
+.nav-btn.active{color:var(--navy)}
+.nav-btn:hover{color:var(--navy)}
+.notif-dot{position:absolute;top:7px;right:calc(50% - 14px);width:8px;height:8px;background:var(--accent);border-radius:50%;border:2px solid var(--white)}
 
-  /* ===== BOTTOM NAV ===== */
-  .bottom-nav {
-    position: fixed; bottom: 0; left: 50%; transform: translateX(-50%);
-    width: 100%; max-width: 480px;
-    background: var(--white);
-    border-top: 2px solid var(--border);
-    display: flex;
-    z-index: 200;
-    box-shadow: 0 -4px 20px rgba(0,0,0,0.08);
-  }
-  @media (min-width: 768px) { .bottom-nav { max-width: 768px; } }
-  @media (min-width: 1100px) { .bottom-nav { max-width: 420px; } }
+/* ── BUTTONS ── */
+.btn{
+  display:flex;align-items:center;justify-content:center;gap:9px;
+  padding:15px 22px;border-radius:var(--r);border:none;cursor:pointer;
+  font-size:17px;font-weight:700;width:100%;transition:all .15s;
+  -webkit-tap-highlight-color:transparent;font-family:inherit;
+}
+.btn-navy{background:var(--navy);color:#fff}
+.btn-navy:hover{background:var(--navy-deep)}
+.btn-navy:disabled{background:var(--border);color:var(--muted);cursor:not-allowed}
+.btn-cta{background:var(--accent);color:#fff}
+.btn-cta:hover{background:#B33008}
+.btn-ghost{background:var(--bg);color:var(--navy);border:2px solid var(--border)}
+.btn-ghost:hover{border-color:var(--navy);background:#EBF2FA}
+.btn-danger{background:#FEF2F2;color:var(--red);border:2px solid var(--red)}
+.btn-danger:hover{background:#FEE2E2}
+.btn-sm{padding:10px 16px;font-size:15px;border-radius:var(--r-sm);width:auto}
 
-  .nav-item {
-    flex: 1; display: flex; flex-direction: column; align-items: center;
-    padding: 10px 4px 8px;
-    cursor: pointer; border: none; background: none;
-    color: var(--text-muted); font-size: 11px; font-weight: 600;
-    transition: color 0.2s;
-    -webkit-tap-highlight-color: transparent;
-  }
-  .nav-item .nav-icon { font-size: 26px; margin-bottom: 3px; }
-  .nav-item.active { color: var(--primary); }
-  .nav-item:hover { color: var(--primary); }
+/* ── INPUTS ── */
+.fg{margin-bottom:18px}
+.fl{display:block;font-size:13px;font-weight:700;color:var(--muted);margin-bottom:6px;text-transform:uppercase;letter-spacing:.5px}
+.fi{
+  width:100%;padding:14px 16px;border:2px solid var(--border);border-radius:var(--r);
+  font-size:18px;font-family:inherit;color:var(--text);background:#fff;transition:border-color .2s;outline:none;
+}
+.fi:focus{border-color:var(--navy)}
+.fi::placeholder{color:#B0B8C8}
 
-  /* ===== BUTTONS ===== */
-  .btn {
-    display: flex; align-items: center; justify-content: center; gap: 10px;
-    padding: 18px 24px;
-    border-radius: var(--radius);
-    border: none; cursor: pointer;
-    font-size: 18px; font-weight: 700;
-    width: 100%; transition: all 0.15s;
-    -webkit-tap-highlight-color: transparent;
-  }
-  .btn-primary { background: var(--primary); color: var(--white); }
-  .btn-primary:hover { background: var(--primary-dark); transform: translateY(-1px); }
-  .btn-primary:active { transform: translateY(0); }
-  .btn-secondary { background: var(--bg); color: var(--primary); border: 2px solid var(--primary); }
-  .btn-secondary:hover { background: #E0EAF4; }
-  .btn-danger { background: #FFF0F0; color: var(--red); border: 2px solid var(--red); }
-  .btn-orange { background: var(--orange); color: var(--white); }
-  .btn-sm { padding: 12px 18px; font-size: 16px; border-radius: var(--radius-sm); width: auto; }
+/* ── CARDS ── */
+.card{background:#fff;border-radius:var(--r);padding:18px;margin-bottom:12px;box-shadow:var(--shadow-sm);border:1px solid var(--border)}
+.card-l{border-left:4px solid var(--navy)}
+.card-l-green{border-left:4px solid var(--green)}
+.card-l-red{border-left:4px solid var(--red)}
 
-  /* ===== INPUTS ===== */
-  .input-group { margin-bottom: 20px; }
-  .input-label { display: block; font-size: 16px; font-weight: 700; color: var(--text-muted); margin-bottom: 8px; text-transform: uppercase; letter-spacing: 0.5px; }
-  .input-field {
-    width: 100%; padding: 18px 20px;
-    border: 2px solid var(--border); border-radius: var(--radius);
-    font-size: 20px; font-family: inherit; color: var(--text);
-    background: var(--white); transition: border-color 0.2s;
-    outline: none;
-  }
-  .input-field:focus { border-color: var(--primary); }
-  .input-field::placeholder { color: #B0B5CC; }
+/* ── SECTION ── */
+.st{font-size:19px;font-weight:800;color:var(--text);margin-bottom:12px}
+.ss{font-size:15px;color:var(--muted);margin-bottom:16px;line-height:1.5}
+.divider{height:1px;background:var(--border);margin:12px 0}
 
-  /* ===== CARDS ===== */
-  .card {
-    background: var(--white); border-radius: var(--radius);
-    padding: 20px; margin-bottom: 16px;
-    box-shadow: var(--shadow); border: 1px solid var(--border);
-  }
-  .card-accent-top { border-top: 4px solid var(--primary); }
-  .card-accent-orange { border-top: 4px solid var(--orange); }
-  .card-accent-teal { border-top: 4px solid var(--teal); }
+/* ── BADGE ── */
+.badge{display:inline-flex;align-items:center;gap:4px;padding:3px 10px;border-radius:100px;font-size:13px;font-weight:700}
+.b-navy{background:#DDE8F4;color:var(--navy)}
+.b-green{background:#DCFCE7;color:var(--green)}
+.b-red{background:#FEE2E2;color:var(--red)}
+.b-orange{background:#FFEDD5;color:var(--accent)}
+.b-yellow{background:#FEF9C3;color:var(--yellow)}
 
-  /* ===== SECTION TITLE ===== */
-  .section-title { font-size: 22px; font-weight: 800; color: var(--text); margin-bottom: 16px; }
-  .section-sub { font-size: 16px; color: var(--text-muted); margin-bottom: 20px; }
+/* ── STEPS ── */
+.steps{display:flex;align-items:center;margin-bottom:22px}
+.step-dot{width:30px;height:30px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:800;background:var(--border);color:var(--muted);flex-shrink:0;transition:all .2s}
+.step-dot.on{background:var(--navy);color:#fff}
+.step-dot.ok{background:var(--green);color:#fff}
+.step-line{flex:1;height:2px;background:var(--border);margin:0 3px}
+.step-line.ok{background:var(--green)}
 
-  /* ===== BADGE ===== */
-  .badge {
-    display: inline-flex; align-items: center; gap: 5px;
-    padding: 4px 12px; border-radius: 20px;
-    font-size: 14px; font-weight: 700;
-  }
-  .badge-primary { background: #DDE8F4; color: var(--primary); }
-  .badge-orange { background: #FFF0E8; color: var(--orange); }
-  .badge-green { background: #E8F8EE; color: var(--green); }
-  .badge-red { background: #FFF0F0; color: var(--red); }
-  .badge-teal { background: #E0F7F5; color: var(--teal); }
-  .badge-yellow { background: #FFFBEE; color: #D97706; }
+/* ── SPECIALTY ── */
+.spec-grid{display:grid;grid-template-columns:1fr 1fr;gap:9px}
+.spec-item{
+  background:#fff;border:2px solid var(--border);border-radius:var(--r);
+  padding:14px 10px;cursor:pointer;text-align:center;transition:all .15s;
+  -webkit-tap-highlight-color:transparent;
+}
+.spec-item:hover{border-color:var(--navy);box-shadow:0 0 0 3px rgba(0,43,92,.07)}
+.spec-item.sel{border-color:var(--navy);background:#EBF2FA}
+.spec-icon{font-size:30px;margin-bottom:5px;display:block}
+.spec-name{font-size:13px;font-weight:700;color:var(--text)}
 
-  /* ===== DIVIDER ===== */
-  .divider { height: 1px; background: var(--border); margin: 16px 0; }
+/* ── CALENDAR ── */
+.cal-nav{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px}
+.cal-nav-btn{background:none;border:1px solid var(--border);border-radius:var(--r-sm);padding:6px 14px;cursor:pointer;font-size:14px;font-weight:700;color:var(--navy);transition:background .15s;font-family:inherit}
+.cal-nav-btn:hover{background:var(--bg)}
+.cal-month{font-size:17px;font-weight:800}
+.cal-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:3px}
+.cal-dn{text-align:center;font-size:12px;font-weight:700;color:var(--muted);padding:5px 0}
+.cal-d{aspect-ratio:1;display:flex;align-items:center;justify-content:center;border-radius:50%;font-size:14px;font-weight:600;cursor:pointer;transition:all .15s;position:relative;-webkit-tap-highlight-color:transparent}
+.cal-d.empty,.cal-d.past{pointer-events:none}
+.cal-d.past{color:#C5CDD8}
+.cal-d.avail:hover{background:#DDE8F4;color:var(--navy)}
+.cal-d.sel{background:var(--navy);color:#fff}
+.cal-d.today{border:2px solid var(--navy);color:var(--navy);font-weight:900}
+.cal-d.sel.today{border-color:transparent}
+.cal-d.has-slots::after{content:'';position:absolute;bottom:3px;left:50%;transform:translateX(-50%);width:4px;height:4px;background:var(--green);border-radius:50%}
 
-  /* ===== PROGRESS STEPS ===== */
-  .steps {
-    display: flex; align-items: center; justify-content: center;
-    gap: 0; margin-bottom: 28px; padding: 0 10px;
-  }
-  .step-dot {
-    width: 36px; height: 36px; border-radius: 50%;
-    display: flex; align-items: center; justify-content: center;
-    font-size: 15px; font-weight: 800;
-    background: var(--border); color: var(--text-muted);
-    flex-shrink: 0; transition: all 0.3s;
-  }
-  .step-dot.active { background: var(--primary); color: var(--white); }
-  .step-dot.done { background: var(--green); color: var(--white); }
-  .step-line { flex: 1; height: 3px; background: var(--border); }
-  .step-line.done { background: var(--green); }
+/* ── TIME SLOTS ── */
+.tslots{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.tslot{padding:13px 6px;border-radius:var(--r-sm);border:2px solid var(--border);text-align:center;cursor:pointer;font-size:15px;font-weight:700;transition:all .15s;background:#fff;font-family:inherit}
+.tslot:hover{border-color:var(--navy);background:#EBF2FA;color:var(--navy)}
+.tslot.sel{border-color:var(--navy);background:var(--navy);color:#fff}
+.tslot.taken{background:var(--bg);color:var(--muted);cursor:not-allowed;border-color:transparent;font-size:13px}
 
-  /* ===== SPECIALTY GRID ===== */
-  .specialty-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
-  .specialty-item {
-    background: var(--white); border: 2px solid var(--border);
-    border-radius: var(--radius); padding: 18px 12px;
-    cursor: pointer; text-align: center;
-    transition: all 0.15s; -webkit-tap-highlight-color: transparent;
-  }
-  .specialty-item:hover, .specialty-item.selected {
-    border-color: var(--primary); background: #E8F0F9;
-  }
-  .specialty-icon { font-size: 36px; margin-bottom: 8px; display: block; }
-  .specialty-name { font-size: 15px; font-weight: 700; color: var(--text); }
+/* ── QR ── */
+.qr-wrap{display:flex;justify-content:center;padding:18px 0}
+.qr-box{width:164px;height:164px;background:repeating-linear-gradient(0deg,#000 0,#000 4px,#fff 4px,#fff 8px),repeating-linear-gradient(90deg,#000 0,#000 4px,#fff 4px,#fff 8px);background-blend-mode:multiply;border-radius:8px;display:flex;align-items:center;justify-content:center;border:4px solid var(--navy)}
+.qr-inner{width:42px;height:42px;background:#fff;border-radius:4px;display:flex;align-items:center;justify-content:center}
 
-  /* ===== CALENDAR ===== */
-  .calendar-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px; }
-  .calendar-month { font-size: 20px; font-weight: 800; }
-  .calendar-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 6px; }
-  .cal-day-name { text-align: center; font-size: 13px; font-weight: 700; color: var(--text-muted); padding: 4px 0; }
-  .cal-day {
-    aspect-ratio: 1; display: flex; align-items: center; justify-content: center;
-    border-radius: 50%; font-size: 16px; font-weight: 600; cursor: pointer;
-    transition: all 0.15s; -webkit-tap-highlight-color: transparent;
-  }
-  .cal-day.empty { pointer-events: none; }
-  .cal-day.past { color: #C0C4D4; pointer-events: none; }
-  .cal-day.available { color: var(--text); }
-  .cal-day.available:hover { background: #DDE8F4; color: var(--primary); }
-  .cal-day.selected { background: var(--primary); color: var(--white); }
-  .cal-day.today { border: 2px solid var(--primary); color: var(--primary); font-weight: 800; }
-  .cal-day.has-slots::after { content: '•'; display: block; font-size: 8px; color: var(--green); position: absolute; bottom: 2px; }
-  .cal-day { position: relative; }
+/* ── QUEUE ── */
+.q-num{font-size:80px;font-weight:900;color:var(--navy);text-align:center;line-height:1}
+.q-label{font-size:16px;color:var(--muted);text-align:center;margin:4px 0 14px}
+.prog-wrap{background:var(--border);border-radius:100px;height:10px;overflow:hidden;margin:6px 0}
+.prog-fill{height:100%;background:var(--navy);border-radius:100px;transition:width 1s}
 
-  /* ===== TIME SLOTS ===== */
-  .time-slots { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
-  .time-slot {
-    padding: 14px 8px; border-radius: var(--radius-sm);
-    border: 2px solid var(--border); text-align: center;
-    cursor: pointer; font-size: 16px; font-weight: 700;
-    transition: all 0.15s; background: var(--white);
-    -webkit-tap-highlight-color: transparent;
-  }
-  .time-slot:hover, .time-slot.selected { border-color: var(--primary); background: #DDE8F4; color: var(--primary); }
-  .time-slot.taken { background: var(--border); color: var(--text-muted); cursor: not-allowed; border-color: transparent; }
+/* ── APPT CARD ── */
+.ac{background:#fff;border-radius:var(--r);border:1px solid var(--border);overflow:hidden;margin-bottom:12px;box-shadow:var(--shadow-sm)}
+.ac-head{background:var(--navy);color:#fff;padding:13px 16px}
+.ac-spec{font-size:17px;font-weight:800}
+.ac-sub{font-size:12px;opacity:.75;margin-top:2px}
+.ac-body{padding:13px 16px}
+.ac-row{display:flex;align-items:center;gap:9px;margin-bottom:7px;font-size:15px}
+.ac-row .ic{font-size:18px;width:22px;flex-shrink:0}
 
-  /* ===== QR CODE ===== */
-  .qr-container {
-    display: flex; align-items: center; justify-content: center;
-    padding: 24px; background: var(--white); border-radius: var(--radius);
-    border: 2px solid var(--border); margin: 20px 0;
-  }
-  .qr-box {
-    width: 180px; height: 180px;
-    background: repeating-linear-gradient(0deg, #000 0px, #000 4px, #fff 4px, #fff 8px),
-                repeating-linear-gradient(90deg, #000 0px, #000 4px, #fff 4px, #fff 8px);
-    background-blend-mode: multiply;
-    border-radius: 8px; position: relative;
-    display: flex; align-items: center; justify-content: center;
-  }
-  .qr-inner { width: 50px; height: 50px; background: white; display: flex; align-items: center; justify-content: center; border-radius: 6px; font-size: 24px; }
+/* ── ALERTS ── */
+.al{border-radius:var(--r-sm);padding:13px 15px;display:flex;align-items:flex-start;gap:11px;margin-bottom:12px;font-size:16px}
+.al-ic{font-size:21px;flex-shrink:0;margin-top:1px}
+.al-ok{background:#F0FDF4;border-left:4px solid var(--green)}
+.al-err{background:#FEF2F2;border-left:4px solid var(--red)}
+.al-info{background:#EBF2FA;border-left:4px solid var(--navy)}
+.al-warn{background:#FFFBEB;border-left:4px solid var(--yellow)}
 
-  /* ===== QUEUE BAR ===== */
-  .queue-number { font-size: 72px; font-weight: 900; color: var(--primary); text-align: center; line-height: 1; }
-  .queue-label { font-size: 18px; color: var(--text-muted); text-align: center; margin-bottom: 20px; }
-  .progress-bar-wrap { background: var(--border); border-radius: 100px; height: 16px; overflow: hidden; margin: 8px 0; }
-  .progress-bar-fill { height: 100%; background: var(--primary); border-radius: 100px; transition: width 1s ease; }
+/* ── LOGIN ── */
+.login-shell{display:flex;flex-direction:column;min-height:100vh}
+.login-left{background:var(--navy);padding:40px 28px;color:#fff;text-align:center}
+.login-logo{margin-bottom:20px}
+.login-logo img{height:46px}
+.login-title{font-size:22px;font-weight:800;margin-bottom:8px}
+.login-sub{font-size:16px;color:rgba(255,255,255,.6);line-height:1.6}
+.login-stats{display:flex;gap:10px;margin-top:24px;flex-wrap:wrap;justify-content:center}
+.ls{background:rgba(255,255,255,.1);border-radius:var(--r-sm);padding:10px 14px;text-align:center;flex:1;min-width:80px}
+.ls-num{font-size:22px;font-weight:900;display:block}
+.ls-lbl{font-size:11px;opacity:.65;margin-top:2px;display:block;line-height:1.3}
+.login-right{padding:32px 28px;background:#fff;flex:1}
+.login-help{font-size:15px;color:var(--muted);text-align:center;margin-top:16px;line-height:1.5}
+.login-help a{color:var(--navy);font-weight:700;text-decoration:none}
 
-  /* ===== APPOINTMENT CARD ===== */
-  .appt-card {
-    background: var(--white); border-radius: var(--radius);
-    border: 1px solid var(--border); overflow: hidden;
-    margin-bottom: 16px; box-shadow: var(--shadow);
-  }
-  .appt-header { background: var(--primary); color: var(--white); padding: 14px 20px; }
-  .appt-spec { font-size: 20px; font-weight: 800; }
-  .appt-body { padding: 16px 20px; }
-  .appt-row { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; font-size: 17px; }
-  .appt-row .icon { font-size: 22px; width: 28px; flex-shrink: 0; }
+/* ── HOME ── */
+.home-top{background:var(--navy);padding:16px 20px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100}
+.home-top img{height:30px}
+.home-top-btn{background:rgba(255,255,255,.13);border:none;border-radius:var(--r-sm);padding:8px 12px;color:#fff;font-size:14px;font-weight:700;cursor:pointer;display:flex;align-items:center;gap:6px;font-family:inherit}
+.home-top-btn:hover{background:rgba(255,255,255,.22)}
+.home-welcome{background:var(--navy);padding:6px 20px 24px;color:#fff}
+.home-greet{font-size:14px;opacity:.65}
+.home-name{font-size:22px;font-weight:900;margin-top:3px}
+.home-cta-btn{
+  background:#fff;color:var(--navy);border:none;border-radius:var(--r);
+  padding:14px 20px;font-size:16px;font-weight:800;width:100%;
+  display:flex;align-items:center;justify-content:center;gap:8px;
+  margin-top:16px;cursor:pointer;transition:background .15s;font-family:inherit;
+}
+.home-cta-btn:hover{background:#E8F0FA}
 
-  /* ===== ALERT BANNER ===== */
-  .alert {
-    border-radius: var(--radius-sm); padding: 14px 18px;
-    display: flex; align-items: flex-start; gap: 12px; margin-bottom: 16px;
-    font-size: 17px;
-  }
-  .alert-icon { font-size: 24px; flex-shrink: 0; }
-  .alert-warning { background: #FFFBEE; border-left: 4px solid var(--yellow); }
-  .alert-success { background: #E8F8EE; border-left: 4px solid var(--green); }
-  .alert-danger { background: #FFF0F0; border-left: 4px solid var(--red); }
-  .alert-info { background: #E0EBF5; border-left: 4px solid var(--primary); }
+/* ── QUICK ACTIONS ── */
+.qa-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:18px}
+.qa{background:#fff;border-radius:var(--r);padding:15px 12px;text-align:center;cursor:pointer;border:1px solid var(--border);box-shadow:var(--shadow-sm);transition:all .15s;-webkit-tap-highlight-color:transparent}
+.qa:hover{border-color:var(--navy);transform:translateY(-1px);box-shadow:var(--shadow)}
+.qa-icon{font-size:26px;margin-bottom:5px}
+.qa-label{font-size:13px;font-weight:700;color:var(--text)}
 
-  /* ===== HERO LOGIN ===== */
-  .login-hero {
-    background: linear-gradient(160deg, #001A3D 0%, #003F85 100%);
-    padding: 48px 24px 40px;
-    color: white; text-align: center;
-  }
-  .login-hero-logo { margin-bottom: 24px; display: flex; align-items: center; justify-content: center; }
-  .login-hero-logo img { height: 52px; width: auto; object-fit: contain; }
-  .login-hero-title { font-size: 22px; font-weight: 800; margin-bottom: 10px; color: #FFFFFF; }
-  .login-hero-sub { font-size: 17px; color: #A8C4E0; line-height: 1.6; }
-  .login-form { padding: 32px 24px; }
-  .login-help { font-size: 16px; color: var(--text-muted); text-align: center; margin-top: 16px; line-height: 1.5; }
+/* ── HIST ── */
+.hi{background:#fff;border-radius:var(--r-sm);padding:13px 15px;margin-bottom:9px;border:1px solid var(--border);box-shadow:var(--shadow-sm);display:flex;align-items:center;gap:11px;cursor:pointer;transition:border-color .15s}
+.hi:hover{border-color:var(--navy)}
+.hi-icon{font-size:26px;flex-shrink:0}
+.hi-spec{font-size:15px;font-weight:800}
+.hi-date{font-size:13px;color:var(--muted);margin-top:2px}
+.hi-arr{margin-left:auto;color:var(--muted);font-size:16px}
 
-  /* ===== HOME HEADER ===== */
-  .home-header {
-    background: linear-gradient(160deg, #001A3D 0%, #003F85 100%);
-    padding: 24px 20px 32px; color: white;
-  }
-  .home-greeting { font-size: 16px; opacity: 0.85; margin-bottom: 4px; }
-  .home-name { font-size: 26px; font-weight: 900; margin-bottom: 16px; }
-  .home-cta-btn {
-    background: white; color: var(--primary);
-    padding: 16px 28px; border-radius: var(--radius);
-    display: inline-flex; align-items: center; gap: 10px;
-    font-size: 18px; font-weight: 800;
-    cursor: pointer; border: none; width: 100%;
-    justify-content: center; -webkit-tap-highlight-color: transparent;
-  }
-  .home-cta-btn:hover { background: #E0EAF4; }
+/* ── RELATIVE ── */
+.ri{background:#fff;border-radius:var(--r);padding:14px 16px;margin-bottom:9px;border:1px solid var(--border);box-shadow:var(--shadow-sm);display:flex;align-items:center;gap:12px;cursor:pointer;transition:border-color .15s}
+.ri:hover{border-color:var(--navy)}
+.ri-av{width:46px;height:46px;border-radius:50%;background:var(--navy);color:#fff;display:flex;align-items:center;justify-content:center;font-size:18px;font-weight:800;flex-shrink:0}
+.ri-name{font-size:15px;font-weight:800}
+.ri-sub{font-size:13px;color:var(--muted);margin-top:2px}
+.ri-arr{margin-left:auto;color:var(--muted);font-size:16px}
 
-  /* ===== QUICK ACTIONS ===== */
-  .quick-actions { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 24px; }
-  .quick-action {
-    background: var(--white); border-radius: var(--radius);
-    padding: 18px 14px; text-align: center; cursor: pointer;
-    border: 1px solid var(--border); box-shadow: var(--shadow);
-    transition: all 0.15s; -webkit-tap-highlight-color: transparent;
-  }
-  .quick-action:hover { border-color: var(--primary); transform: translateY(-2px); }
-  .quick-action-icon { font-size: 32px; margin-bottom: 8px; }
-  .quick-action-label { font-size: 15px; font-weight: 700; color: var(--text); }
+/* ── MODAL ── */
+.moverlay{display:none;position:fixed;inset:0;background:rgba(0,27,61,.55);z-index:500;align-items:flex-end;justify-content:center}
+.moverlay.open{display:flex}
+.msheet{background:#fff;border-radius:20px 20px 0 0;padding:20px 22px 36px;width:100%;max-width:520px;max-height:92vh;overflow-y:auto;animation:up .25s ease}
+@keyframes up{from{transform:translateY(100%);opacity:0}to{transform:translateY(0);opacity:1}}
+.mhandle{width:38px;height:4px;background:var(--border);border-radius:100px;margin:0 auto 16px}
 
-  /* ===== HISTORY LIST ===== */
-  .hist-item {
-    background: var(--white); border-radius: var(--radius-sm);
-    padding: 16px; margin-bottom: 12px;
-    border: 1px solid var(--border); box-shadow: var(--shadow);
-    display: flex; align-items: center; gap: 14px; cursor: pointer;
-  }
-  .hist-icon { font-size: 32px; flex-shrink: 0; }
-  .hist-spec { font-size: 17px; font-weight: 800; }
-  .hist-date { font-size: 15px; color: var(--text-muted); }
-  .hist-arrow { margin-left: auto; color: var(--text-muted); font-size: 20px; }
+/* ── EMPTY ── */
+.empty{text-align:center;padding:40px 16px}
+.empty-icon{font-size:52px;margin-bottom:12px}
+.empty-t{font-size:19px;font-weight:800;margin-bottom:8px}
+.empty-s{font-size:15px;color:var(--muted);margin-bottom:18px;line-height:1.5}
 
-  /* ===== RELATIVE ITEM ===== */
-  .relative-item {
-    background: var(--white); border-radius: var(--radius);
-    padding: 18px 20px; margin-bottom: 12px;
-    border: 1px solid var(--border); box-shadow: var(--shadow);
-    display: flex; align-items: center; gap: 14px; cursor: pointer;
-  }
-  .relative-avatar {
-    width: 52px; height: 52px; border-radius: 50%;
-    background: linear-gradient(135deg, var(--teal), var(--green));
-    display: flex; align-items: center; justify-content: center;
-    font-size: 24px; color: white; flex-shrink: 0;
-  }
-  .relative-name { font-size: 18px; font-weight: 800; }
-  .relative-rel { font-size: 15px; color: var(--text-muted); }
-  .relative-arrow { margin-left: auto; color: var(--text-muted); font-size: 22px; }
+/* ── SUCCESS ── */
+.success-c{width:84px;height:84px;border-radius:50%;background:var(--green);display:flex;align-items:center;justify-content:center;margin:0 auto 14px;font-size:42px;color:#fff}
 
-  /* ===== MODAL ===== */
-  .modal-overlay {
-    display: none; position: fixed; inset: 0;
-    background: rgba(0,0,0,0.6); z-index: 500;
-    align-items: flex-end; justify-content: center;
-  }
-  .modal-overlay.open { display: flex; }
-  .modal-sheet {
-    background: var(--white); border-radius: 24px 24px 0 0;
-    padding: 24px; width: 100%; max-width: 480px;
-    max-height: 90vh; overflow-y: auto;
-    animation: slideUp 0.3s ease;
-  }
-  @media (min-width: 768px) { .modal-sheet { max-width: 768px; } }
-  @keyframes slideUp { from { transform: translateY(100%); } to { transform: translateY(0); } }
-  .modal-handle { width: 48px; height: 4px; background: var(--border); border-radius: 100px; margin: 0 auto 20px; }
+/* ── ACCESSIBILITY ── */
+*:focus-visible{outline:3px solid var(--navy);outline-offset:2px}
+@media(prefers-reduced-motion:reduce){*{animation-duration:.01ms!important;transition-duration:.01ms!important}}
 
-  /* ===== NOTIFICATION DOT ===== */
-  .notif-dot {
-    position: absolute; top: 8px; right: 8px;
-    width: 10px; height: 10px; background: var(--orange); border-radius: 50%;
-  }
+/* ════════════ RESPONSIVE ════════════ */
 
-  /* ===== LOADING ===== */
-  .spinner {
-    width: 48px; height: 48px; border: 5px solid var(--border);
-    border-top-color: var(--primary); border-radius: 50%;
-    animation: spin 0.8s linear infinite; margin: 40px auto;
-  }
-  @keyframes spin { to { transform: rotate(360deg); } }
+/* TABLET 768+ */
+@media(min-width:768px){
+  body{background:#E4EBF5}
+  .app{max-width:680px;box-shadow:0 0 32px rgba(0,0,0,.10)}
+  .spec-grid{grid-template-columns:1fr 1fr 1fr}
+  .tslots{grid-template-columns:repeat(4,1fr)}
+  .qa-grid{grid-template-columns:repeat(4,1fr)}
+  /* Login split */
+  .login-shell{flex-direction:row;min-height:100vh}
+  .login-left{flex:0 0 340px;display:flex;flex-direction:column;justify-content:center;min-height:100vh;padding:48px 36px}
+  .login-right{flex:1;display:flex;flex-direction:column;justify-content:center;padding:48px 40px;min-height:100vh}
+  .login-logo img{height:56px}
+  .login-title{font-size:28px}
+  .login-sub{font-size:17px}
+  .scroll{padding-bottom:88px}
+}
 
-  /* ===== EMPTY STATE ===== */
-  .empty-state { text-align: center; padding: 48px 20px; }
-  .empty-icon { font-size: 64px; margin-bottom: 16px; }
-  .empty-title { font-size: 22px; font-weight: 800; margin-bottom: 8px; }
-  .empty-sub { font-size: 17px; color: var(--text-muted); margin-bottom: 24px; line-height: 1.5; }
-
-  /* ===== SUCCESS CHECK ===== */
-  .success-circle {
-    width: 100px; height: 100px; border-radius: 50%;
-    background: var(--green); display: flex; align-items: center;
-    justify-content: center; margin: 0 auto 20px; font-size: 52px; color: white;
-    box-shadow: 0 8px 24px rgba(39,174,96,0.35);
-  }
-
-  /* Accessibility */
-  *:focus-visible { outline: 3px solid var(--primary); outline-offset: 3px; }
-  @media (prefers-reduced-motion: reduce) { * { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; } }
+/* DESKTOP 1024+ */
+@media(min-width:1024px){
+  body{background:#D8E3F0}
+  .sidebar{display:flex}
+  .main-wrap{margin-left:var(--sidebar)}
+  .app{max-width:none;width:100%;box-shadow:none;border-right:1px solid var(--border)}
+  .bnav{display:none!important}
+  .scroll{padding-bottom:40px;max-width:800px}
+  /* Login: wider left panel */
+  .login-left{flex:0 0 420px;padding:60px 48px}
+  .login-right{padding:60px 52px;max-width:560px}
+  /* Topbar stays white */
+  .topbar{border-bottom:1px solid var(--border)}
+  /* Home top: hide on desktop (sidebar handles nav) */
+  .home-top{display:none}
+  .home-welcome{padding:28px 28px 28px;border-bottom:1px solid rgba(255,255,255,.1)}
+  .spec-grid{grid-template-columns:repeat(4,1fr)}
+  .tslots{grid-template-columns:repeat(5,1fr)}
+  .qa-grid{grid-template-columns:repeat(4,1fr)}
+  /* Modal: centered */
+  .moverlay{align-items:center}
+  .msheet{border-radius:16px;max-width:480px;margin:auto}
+  /* Scroll wider area */
+  .app .scroll{padding:28px 32px 40px;max-width:none}
+}
 </style>
 </head>
 <body>
 
+<div class="shell">
+
+<!-- ═══════════════ SIDEBAR ═══════════════ -->
+<aside class="sidebar" id="sidebar">
+  <div class="sb-brand">
+    <img src="https://cdn.brandfetch.io/id8LwMLHOF/theme/dark/logo.svg?c=1bxid64Mup7aczewSAYMX&t=1771715114189" alt="ISSS" onerror="this.outerHTML='<span style=\'font-size:20px;font-weight:900;color:#fff\'>ISSS</span>'">
+  </div>
+  <div class="sb-user" id="sb-user">
+    <div class="sb-user-name" id="sb-name">—</div>
+    <div class="sb-user-dui" id="sb-dui">—</div>
+  </div>
+  <div class="sb-nav">
+    <button class="sb-item active" id="sbi-home" onclick="showView('view-home');setSbActive('sbi-home')"><span class="ico">🏠</span>Inicio</button>
+    <button class="sb-item" id="sbi-appts" onclick="showView('view-appointments');setSbActive('sbi-appts')"><span class="ico">📋</span>Mis Citas</button>
+    <button class="sb-item" id="sbi-queue" onclick="showView('view-queue');setSbActive('sbi-queue')"><span class="ico">🔢</span>Turno en Vivo</button>
+    <button class="sb-item" id="sbi-hist" onclick="showView('view-history');setSbActive('sbi-hist')"><span class="ico">🗂️</span>Historial</button>
+    <button class="sb-item" id="sbi-rel" onclick="showView('view-relatives');setSbActive('sbi-rel')"><span class="ico">👨‍👩‍👧</span>Familiares</button>
+  </div>
+  <button class="sb-cta" onclick="goStep1()">📅 Nueva cita</button>
+  <div class="sb-foot">
+    <button class="sb-logout" onclick="doLogout()">← Cerrar sesión</button>
+  </div>
+</aside>
+
+<!-- ═══════════════ MAIN ═══════════════ -->
+<div class="main-wrap">
 <div class="app" id="app">
 
-  <!-- ============================= VIEW: LOGIN ============================= -->
-  <div class="view active" id="view-login">
-    <div class="login-hero">
-      <div class="login-hero-logo">
-        <img src="https://cdn.brandfetch.io/id8LwMLHOF/theme/dark/logo.svg?c=1bxid64Mup7aczewSAYMX&t=1771715114189" alt="ISSS" onerror="this.outerHTML='<span style=\'font-size:22px;font-weight:900;letter-spacing:1px;color:#fff\'>ISSS</span>'">
+<!-- ═══ VIEW: LOGIN ═══ -->
+<div class="view active" id="view-login">
+  <div class="login-shell">
+    <div class="login-left">
+      <div class="login-logo">
+        <img src="https://cdn.brandfetch.io/id8LwMLHOF/theme/dark/logo.svg?c=1bxid64Mup7aczewSAYMX&t=1771715114189" alt="ISSS" onerror="this.outerHTML='<span style=\'font-size:24px;font-weight:900;color:#fff\'>ISSS</span>'">
       </div>
-      <div class="login-hero-title">Citas Médicas en Línea</div>
-      <div class="login-hero-sub">Reserve su cita desde casa.<br>Sin filas. Sin madrugar.</div>
-    </div>
-    <div class="login-form">
-      <div class="input-group">
-        <label class="input-label" for="dui-input">Número de DUI</label>
-        <input class="input-field" id="dui-input" type="text" placeholder="00000000-0" maxlength="10" inputmode="numeric" autocomplete="off">
-      </div>
-      <div id="login-error" style="color:var(--red);font-size:16px;margin-bottom:14px;display:none;">
-        ⚠️ Por favor ingrese un DUI válido (8 dígitos + guion + 1 dígito)
-      </div>
-      <button class="btn btn-primary" onclick="doLogin()">
-        <span>🔐</span> Ingresar
-      </button>
-      <div class="login-help">
-        <strong>¿No recuerda su DUI?</strong><br>
-        Llame al ISSS: <a href="tel:132" style="color:var(--primary-mid);font-weight:700;text-decoration:none;">132</a>
+      <div class="login-title">Citas Médicas en Línea</div>
+      <div class="login-sub">Reserve su cita desde casa.<br>Sin filas. Sin madrugar.</div>
+      <div class="login-stats">
+        <div class="ls"><span class="ls-num">4M+</span><span class="ls-lbl">cotizantes activos</span></div>
+        <div class="ls"><span class="ls-num">0</span><span class="ls-lbl">apps oficiales antes</span></div>
+        <div class="ls"><span class="ls-num">2.5h</span><span class="ls-lbl">de fila evitadas</span></div>
       </div>
     </div>
-  </div>
-
-  <!-- ============================= VIEW: HOME ============================= -->
-  <div class="view" id="view-home">
-    <div class="home-header">
-      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:18px">
-        <img src="https://cdn.brandfetch.io/id8LwMLHOF/theme/dark/logo.svg?c=1bxid64Mup7aczewSAYMX&t=1771715114189" alt="ISSS" style="height:34px;width:auto;object-fit:contain" onerror="this.outerHTML='<span style=\'font-size:18px;font-weight:900;color:#fff;letter-spacing:1px\'>ISSS</span>'">
-        <button class="btn-icon" onclick="showView('view-relatives')" title="Familiares" style="background:rgba(255,255,255,0.15);color:white;font-size:22px">👨‍👩‍👧</button>
+    <div class="login-right">
+      <div class="st" style="margin-bottom:6px">Ingrese su DUI</div>
+      <div class="ss">No necesita contraseña. Solo su número de identificación.</div>
+      <div class="fg">
+        <label class="fl" for="dui-in">Número de DUI</label>
+        <input class="fi" id="dui-in" type="text" placeholder="00000000-0" maxlength="10" inputmode="numeric" autocomplete="off">
       </div>
-      <div class="home-greeting">Bienvenido/a,</div>
-      <div class="home-name" id="home-name">Cargando...</div>
-      <button class="home-cta-btn" onclick="goStep1()">
-        <span>📅</span> Pedir nueva cita
-      </button>
-    </div>
-    <div class="scroll-content">
-
-      <!-- Alerta médico cancela (SHOULD HAVE) -->
-      <div id="alert-cancel" class="alert alert-danger" style="display:none">
-        <span class="alert-icon">🚨</span>
-        <div>
-          <strong>El médico canceló su cita</strong><br>
-          Cita de <span id="alert-spec"></span> del <span id="alert-date"></span>. Reagende sin costo.
-          <div style="margin-top:10px;display:flex;gap:10px;flex-wrap:wrap">
-            <button class="btn btn-primary btn-sm" onclick="reagendarAlerta()">Reagendar ahora</button>
-            <button class="btn btn-secondary btn-sm" onclick="cerrarAlerta()">Cerrar</button>
-          </div>
-        </div>
-      </div>
-
-      <!-- Próxima cita -->
-      <div id="proxima-cita-section"></div>
-
-      <!-- Acciones rápidas -->
-      <div class="section-title">¿Qué necesita hoy?</div>
-      <div class="quick-actions">
-        <div class="quick-action" onclick="goStep1()">
-          <div class="quick-action-icon">🩺</div>
-          <div class="quick-action-label">Nueva cita</div>
-        </div>
-        <div class="quick-action" onclick="showView('view-appointments')">
-          <div class="quick-action-icon">📋</div>
-          <div class="quick-action-label">Mis citas</div>
-        </div>
-        <div class="quick-action" onclick="showView('view-queue')">
-          <div class="quick-action-icon">🔢</div>
-          <div class="quick-action-label">Turno en vivo</div>
-        </div>
-        <div class="quick-action" onclick="showView('view-relatives')">
-          <div class="quick-action-icon">👨‍👩‍👧</div>
-          <div class="quick-action-label">Familiares</div>
-        </div>
-      </div>
-
-      <!-- Historial reciente -->
-      <div class="section-title">Consultas recientes</div>
-      <div id="home-history-list"></div>
-    </div>
-    <nav class="bottom-nav">
-      <button class="nav-item active" onclick="showView('view-home')" id="nav-home">
-        <span class="nav-icon">🏠</span>Inicio
-      </button>
-      <button class="nav-item" onclick="showView('view-appointments')" id="nav-appts" style="position:relative">
-        <span class="nav-icon">📋</span>Mis Citas
-        <span class="notif-dot" id="notif-appts"></span>
-      </button>
-      <button class="nav-item" onclick="showView('view-queue')" id="nav-queue">
-        <span class="nav-icon">🔢</span>Turno
-      </button>
-      <button class="nav-item" onclick="showView('view-history')" id="nav-hist">
-        <span class="nav-icon">🗂️</span>Historial
-      </button>
-    </nav>
-  </div>
-
-  <!-- ============================= VIEW: STEP 1 — ESPECIALIDAD ============================= -->
-  <div class="view" id="view-step1">
-    <div class="topbar">
-      <button class="btn-icon" onclick="showView('view-home')">←</button>
-      <div class="topbar-logo">
-        <img src="https://cdn.brandfetch.io/id8LwMLHOF/theme/dark/logo.svg?c=1bxid64Mup7aczewSAYMX&t=1771715114189" alt="ISSS" onerror="this.style.display='none'">
-        <span class="topbar-title">Nueva Cita</span>
-      </div>
-      <div style="width:48px"></div>
-    </div>
-    <div class="scroll-content">
-      <div class="steps">
-        <div class="step-dot active">1</div>
-        <div class="step-line"></div>
-        <div class="step-dot">2</div>
-        <div class="step-line"></div>
-        <div class="step-dot">3</div>
-        <div class="step-line"></div>
-        <div class="step-dot">✓</div>
-      </div>
-
-      <div class="section-title">¿Qué tipo de atención necesita?</div>
-      <div class="section-sub">Seleccione la especialidad o busque por síntoma</div>
-
-      <div class="input-group">
-        <input class="input-field" id="search-spec" type="text" placeholder="🔍  Ej: corazón, huesos, ojos..." oninput="filterSpecialties()" autocomplete="off">
-      </div>
-
-      <div class="specialty-grid" id="specialty-grid"></div>
-
-      <div style="height:20px"></div>
-      <button class="btn btn-primary" id="btn-next-step1" onclick="goStep2()" disabled style="opacity:0.5">
-        Continuar →
-      </button>
-    </div>
-  </div>
-
-  <!-- ============================= VIEW: STEP 2 — CENTRO ============================= -->
-  <div class="view" id="view-step2">
-    <div class="topbar">
-      <button class="btn-icon" onclick="showView('view-step1')">←</button>
-      <div class="topbar-logo">
-        <img src="https://cdn.brandfetch.io/id8LwMLHOF/theme/dark/logo.svg?c=1bxid64Mup7aczewSAYMX&t=1771715114189" alt="ISSS" onerror="this.style.display='none'">
-        <span class="topbar-title">Elegir Centro</span>
-      </div>
-      <div style="width:48px"></div>
-    </div>
-    <div class="scroll-content">
-      <div class="steps">
-        <div class="step-dot done">✓</div>
-        <div class="step-line done"></div>
-        <div class="step-dot active">2</div>
-        <div class="step-line"></div>
-        <div class="step-dot">3</div>
-        <div class="step-line"></div>
-        <div class="step-dot">✓</div>
-      </div>
-
-      <div class="section-title">¿A qué centro desea ir?</div>
-      <div id="selected-spec-badge" style="margin-bottom:16px"></div>
-
-      <div id="centers-list"></div>
-
-      <div style="height:20px"></div>
-      <button class="btn btn-primary" id="btn-next-step2" onclick="goStep3()" disabled style="opacity:0.5">
-        Continuar →
-      </button>
-    </div>
-  </div>
-
-  <!-- ============================= VIEW: STEP 3 — FECHA Y HORA ============================= -->
-  <div class="view" id="view-step3">
-    <div class="topbar">
-      <button class="btn-icon" onclick="showView('view-step2')">←</button>
-      <div class="topbar-logo">
-        <span style="font-size:24px">📅</span>
-        <span class="topbar-title">Fecha y Hora</span>
-      </div>
-      <div style="width:48px"></div>
-    </div>
-    <div class="scroll-content">
-      <div class="steps">
-        <div class="step-dot done">✓</div>
-        <div class="step-line done"></div>
-        <div class="step-dot done">✓</div>
-        <div class="step-line done"></div>
-        <div class="step-dot active">3</div>
-        <div class="step-line"></div>
-        <div class="step-dot">✓</div>
-      </div>
-
-      <!-- Calendar -->
-      <div class="card">
-        <div class="calendar-header">
-          <button class="btn-icon" onclick="changeMonth(-1)">←</button>
-          <span class="calendar-month" id="cal-month-label"></span>
-          <button class="btn-icon" onclick="changeMonth(1)">→</button>
-        </div>
-        <div class="calendar-grid" id="cal-grid"></div>
-      </div>
-
-      <!-- Time slots -->
-      <div id="time-section" style="display:none">
-        <div class="section-title">Horarios disponibles</div>
-        <div class="time-slots" id="time-slots-grid"></div>
-      </div>
-
-      <div style="height:20px"></div>
-      <button class="btn btn-primary" id="btn-next-step3" onclick="goConfirm()" disabled style="opacity:0.5">
-        Ver resumen →
-      </button>
-    </div>
-  </div>
-
-  <!-- ============================= VIEW: CONFIRMACION ============================= -->
-  <div class="view" id="view-confirm">
-    <div class="topbar">
-      <button class="btn-icon" onclick="showView('view-step3')">←</button>
-      <div class="topbar-logo">
-        <img src="https://cdn.brandfetch.io/id8LwMLHOF/theme/dark/logo.svg?c=1bxid64Mup7aczewSAYMX&t=1771715114189" alt="ISSS" onerror="this.style.display='none'">
-        <span class="topbar-title">Confirmación</span>
-      </div>
-      <div style="width:48px"></div>
-    </div>
-    <div class="scroll-content">
-      <div class="steps">
-        <div class="step-dot done">✓</div>
-        <div class="step-line done"></div>
-        <div class="step-dot done">✓</div>
-        <div class="step-line done"></div>
-        <div class="step-dot done">✓</div>
-        <div class="step-line"></div>
-        <div class="step-dot active">✓</div>
-      </div>
-
-      <div class="card card-accent-top">
-        <div class="section-title" style="margin-bottom:4px">Resumen de su cita</div>
-        <div class="section-sub">Revise los datos antes de confirmar</div>
-        <div class="divider"></div>
-        <div class="appt-row"><span class="icon">🩺</span> <strong id="conf-spec"></strong></div>
-        <div class="appt-row"><span class="icon">🏥</span> <span id="conf-center"></span></div>
-        <div class="appt-row"><span class="icon">📅</span> <span id="conf-date"></span></div>
-        <div class="appt-row"><span class="icon">🕐</span> <span id="conf-time"></span></div>
-        <div class="appt-row"><span class="icon">👤</span> <span id="conf-name"></span></div>
-      </div>
-
-      <div class="alert alert-info">
-        <span class="alert-icon">🔔</span>
-        <div>Le enviaremos un recordatorio <strong>24 horas antes</strong> de su cita.</div>
-      </div>
-
-      <!-- Cita para familiar (SHOULD HAVE) -->
-      <div class="card" style="border:2px dashed var(--teal)">
-        <div style="display:flex;align-items:center;gap:10px;cursor:pointer" onclick="toggleFamiliarSection()">
-          <span style="font-size:28px">👨‍👩‍👧</span>
-          <div style="flex:1">
-            <div style="font-size:17px;font-weight:800">¿Es para un familiar?</div>
-            <div style="font-size:15px;color:var(--text-muted)">Puede agendar en su nombre</div>
-          </div>
-          <span id="familiar-toggle-icon" style="font-size:20px;color:var(--teal)">＋</span>
-        </div>
-        <div id="familiar-section" style="display:none;margin-top:16px">
-          <div class="input-group" style="margin-bottom:12px">
-            <label class="input-label">DUI del familiar</label>
-            <input class="input-field" id="familiar-dui" type="text" placeholder="00000000-0" inputmode="numeric">
-          </div>
-          <div class="input-group" style="margin-bottom:0">
-            <label class="input-label">Parentesco</label>
-            <select class="input-field" id="familiar-rel">
-              <option value="">Seleccione...</option>
-              <option>Madre / Padre</option>
-              <option>Hijo / Hija</option>
-              <option>Abuelo / Abuela</option>
-              <option>Cónyuge</option>
-              <option>Otro familiar</option>
-            </select>
-          </div>
-        </div>
-      </div>
-
-      <button class="btn btn-primary" onclick="confirmAppointment()">
-        <span>✅</span> Confirmar cita
-      </button>
-    </div>
-  </div>
-
-  <!-- ============================= VIEW: COMPROBANTE ============================= -->
-  <div class="view" id="view-ticket">
-    <div class="topbar">
-      <button class="btn-icon" onclick="showView('view-home')">🏠</button>
-      <div class="topbar-logo">
-        <img src="https://cdn.brandfetch.io/id8LwMLHOF/theme/dark/logo.svg?c=1bxid64Mup7aczewSAYMX&t=1771715114189" alt="ISSS" onerror="this.style.display='none'">
-        <span class="topbar-title">Comprobante</span>
-      </div>
-      <button class="btn-icon" onclick="shareTicket()" title="Compartir">📤</button>
-    </div>
-    <div class="scroll-content" style="text-align:center">
-      <div class="success-circle">✓</div>
-      <div class="section-title">¡Cita confirmada!</div>
-      <div class="section-sub">Su cita ha sido registrada exitosamente</div>
-
-      <div class="qr-container">
-        <div class="qr-box">
-          <div class="qr-inner"><img src="https://cdn.brandfetch.io/id8LwMLHOF/w/400/h/400/theme/dark/icon.jpeg?c=1bxid64Mup7aczewSAYMX&t=1771715114286" alt="ISSS" style="width:38px;height:38px;border-radius:4px;object-fit:cover"></div>
-        </div>
-      </div>
-      <div id="ticket-code" style="font-size:22px;font-weight:900;color:var(--primary);margin-bottom:4px"></div>
-      <div style="font-size:15px;color:var(--text-muted);margin-bottom:24px">Código de comprobante</div>
-
-      <div class="card" style="text-align:left">
-        <div class="appt-row"><span class="icon">🩺</span> <strong id="ticket-spec"></strong></div>
-        <div class="appt-row"><span class="icon">🏥</span> <span id="ticket-center"></span></div>
-        <div class="appt-row"><span class="icon">📅</span> <span id="ticket-date"></span></div>
-        <div class="appt-row"><span class="icon">🕐</span> <span id="ticket-time"></span></div>
-      </div>
-
-      <div class="alert alert-success" style="text-align:left">
-        <span class="alert-icon">🔔</span>
-        <div>Recibirá un recordatorio el día anterior a su cita.</div>
-      </div>
-
-      <div style="display:flex;flex-direction:column;gap:12px">
-        <button class="btn btn-primary" onclick="downloadTicket()">
-          <span>⬇️</span> Guardar comprobante
-        </button>
-        <button class="btn btn-secondary" onclick="showView('view-home')">
-          Ir al inicio
-        </button>
-      </div>
-    </div>
-  </div>
-
-  <!-- ============================= VIEW: MIS CITAS ============================= -->
-  <div class="view" id="view-appointments">
-    <div class="topbar">
-      <button class="btn-icon" onclick="showView('view-home')">←</button>
-      <div class="topbar-logo">
-        <img src="https://cdn.brandfetch.io/id8LwMLHOF/theme/dark/logo.svg?c=1bxid64Mup7aczewSAYMX&t=1771715114189" alt="ISSS" onerror="this.style.display='none'">
-        <span class="topbar-title">Mis Citas</span>
-      </div>
-      <button class="btn-icon" onclick="goStep1()" title="Nueva cita">＋</button>
-    </div>
-    <div class="scroll-content">
-      <div id="appts-upcoming-section"></div>
-      <div id="appts-empty" style="display:none">
-        <div class="empty-state">
-          <div class="empty-icon">📭</div>
-          <div class="empty-title">No tiene citas próximas</div>
-          <div class="empty-sub">Reserve una cita médica desde el botón de abajo.</div>
-          <button class="btn btn-primary" onclick="goStep1()">Reservar cita</button>
-        </div>
-      </div>
-    </div>
-    <nav class="bottom-nav">
-      <button class="nav-item" onclick="showView('view-home')">
-        <span class="nav-icon">🏠</span>Inicio
-      </button>
-      <button class="nav-item active" onclick="showView('view-appointments')">
-        <span class="nav-icon">📋</span>Mis Citas
-      </button>
-      <button class="nav-item" onclick="showView('view-queue')">
-        <span class="nav-icon">🔢</span>Turno
-      </button>
-      <button class="nav-item" onclick="showView('view-history')">
-        <span class="nav-icon">🗂️</span>Historial
-      </button>
-    </nav>
-  </div>
-
-  <!-- ============================= VIEW: TURNO EN VIVO ============================= -->
-  <div class="view" id="view-queue">
-    <div class="topbar">
-      <button class="btn-icon" onclick="showView('view-home')">←</button>
-      <div class="topbar-logo">
-        <img src="https://cdn.brandfetch.io/id8LwMLHOF/theme/dark/logo.svg?c=1bxid64Mup7aczewSAYMX&t=1771715114189" alt="ISSS" onerror="this.style.display='none'">
-        <span class="topbar-title">Turno en Vivo</span>
-      </div>
-      <div style="width:48px"></div>
-    </div>
-    <div class="scroll-content">
-      <div id="queue-content"></div>
-    </div>
-    <nav class="bottom-nav">
-      <button class="nav-item" onclick="showView('view-home')">
-        <span class="nav-icon">🏠</span>Inicio
-      </button>
-      <button class="nav-item" onclick="showView('view-appointments')">
-        <span class="nav-icon">📋</span>Mis Citas
-      </button>
-      <button class="nav-item active" onclick="showView('view-queue')">
-        <span class="nav-icon">🔢</span>Turno
-      </button>
-      <button class="nav-item" onclick="showView('view-history')">
-        <span class="nav-icon">🗂️</span>Historial
-      </button>
-    </nav>
-  </div>
-
-  <!-- ============================= VIEW: HISTORIAL ============================= -->
-  <div class="view" id="view-history">
-    <div class="topbar">
-      <button class="btn-icon" onclick="showView('view-home')">←</button>
-      <div class="topbar-logo">
-        <img src="https://cdn.brandfetch.io/id8LwMLHOF/theme/dark/logo.svg?c=1bxid64Mup7aczewSAYMX&t=1771715114189" alt="ISSS" onerror="this.style.display='none'">
-        <span class="topbar-title">Historial</span>
-      </div>
-      <div style="width:48px"></div>
-    </div>
-    <div class="scroll-content">
-      <div class="section-title">Consultas anteriores</div>
-      <div id="history-list"></div>
-    </div>
-    <nav class="bottom-nav">
-      <button class="nav-item" onclick="showView('view-home')">
-        <span class="nav-icon">🏠</span>Inicio
-      </button>
-      <button class="nav-item" onclick="showView('view-appointments')">
-        <span class="nav-icon">📋</span>Mis Citas
-      </button>
-      <button class="nav-item" onclick="showView('view-queue')">
-        <span class="nav-icon">🔢</span>Turno
-      </button>
-      <button class="nav-item active" onclick="showView('view-history')">
-        <span class="nav-icon">🗂️</span>Historial
-      </button>
-    </nav>
-  </div>
-
-  <!-- ============================= VIEW: FAMILIARES ============================= -->
-  <div class="view" id="view-relatives">
-    <div class="topbar">
-      <button class="btn-icon" onclick="showView('view-home')">←</button>
-      <div class="topbar-logo">
-        <img src="https://cdn.brandfetch.io/id8LwMLHOF/theme/dark/logo.svg?c=1bxid64Mup7aczewSAYMX&t=1771715114189" alt="ISSS" onerror="this.style.display='none'">
-        <span class="topbar-title">Familiares</span>
-      </div>
-      <button class="btn-icon" onclick="openAddRelative()" title="Agregar">＋</button>
-    </div>
-    <div class="scroll-content">
-      <div class="alert alert-info">
-        <span class="alert-icon">💡</span>
-        <div>Puede agendar citas a nombre de sus familiares. Ellos solo tendrán que presentarse.</div>
-      </div>
-      <div id="relatives-list"></div>
-      <button class="btn btn-secondary" onclick="openAddRelative()" style="margin-top:8px">
-        <span>＋</span> Agregar familiar
-      </button>
-    </div>
-  </div>
-
-  <!-- ============================= VIEW: DETALLE CITA ============================= -->
-  <div class="view" id="view-appt-detail">
-    <div class="topbar">
-      <button class="btn-icon" id="detail-back-btn">←</button>
-      <div class="topbar-logo">
-        <img src="https://cdn.brandfetch.io/id8LwMLHOF/theme/dark/logo.svg?c=1bxid64Mup7aczewSAYMX&t=1771715114189" alt="ISSS" onerror="this.style.display='none'">
-        <span class="topbar-title">Detalle de Cita</span>
-      </div>
-      <div style="width:48px"></div>
-    </div>
-    <div class="scroll-content" id="appt-detail-content"></div>
-  </div>
-
-</div><!-- end .app -->
-
-<!-- ============================= MODAL: CANCEL/RESCHEDULE ============================= -->
-<div class="modal-overlay" id="modal-cancel">
-  <div class="modal-sheet">
-    <div class="modal-handle"></div>
-    <div class="section-title">Cancelar cita</div>
-    <div class="section-sub">¿Qué desea hacer con esta cita?</div>
-    <div style="display:flex;flex-direction:column;gap:12px;margin-top:8px">
-      <button class="btn btn-orange" onclick="rescheduleAppt()">
-        <span>📅</span> Reagendar
-      </button>
-      <button class="btn btn-danger" onclick="cancelAppt()">
-        <span>🗑️</span> Cancelar definitivamente
-      </button>
-      <button class="btn btn-secondary" onclick="closeModal('modal-cancel')">
-        Volver
-      </button>
+      <div id="login-err" style="color:var(--red);font-size:15px;margin-bottom:12px;display:none">⚠️ DUI inválido. Formato: 00000000-0</div>
+      <button class="btn btn-navy" onclick="doLogin()">🔐 Ingresar</button>
+      <div class="login-help" style="margin-top:20px">¿Problemas para ingresar? Llame al ISSS: <a href="tel:132">132</a></div>
     </div>
   </div>
 </div>
 
-<!-- ============================= MODAL: ADD RELATIVE ============================= -->
-<div class="modal-overlay" id="modal-add-relative">
-  <div class="modal-sheet">
-    <div class="modal-handle"></div>
-    <div class="section-title">Agregar familiar</div>
-    <div class="input-group">
-      <label class="input-label">Nombre completo</label>
-      <input class="input-field" id="rel-name" type="text" placeholder="Nombre del familiar">
+<!-- ═══ VIEW: HOME ═══ -->
+<div class="view" id="view-home">
+  <div class="home-top" id="home-top-bar">
+    <img src="https://cdn.brandfetch.io/id8LwMLHOF/theme/dark/logo.svg?c=1bxid64Mup7aczewSAYMX&t=1771715114189" alt="ISSS" onerror="this.style.display='none'">
+    <button class="home-top-btn" onclick="showView('view-relatives')">👨‍👩‍👧 Familiares</button>
+  </div>
+  <div class="home-welcome">
+    <div class="home-greet">Bienvenido/a,</div>
+    <div class="home-name" id="home-name">—</div>
+    <button class="home-cta-btn" onclick="goStep1()">📅 Pedir nueva cita</button>
+  </div>
+  <div class="scroll">
+    <div id="alert-cancel" class="al al-err" style="display:none">
+      <span class="al-ic">🚨</span>
+      <div>
+        <strong>El médico canceló su cita</strong><br>
+        Cita de <span id="al-spec"></span> — <span id="al-date"></span>. Reagende sin costo.
+        <div style="margin-top:10px;display:flex;gap:8px;flex-wrap:wrap">
+          <button class="btn btn-navy btn-sm" onclick="reagendarAlerta()">Reagendar ahora</button>
+          <button class="btn btn-ghost btn-sm" onclick="cerrarAlerta()">Cerrar</button>
+        </div>
+      </div>
     </div>
-    <div class="input-group">
-      <label class="input-label">DUI del familiar</label>
-      <input class="input-field" id="rel-dui" type="text" placeholder="00000000-0" inputmode="numeric">
+    <div id="proxima-cita"></div>
+    <div class="st">¿Qué necesita hoy?</div>
+    <div class="qa-grid">
+      <div class="qa" onclick="goStep1()"><div class="qa-icon">🩺</div><div class="qa-label">Nueva cita</div></div>
+      <div class="qa" onclick="showView('view-appointments')"><div class="qa-icon">📋</div><div class="qa-label">Mis citas</div></div>
+      <div class="qa" onclick="showView('view-queue')"><div class="qa-icon">🔢</div><div class="qa-label">Turno en vivo</div></div>
+      <div class="qa" onclick="showView('view-relatives')"><div class="qa-icon">👨‍👩‍👧</div><div class="qa-label">Familiares</div></div>
     </div>
-    <div class="input-group">
-      <label class="input-label">Parentesco</label>
-      <select class="input-field" id="rel-relation">
-        <option value="">Seleccione...</option>
-        <option>Madre</option>
-        <option>Padre</option>
-        <option>Hijo / Hija</option>
-        <option>Abuelo / Abuela</option>
-        <option>Cónyuge</option>
-        <option>Otro familiar</option>
-      </select>
+    <div class="st">Consultas recientes</div>
+    <div id="home-hist"></div>
+  </div>
+  <nav class="bnav">
+    <button class="nav-btn active" onclick="showView('view-home')"><span class="ni">🏠</span>Inicio</button>
+    <button class="nav-btn" onclick="showView('view-appointments')" style="position:relative"><span class="ni">📋</span>Mis Citas<span class="notif-dot" id="notif-dot" style="display:none"></span></button>
+    <button class="nav-btn" onclick="showView('view-queue')"><span class="ni">🔢</span>Turno</button>
+    <button class="nav-btn" onclick="showView('view-history')"><span class="ni">🗂️</span>Historial</button>
+  </nav>
+</div>
+
+<!-- ═══ VIEW: STEP 1 — ESPECIALIDAD ═══ -->
+<div class="view" id="view-step1">
+  <div class="topbar">
+    <div class="topbar-left">
+      <button class="back-link" onclick="showView('view-home')"><span class="arr">←</span> Inicio</button>
     </div>
-    <div style="display:flex;flex-direction:column;gap:12px">
-      <button class="btn btn-primary" onclick="saveRelative()">Guardar familiar</button>
-      <button class="btn btn-secondary" onclick="closeModal('modal-add-relative')">Cancelar</button>
+    <div class="topbar-left">
+      <img class="tb-logo" src="https://cdn.brandfetch.io/id8LwMLHOF/theme/dark/logo.svg?c=1bxid64Mup7aczewSAYMX&t=1771715114189" alt="ISSS" onerror="this.style.display='none'">
+      <span class="tb-sep"></span>
+      <span class="tb-title">Nueva Cita</span>
+    </div>
+    <div style="width:80px"></div>
+  </div>
+  <div class="scroll">
+    <div class="steps">
+      <div class="step-dot on">1</div><div class="step-line"></div>
+      <div class="step-dot">2</div><div class="step-line"></div>
+      <div class="step-dot">3</div><div class="step-line"></div>
+      <div class="step-dot">✓</div>
+    </div>
+    <div class="st">¿Qué tipo de atención necesita?</div>
+    <div class="ss">Seleccione la especialidad o escriba su síntoma</div>
+    <div class="fg"><input class="fi" id="search-spec" type="text" placeholder="🔍  Ej: corazón, ojos, huesos..." oninput="filterSpecs()" autocomplete="off"></div>
+    <div class="spec-grid" id="spec-grid"></div>
+    <div style="height:16px"></div>
+    <button class="btn btn-navy" id="btn1" onclick="goStep2()" disabled>Continuar →</button>
+  </div>
+</div>
+
+<!-- ═══ VIEW: STEP 2 — CENTRO ═══ -->
+<div class="view" id="view-step2">
+  <div class="topbar">
+    <div class="topbar-left">
+      <button class="back-link" onclick="showView('view-step1')"><span class="arr">←</span> Especialidad</button>
+    </div>
+    <div class="topbar-left">
+      <img class="tb-logo" src="https://cdn.brandfetch.io/id8LwMLHOF/theme/dark/logo.svg?c=1bxid64Mup7aczewSAYMX&t=1771715114189" alt="ISSS" onerror="this.style.display='none'">
+      <span class="tb-sep"></span>
+      <span class="tb-title">Elegir Centro</span>
+    </div>
+    <div style="width:80px"></div>
+  </div>
+  <div class="scroll">
+    <div class="steps">
+      <div class="step-dot ok">✓</div><div class="step-line ok"></div>
+      <div class="step-dot on">2</div><div class="step-line"></div>
+      <div class="step-dot">3</div><div class="step-line"></div>
+      <div class="step-dot">✓</div>
+    </div>
+    <div class="st">¿A qué centro desea ir?</div>
+    <div id="spec-badge" style="margin-bottom:14px"></div>
+    <div id="centers-list"></div>
+    <div style="height:16px"></div>
+    <button class="btn btn-navy" id="btn2" onclick="goStep3()" disabled>Continuar →</button>
+  </div>
+</div>
+
+<!-- ═══ VIEW: STEP 3 — FECHA / HORA ═══ -->
+<div class="view" id="view-step3">
+  <div class="topbar">
+    <div class="topbar-left">
+      <button class="back-link" onclick="showView('view-step2')"><span class="arr">←</span> Centro</button>
+    </div>
+    <div class="topbar-left">
+      <img class="tb-logo" src="https://cdn.brandfetch.io/id8LwMLHOF/theme/dark/logo.svg?c=1bxid64Mup7aczewSAYMX&t=1771715114189" alt="ISSS" onerror="this.style.display='none'">
+      <span class="tb-sep"></span>
+      <span class="tb-title">Fecha y Hora</span>
+    </div>
+    <div style="width:80px"></div>
+  </div>
+  <div class="scroll">
+    <div class="steps">
+      <div class="step-dot ok">✓</div><div class="step-line ok"></div>
+      <div class="step-dot ok">✓</div><div class="step-line ok"></div>
+      <div class="step-dot on">3</div><div class="step-line"></div>
+      <div class="step-dot">✓</div>
+    </div>
+    <div class="card">
+      <div class="cal-nav">
+        <button class="cal-nav-btn" onclick="changeMonth(-1)">← Ant.</button>
+        <span class="cal-month" id="cal-month"></span>
+        <button class="cal-nav-btn" onclick="changeMonth(1)">Sig. →</button>
+      </div>
+      <div class="cal-grid" id="cal-grid"></div>
+    </div>
+    <div id="time-sec" style="display:none">
+      <div class="st">Horarios disponibles</div>
+      <div class="tslots" id="tslots"></div>
+    </div>
+    <div style="height:16px"></div>
+    <button class="btn btn-navy" id="btn3" onclick="goConfirm()" disabled>Ver resumen →</button>
+  </div>
+</div>
+
+<!-- ═══ VIEW: CONFIRMACIÓN ═══ -->
+<div class="view" id="view-confirm">
+  <div class="topbar">
+    <div class="topbar-left">
+      <button class="back-link" onclick="showView('view-step3')"><span class="arr">←</span> Fecha</button>
+    </div>
+    <div class="topbar-left">
+      <img class="tb-logo" src="https://cdn.brandfetch.io/id8LwMLHOF/theme/dark/logo.svg?c=1bxid64Mup7aczewSAYMX&t=1771715114189" alt="ISSS" onerror="this.style.display='none'">
+      <span class="tb-sep"></span>
+      <span class="tb-title">Confirmación</span>
+    </div>
+    <div style="width:80px"></div>
+  </div>
+  <div class="scroll">
+    <div class="steps">
+      <div class="step-dot ok">✓</div><div class="step-line ok"></div>
+      <div class="step-dot ok">✓</div><div class="step-line ok"></div>
+      <div class="step-dot ok">✓</div><div class="step-line"></div>
+      <div class="step-dot on">✓</div>
+    </div>
+    <div class="card card-l">
+      <div class="st" style="margin-bottom:4px">Resumen de su cita</div>
+      <div class="ss" style="margin-bottom:12px">Revise los datos antes de confirmar</div>
+      <div class="divider"></div>
+      <div class="ac-row"><span class="ic">🩺</span><strong id="cf-spec"></strong></div>
+      <div class="ac-row"><span class="ic">🏥</span><span id="cf-center"></span></div>
+      <div class="ac-row"><span class="ic">📅</span><span id="cf-date"></span></div>
+      <div class="ac-row"><span class="ic">🕐</span><span id="cf-time"></span></div>
+      <div class="ac-row"><span class="ic">👤</span><span id="cf-name"></span></div>
+    </div>
+    <div class="al al-info"><span class="al-ic">🔔</span><div>Le enviaremos un recordatorio <strong>24 horas antes</strong> de su cita.</div></div>
+    <!-- Familiar section -->
+    <div class="card" style="border:2px dashed #CBD5E1">
+      <div style="display:flex;align-items:center;gap:10px;cursor:pointer" onclick="toggleFamiliar()">
+        <span style="font-size:26px">👨‍👩‍👧</span>
+        <div style="flex:1"><div style="font-size:16px;font-weight:800">¿Es para un familiar?</div><div style="font-size:14px;color:var(--muted)">Puede agendar en su nombre</div></div>
+        <span id="fam-ico" style="font-size:18px;color:var(--navy)">＋</span>
+      </div>
+      <div id="fam-sec" style="display:none;margin-top:14px">
+        <div class="fg" style="margin-bottom:10px"><label class="fl">DUI del familiar</label><input class="fi" id="fam-dui" type="text" placeholder="00000000-0" inputmode="numeric"></div>
+        <div class="fg" style="margin-bottom:0"><label class="fl">Parentesco</label>
+          <select class="fi" id="fam-rel"><option value="">Seleccione...</option><option>Madre / Padre</option><option>Hijo / Hija</option><option>Abuelo / Abuela</option><option>Cónyuge</option><option>Otro familiar</option></select>
+        </div>
+      </div>
+    </div>
+    <button class="btn btn-cta" onclick="confirmAppt()">✅ Confirmar cita</button>
+  </div>
+</div>
+
+<!-- ═══ VIEW: COMPROBANTE ═══ -->
+<div class="view" id="view-ticket">
+  <div class="topbar">
+    <div class="topbar-left">
+      <button class="back-link" onclick="showView('view-home')"><span class="arr">🏠</span> Inicio</button>
+    </div>
+    <div class="topbar-left">
+      <img class="tb-logo" src="https://cdn.brandfetch.io/id8LwMLHOF/theme/dark/logo.svg?c=1bxid64Mup7aczewSAYMX&t=1771715114189" alt="ISSS" onerror="this.style.display='none'">
+      <span class="tb-sep"></span>
+      <span class="tb-title">Comprobante</span>
+    </div>
+    <button class="btn-ico" onclick="shareTicket()" title="Compartir">📤</button>
+  </div>
+  <div class="scroll" style="text-align:center">
+    <div class="success-c">✓</div>
+    <div class="st">¡Cita confirmada!</div>
+    <div class="ss">Su cita ha sido registrada exitosamente</div>
+    <div class="qr-wrap">
+      <div class="qr-box"><div class="qr-inner"><img src="https://cdn.brandfetch.io/id8LwMLHOF/w/400/h/400/theme/dark/icon.jpeg?c=1bxid64Mup7aczewSAYMX&t=1771715114286" alt="ISSS" style="width:36px;height:36px;border-radius:3px;object-fit:cover"></div></div>
+    </div>
+    <div id="tk-code" style="font-size:20px;font-weight:900;color:var(--navy);margin-bottom:4px"></div>
+    <div style="font-size:14px;color:var(--muted);margin-bottom:20px">Código de comprobante</div>
+    <div class="card" style="text-align:left">
+      <div class="ac-row"><span class="ic">🩺</span><strong id="tk-spec"></strong></div>
+      <div class="ac-row"><span class="ic">🏥</span><span id="tk-center"></span></div>
+      <div class="ac-row"><span class="ic">📅</span><span id="tk-date"></span></div>
+      <div class="ac-row"><span class="ic">🕐</span><span id="tk-time"></span></div>
+    </div>
+    <div class="al al-ok" style="text-align:left"><span class="al-ic">🔔</span><div>Recibirá un recordatorio el día anterior a su cita.</div></div>
+    <div style="display:flex;flex-direction:column;gap:10px">
+      <button class="btn btn-navy" onclick="downloadTicket()">⬇️ Guardar comprobante</button>
+      <button class="btn btn-ghost" onclick="showView('view-home')">Ir al inicio</button>
     </div>
   </div>
 </div>
 
-<!-- ============================= MODAL: HISTORIAL DETALLE ============================= -->
-<div class="modal-overlay" id="modal-history-detail">
-  <div class="modal-sheet">
-    <div class="modal-handle"></div>
-    <div id="modal-history-content"></div>
-    <button class="btn btn-secondary" onclick="closeModal('modal-history-detail')" style="margin-top:12px">Cerrar</button>
+<!-- ═══ VIEW: MIS CITAS ═══ -->
+<div class="view" id="view-appointments">
+  <div class="topbar">
+    <div class="topbar-left">
+      <button class="back-link" onclick="showView('view-home')"><span class="arr">←</span> Inicio</button>
+    </div>
+    <div class="topbar-left">
+      <img class="tb-logo" src="https://cdn.brandfetch.io/id8LwMLHOF/theme/dark/logo.svg?c=1bxid64Mup7aczewSAYMX&t=1771715114189" alt="ISSS" onerror="this.style.display='none'">
+      <span class="tb-sep"></span>
+      <span class="tb-title">Mis Citas</span>
+    </div>
+    <button class="btn-ico" onclick="goStep1()" title="Nueva cita">＋</button>
+  </div>
+  <div class="scroll">
+    <div id="appts-list"></div>
+    <div id="appts-empty" style="display:none">
+      <div class="empty"><div class="empty-icon">📭</div><div class="empty-t">Sin citas programadas</div><div class="empty-s">Reserve su primera cita médica en línea.</div><button class="btn btn-navy" onclick="goStep1()">Reservar cita</button></div>
+    </div>
+  </div>
+  <nav class="bnav">
+    <button class="nav-btn" onclick="showView('view-home')"><span class="ni">🏠</span>Inicio</button>
+    <button class="nav-btn active" onclick="showView('view-appointments')"><span class="ni">📋</span>Mis Citas</button>
+    <button class="nav-btn" onclick="showView('view-queue')"><span class="ni">🔢</span>Turno</button>
+    <button class="nav-btn" onclick="showView('view-history')"><span class="ni">🗂️</span>Historial</button>
+  </nav>
+</div>
+
+<!-- ═══ VIEW: TURNO EN VIVO ═══ -->
+<div class="view" id="view-queue">
+  <div class="topbar">
+    <div class="topbar-left">
+      <button class="back-link" onclick="showView('view-home')"><span class="arr">←</span> Inicio</button>
+    </div>
+    <div class="topbar-left">
+      <img class="tb-logo" src="https://cdn.brandfetch.io/id8LwMLHOF/theme/dark/logo.svg?c=1bxid64Mup7aczewSAYMX&t=1771715114189" alt="ISSS" onerror="this.style.display='none'">
+      <span class="tb-sep"></span>
+      <span class="tb-title">Turno en Vivo</span>
+    </div>
+    <div style="width:80px"></div>
+  </div>
+  <div class="scroll"><div id="queue-content"></div></div>
+  <nav class="bnav">
+    <button class="nav-btn" onclick="showView('view-home')"><span class="ni">🏠</span>Inicio</button>
+    <button class="nav-btn" onclick="showView('view-appointments')"><span class="ni">📋</span>Mis Citas</button>
+    <button class="nav-btn active" onclick="showView('view-queue')"><span class="ni">🔢</span>Turno</button>
+    <button class="nav-btn" onclick="showView('view-history')"><span class="ni">🗂️</span>Historial</button>
+  </nav>
+</div>
+
+<!-- ═══ VIEW: HISTORIAL ═══ -->
+<div class="view" id="view-history">
+  <div class="topbar">
+    <div class="topbar-left">
+      <button class="back-link" onclick="showView('view-home')"><span class="arr">←</span> Inicio</button>
+    </div>
+    <div class="topbar-left">
+      <img class="tb-logo" src="https://cdn.brandfetch.io/id8LwMLHOF/theme/dark/logo.svg?c=1bxid64Mup7aczewSAYMX&t=1771715114189" alt="ISSS" onerror="this.style.display='none'">
+      <span class="tb-sep"></span>
+      <span class="tb-title">Historial</span>
+    </div>
+    <div style="width:80px"></div>
+  </div>
+  <div class="scroll">
+    <div class="st">Consultas anteriores</div>
+    <div id="hist-list"></div>
+  </div>
+  <nav class="bnav">
+    <button class="nav-btn" onclick="showView('view-home')"><span class="ni">🏠</span>Inicio</button>
+    <button class="nav-btn" onclick="showView('view-appointments')"><span class="ni">📋</span>Mis Citas</button>
+    <button class="nav-btn" onclick="showView('view-queue')"><span class="ni">🔢</span>Turno</button>
+    <button class="nav-btn active" onclick="showView('view-history')"><span class="ni">🗂️</span>Historial</button>
+  </nav>
+</div>
+
+<!-- ═══ VIEW: FAMILIARES ═══ -->
+<div class="view" id="view-relatives">
+  <div class="topbar">
+    <div class="topbar-left">
+      <button class="back-link" onclick="showView('view-home')"><span class="arr">←</span> Inicio</button>
+    </div>
+    <div class="topbar-left">
+      <img class="tb-logo" src="https://cdn.brandfetch.io/id8LwMLHOF/theme/dark/logo.svg?c=1bxid64Mup7aczewSAYMX&t=1771715114189" alt="ISSS" onerror="this.style.display='none'">
+      <span class="tb-sep"></span>
+      <span class="tb-title">Familiares</span>
+    </div>
+    <button class="btn-ico" onclick="openAddRel()" title="Agregar">＋</button>
+  </div>
+  <div class="scroll">
+    <div class="al al-info"><span class="al-ic">💡</span><div>Puede agendar citas a nombre de sus familiares. Ellos solo deben presentarse a la hora.</div></div>
+    <div id="rel-list"></div>
+    <button class="btn btn-ghost" onclick="openAddRel()" style="margin-top:6px">＋ Agregar familiar</button>
+  </div>
+</div>
+
+<!-- ═══ VIEW: DETALLE CITA ═══ -->
+<div class="view" id="view-detail">
+  <div class="topbar">
+    <div class="topbar-left">
+      <button class="back-link" id="detail-back"><span class="arr">←</span> Volver</button>
+    </div>
+    <div class="topbar-left">
+      <img class="tb-logo" src="https://cdn.brandfetch.io/id8LwMLHOF/theme/dark/logo.svg?c=1bxid64Mup7aczewSAYMX&t=1771715114189" alt="ISSS" onerror="this.style.display='none'">
+      <span class="tb-sep"></span>
+      <span class="tb-title">Detalle de Cita</span>
+    </div>
+    <div style="width:80px"></div>
+  </div>
+  <div class="scroll" id="detail-content"></div>
+</div>
+
+</div><!-- .app -->
+</div><!-- .main-wrap -->
+</div><!-- .shell -->
+
+<!-- ═══════════ MODALS ═══════════ -->
+<div class="moverlay" id="m-cancel">
+  <div class="msheet">
+    <div class="mhandle"></div>
+    <div class="st">¿Qué desea hacer?</div>
+    <div class="ss">Seleccione una opción para esta cita</div>
+    <div style="display:flex;flex-direction:column;gap:10px;margin-top:4px">
+      <button class="btn btn-navy" onclick="rescheduleAppt()">📅 Reagendar</button>
+      <button class="btn btn-danger" onclick="cancelAppt()">🗑️ Cancelar definitivamente</button>
+      <button class="btn btn-ghost" onclick="closeModal('m-cancel')">Volver</button>
+    </div>
+  </div>
+</div>
+
+<div class="moverlay" id="m-add-rel">
+  <div class="msheet">
+    <div class="mhandle"></div>
+    <div class="st">Agregar familiar</div>
+    <div class="fg"><label class="fl">Nombre completo</label><input class="fi" id="rel-name" type="text" placeholder="Nombre del familiar"></div>
+    <div class="fg"><label class="fl">DUI del familiar</label><input class="fi" id="rel-dui" type="text" placeholder="00000000-0" inputmode="numeric"></div>
+    <div class="fg"><label class="fl">Parentesco</label>
+      <select class="fi" id="rel-rel"><option value="">Seleccione...</option><option>Madre</option><option>Padre</option><option>Hijo / Hija</option><option>Abuelo / Abuela</option><option>Cónyuge</option><option>Otro familiar</option></select>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:10px">
+      <button class="btn btn-navy" onclick="saveRel()">Guardar familiar</button>
+      <button class="btn btn-ghost" onclick="closeModal('m-add-rel')">Cancelar</button>
+    </div>
+  </div>
+</div>
+
+<div class="moverlay" id="m-hist-detail">
+  <div class="msheet">
+    <div class="mhandle"></div>
+    <div id="hist-modal-content"></div>
+    <button class="btn btn-ghost" onclick="closeModal('m-hist-detail')" style="margin-top:12px">Cerrar</button>
   </div>
 </div>
 
 <script>
-// =====================================================================
-// DATA
-// =====================================================================
-const SPECIALTIES = [
-  { id:'med-gen', name:'Medicina General', icon:'🩺', keywords:['general','fiebre','gripe','dolor','malestar','tos'] },
-  { id:'cardio', name:'Cardiología', icon:'❤️', keywords:['corazón','pecho','presión','cardio','corazon'] },
-  { id:'oftalmol', name:'Oftalmología', icon:'👁️', keywords:['ojos','vista','lentes','oftalmol'] },
-  { id:'ortopedia', name:'Ortopedia', icon:'🦴', keywords:['huesos','rodilla','columna','fracturas','cadera'] },
-  { id:'ginecol', name:'Ginecología', icon:'🌸', keywords:['gineco','mujer','embarazo','utero'] },
-  { id:'pediatria', name:'Pediatría', icon:'👶', keywords:['niños','bebe','infante','pediatr'] },
-  { id:'dermatol', name:'Dermatología', icon:'🧴', keywords:['piel','derma','acne','mancha','erupcion'] },
-  { id:'neurolog', name:'Neurología', icon:'🧠', keywords:['cabeza','cerebro','neuro','migraña','epilepsia'] },
-  { id:'gastro', name:'Gastroenterología', icon:'🫁', keywords:['estomago','gastro','intestino','digestion','colitis'] },
-  { id:'psiquiatria', name:'Psiquiatría', icon:'💆', keywords:['mental','psiqui','ansiedad','depresion','mente'] },
-  { id:'urologia', name:'Urología', icon:'💧', keywords:['rinon','urinario','urolog','vejiga'] },
-  { id:'odontol', name:'Odontología', icon:'🦷', keywords:['diente','muela','odonto','dental','boca'] },
+// ── DATA ──
+const SPECS = [
+  {id:'med-gen', name:'Medicina General', icon:'🩺', kw:['general','fiebre','gripe','dolor','malestar','tos']},
+  {id:'cardio',  name:'Cardiología',      icon:'❤️', kw:['corazón','pecho','presión','cardio','corazon']},
+  {id:'oftalmol',name:'Oftalmología',     icon:'👁️', kw:['ojos','vista','lentes']},
+  {id:'ortoped', name:'Ortopedia',        icon:'🦴', kw:['huesos','rodilla','columna','fractura','cadera']},
+  {id:'ginecol', name:'Ginecología',      icon:'🌸', kw:['gineco','mujer','embarazo','utero']},
+  {id:'pediatr', name:'Pediatría',        icon:'👶', kw:['niño','bebe','infante','pediatr']},
+  {id:'dermat',  name:'Dermatología',     icon:'🧴', kw:['piel','acne','mancha','erupcion']},
+  {id:'neurol',  name:'Neurología',       icon:'🧠', kw:['cabeza','cerebro','migraña','epilepsia']},
+  {id:'gastro',  name:'Gastroenterología',icon:'🫁', kw:['estomago','intestino','digestion','colitis']},
+  {id:'psiq',    name:'Psiquiatría',      icon:'💆', kw:['mental','ansiedad','depresion','mente']},
+  {id:'urol',    name:'Urología',         icon:'💧', kw:['rinon','urinario','vejiga']},
+  {id:'odontol', name:'Odontología',      icon:'🦷', kw:['diente','muela','dental','boca']},
 ];
 
 const CENTERS = [
-  { id:'zacamil', name:'ISSS Zacamil', address:'Col. Zacamil, San Salvador', wait:'~45 min', slots: 8 },
-  { id:'policlinica', name:'Policlínica Arce', address:'2ª C. Pte., San Salvador', wait:'~30 min', slots: 12 },
-  { id:'san-marcos', name:'ISSS San Marcos', address:'Av. Circunvalación, San Marcos', wait:'~60 min', slots: 5 },
-  { id:'santa-ana', name:'ISSS Santa Ana', address:'Av. Independencia, Santa Ana', wait:'~20 min', slots: 15 },
-  { id:'soyapango', name:'ISSS Soyapango', address:'Blvd. Del Ejército, Soyapango', wait:'~50 min', slots: 6 },
+  {id:'zacamil',    name:'ISSS Zacamil',       addr:'Col. Zacamil, San Salvador',    wait:'~45 min', slots:8},
+  {id:'policlinica',name:'Policlínica Arce',   addr:'2ª C. Pte., San Salvador',      wait:'~30 min', slots:12},
+  {id:'san-marcos', name:'ISSS San Marcos',    addr:'Av. Circunvalación, San Marcos', wait:'~60 min', slots:5},
+  {id:'santa-ana',  name:'ISSS Santa Ana',     addr:'Av. Independencia, Santa Ana',   wait:'~20 min', slots:15},
+  {id:'soyapango',  name:'ISSS Soyapango',     addr:'Blvd. Del Ejército, Soyapango', wait:'~50 min', slots:6},
 ];
 
-const HISTORY_DATA = [
-  { spec:'Medicina General', icon:'🩺', date:'12 marzo 2026', doctor:'Dr. Martínez', center:'ISSS Zacamil', notes:'Control de presión arterial. Continuar tratamiento.', prescription:'Enalapril 10mg — 1 vez al día' },
-  { spec:'Cardiología', icon:'❤️', date:'5 febrero 2026', doctor:'Dra. López', center:'Policlínica Arce', notes:'Electrocardiograma normal. Seguimiento en 6 meses.', prescription:'Aspirina 100mg — 1 vez al día' },
-  { spec:'Oftalmología', icon:'👁️', date:'18 enero 2026', doctor:'Dr. García', center:'ISSS Zacamil', notes:'Miopía leve. Se recomienda usar lentes.', prescription:'Receta óptica adjunta' },
+const HIST = [
+  {spec:'Medicina General', icon:'🩺', date:'12 marzo 2026',   doc:'Dr. Martínez', center:'ISSS Zacamil',   notes:'Control de presión arterial. Continuar tratamiento.', rx:'Enalapril 10mg — 1 vez al día'},
+  {spec:'Cardiología',      icon:'❤️', date:'5 febrero 2026',  doc:'Dra. López',   center:'Policlínica Arce',notes:'Electrocardiograma normal. Seguimiento en 6 meses.',  rx:'Aspirina 100mg — 1 vez al día'},
+  {spec:'Oftalmología',     icon:'👁️', date:'18 enero 2026',   doc:'Dr. García',   center:'ISSS Zacamil',   notes:'Miopía leve. Se recomienda usar lentes.',             rx:'Receta óptica adjunta'},
 ];
 
-// App state
-let state = {
-  user: null,
-  selectedSpec: null,
-  selectedCenter: null,
-  selectedDate: null,
-  selectedTime: null,
-  currentMonth: new Date(),
-  appointments: [],
-  relatives: [],
-  cancelTarget: null,
-  queuePosition: 8,
-  queueTotal: 30,
-  queueInterval: null,
-};
+// ── STATE ──
+let S = {user:null, spec:null, center:null, date:null, time:null, month:new Date(), appts:[], relatives:[], cancelId:null, queuePos:8, queueTotal:30, queueTimer:null};
 
-// =====================================================================
-// PERSISTENCE
-// =====================================================================
-function saveState() {
-  try {
-    localStorage.setItem('isss_appts', JSON.stringify(state.appointments));
-    localStorage.setItem('isss_relatives', JSON.stringify(state.relatives));
-    localStorage.setItem('isss_user', JSON.stringify(state.user));
-  } catch(e) {}
+// ── PERSIST ──
+function save(){try{localStorage.setItem('isss_a',JSON.stringify(S.appts));localStorage.setItem('isss_r',JSON.stringify(S.relatives));localStorage.setItem('isss_u',JSON.stringify(S.user));}catch(e){}}
+function load(){try{const a=localStorage.getItem('isss_a'),r=localStorage.getItem('isss_r'),u=localStorage.getItem('isss_u');if(a)S.appts=JSON.parse(a);if(r)S.relatives=JSON.parse(r);if(u)S.user=JSON.parse(u);}catch(e){}}
+
+// ── LOGIN ──
+function fmtDui(e){let v=e.target.value.replace(/[^0-9]/g,'');if(v.length>9)v=v.slice(0,9);if(v.length>8)v=v.slice(0,8)+'-'+v.slice(8);e.target.value=v}
+document.getElementById('dui-in').addEventListener('input',fmtDui);
+document.getElementById('dui-in').addEventListener('keypress',e=>{if(e.key==='Enter')doLogin()});
+
+function doLogin(){
+  const dui=document.getElementById('dui-in').value.trim();
+  const err=document.getElementById('login-err');
+  if(!/^\d{8}-\d$/.test(dui)){err.style.display='block';return;}
+  err.style.display='none';
+  const names=['María José García','Carlos Alberto Flores','Ana Cecilia López','José Manuel Rodríguez','Rosa Elena Martínez'];
+  S.user={dui,name:names[Math.floor(Math.random()*names.length)]};
+  save();initHome();showView('view-home');
 }
 
-function loadState() {
-  try {
-    const appts = localStorage.getItem('isss_appts');
-    const rels = localStorage.getItem('isss_relatives');
-    const user = localStorage.getItem('isss_user');
-    if (appts) state.appointments = JSON.parse(appts);
-    if (rels) state.relatives = JSON.parse(rels);
-    if (user) state.user = JSON.parse(user);
-  } catch(e) {}
-}
+function doLogout(){S.user=null;save();showView('view-login')}
 
-// =====================================================================
-// LOGIN
-// =====================================================================
-function formatDUI(e) {
-  let v = e.target.value.replace(/[^0-9]/g,'');
-  if (v.length > 9) v = v.slice(0,9);
-  if (v.length > 8) v = v.slice(0,8) + '-' + v.slice(8);
-  e.target.value = v;
-}
-
-function doLogin() {
-  const dui = document.getElementById('dui-input').value.trim();
-  const errEl = document.getElementById('login-error');
-  if (!/^\d{8}-\d$/.test(dui)) {
-    errEl.style.display = 'block'; return;
-  }
-  errEl.style.display = 'none';
-  // Simulate name lookup
-  const names = ['María José García','Carlos Alberto Flores','Ana Cecilia López','José Manuel Rodríguez','Rosa Elena Martínez'];
-  state.user = { dui, name: names[Math.floor(Math.random()*names.length)], age: 72 };
-  saveState();
-  setupHome();
-  showView('view-home');
-}
-
-document.getElementById('dui-input').addEventListener('input', formatDUI);
-document.getElementById('dui-input').addEventListener('keypress', e => { if(e.key==='Enter') doLogin(); });
-
-// =====================================================================
-// VIEW ROUTER
-// =====================================================================
-function showView(id) {
-  document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+// ── VIEW ROUTER ──
+function showView(id){
+  document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));
   document.getElementById(id).classList.add('active');
   window.scrollTo(0,0);
-  if(id==='view-appointments') renderAppointments();
-  if(id==='view-history') renderHistory();
-  if(id==='view-queue') renderQueue();
-  if(id==='view-relatives') renderRelatives();
+  if(id==='view-appointments')renderAppts();
+  if(id==='view-history')renderHist();
+  if(id==='view-queue')renderQueue();
+  if(id==='view-relatives')renderRels();
 }
 
-// =====================================================================
-// HOME
-// =====================================================================
-function setupHome() {
-  document.getElementById('home-name').textContent = state.user?.name || '';
-  renderHomeHistory();
-  renderProximaCita();
-  checkAlerts();
+function setSbActive(id){
+  document.querySelectorAll('.sb-item').forEach(b=>b.classList.remove('active'));
+  document.getElementById(id)?.classList.add('active');
 }
 
-function renderProximaCita() {
-  const sec = document.getElementById('proxima-cita-section');
-  const upcoming = state.appointments.filter(a => a.status==='upcoming').slice(0,1);
-  if (!upcoming.length) { sec.innerHTML=''; return; }
-  const a = upcoming[0];
-  sec.innerHTML = `
-    <div class="section-title">Próxima cita</div>
-    <div class="appt-card" onclick="openApptDetail('${a.id}','view-home')">
-      <div class="appt-header">
-        <div class="appt-spec">${a.specIcon} ${a.spec}</div>
-        <div style="font-size:14px;opacity:0.85;margin-top:2px">${a.date} • ${a.time}</div>
+// ── HOME ──
+function initHome(){
+  document.getElementById('home-name').textContent=S.user?.name||'';
+  document.getElementById('sb-name').textContent=S.user?.name||'—';
+  document.getElementById('sb-dui').textContent='DUI: '+(S.user?.dui||'—');
+  renderProxima();renderHomeHist();checkAlerts();
+  // Demo appt if empty
+  if(!S.appts.length){S.appts.push({id:'demo1',spec:'Medicina General',specIcon:'🩺',center:'ISSS Zacamil',date:'jueves, 28 mayo 2026',time:'9:00 AM',code:'ISSS-DEMO01',status:'upcoming'});save();renderProxima();}
+}
+
+function renderProxima(){
+  const sec=document.getElementById('proxima-cita');
+  const a=S.appts.find(x=>x.status==='upcoming');
+  if(!a){sec.innerHTML='';return;}
+  sec.innerHTML=`<div class="st">Próxima cita</div>
+  <div class="ac" onclick="openDetail('${a.id}','view-home')" style="cursor:pointer">
+    <div class="ac-head"><div class="ac-spec">${a.specIcon} ${a.spec}</div><div class="ac-sub">${a.date} · ${a.time}</div></div>
+    <div class="ac-body">
+      <div class="ac-row"><span class="ic">🏥</span>${a.center}</div>
+      <div class="ac-row"><span class="ic">🎟️</span>Código: <strong>${a.code}</strong></div>
+      <div style="margin-top:10px;display:flex;gap:8px;flex-wrap:wrap">
+        <button class="btn btn-navy btn-sm" onclick="event.stopPropagation();showView('view-queue')">Ver turno</button>
+        <button class="btn btn-danger btn-sm" onclick="event.stopPropagation();openCancel('${a.id}')">Cancelar / Reagendar</button>
       </div>
-      <div class="appt-body">
-        <div class="appt-row"><span class="icon">🏥</span>${a.center}</div>
-        <div class="appt-row"><span class="icon">🎟️</span>Código: <strong>${a.code}</strong></div>
-        <div style="margin-top:12px;display:flex;gap:10px;flex-wrap:wrap">
-          <button class="btn btn-primary btn-sm" onclick="event.stopPropagation();showView('view-queue')">Ver turno en vivo</button>
-          <button class="btn btn-danger btn-sm" onclick="event.stopPropagation();openCancelModal('${a.id}')">Cancelar / Reagendar</button>
-        </div>
-      </div>
-    </div>`;
+    </div>
+  </div>`;
 }
 
-function renderHomeHistory() {
-  const el = document.getElementById('home-history-list');
-  if (!HISTORY_DATA.length) { el.innerHTML='<div style="color:var(--text-muted);font-size:17px">No hay consultas aún.</div>'; return; }
-  el.innerHTML = HISTORY_DATA.slice(0,2).map(h => `
-    <div class="hist-item" onclick="showHistoryDetail(${HISTORY_DATA.indexOf(h)})">
-      <div class="hist-icon">${h.icon}</div>
-      <div><div class="hist-spec">${h.spec}</div><div class="hist-date">${h.date} — ${h.center}</div></div>
-      <div class="hist-arrow">›</div>
-    </div>`).join('');
+function renderHomeHist(){
+  const el=document.getElementById('home-hist');
+  el.innerHTML=HIST.slice(0,2).map((h,i)=>`<div class="hi" onclick="showHistDetail(${i})"><div class="hi-icon">${h.icon}</div><div><div class="hi-spec">${h.spec}</div><div class="hi-date">${h.date} — ${h.center}</div></div><div class="hi-arr">›</div></div>`).join('');
 }
 
-function checkAlerts() {
-  const cancelled = state.appointments.find(a => a.status==='cancelled-by-doctor');
-  const el = document.getElementById('alert-cancel');
-  if (cancelled) {
-    document.getElementById('alert-spec').textContent = cancelled.spec;
-    document.getElementById('alert-date').textContent = cancelled.date;
-    el.style.display = 'flex';
-  } else {
-    el.style.display = 'none';
+function checkAlerts(){
+  const a=S.appts.find(x=>x.status==='cancelled-by-doctor');
+  const el=document.getElementById('alert-cancel');
+  if(a){document.getElementById('al-spec').textContent=a.spec;document.getElementById('al-date').textContent=a.date;el.style.display='flex';}
+  else el.style.display='none';
+}
+function cerrarAlerta(){document.getElementById('alert-cancel').style.display='none'}
+function reagendarAlerta(){const a=S.appts.find(x=>x.status==='cancelled-by-doctor');if(a)a.status='upcoming';save();cerrarAlerta();goStep1()}
+
+// ── STEP 1 ──
+function goStep1(){renderSpecs('');showView('view-step1')}
+function renderSpecs(q){
+  const filtered=q?SPECS.filter(s=>s.kw.some(k=>k.includes(q.toLowerCase()))||s.name.toLowerCase().includes(q.toLowerCase())):SPECS;
+  document.getElementById('spec-grid').innerHTML=filtered.map(s=>`<div class="spec-item ${S.spec?.id===s.id?'sel':''}" onclick="selSpec('${s.id}')"><span class="spec-icon">${s.icon}</span><div class="spec-name">${s.name}</div></div>`).join('');
+  const btn=document.getElementById('btn1');btn.disabled=!S.spec;
+}
+function filterSpecs(){renderSpecs(document.getElementById('search-spec').value)}
+function selSpec(id){S.spec=SPECS.find(s=>s.id===id);renderSpecs(document.getElementById('search-spec').value);document.getElementById('btn1').disabled=false}
+
+// ── STEP 2 ──
+function goStep2(){
+  if(!S.spec)return;
+  document.getElementById('spec-badge').innerHTML=`<span class="badge b-navy">${S.spec.icon} ${S.spec.name}</span>`;
+  renderCenters();showView('view-step2');
+}
+function renderCenters(){
+  document.getElementById('centers-list').innerHTML=CENTERS.map(c=>`
+  <div class="card" style="cursor:pointer;border:2px solid ${S.center?.id===c.id?'var(--navy)':'var(--border)'};margin-bottom:10px" onclick="selCenter('${c.id}')">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px">
+      <div style="font-size:16px;font-weight:800">${c.name}</div>
+      <span class="badge b-green">🟢 ${c.slots} cupos</span>
+    </div>
+    <div style="font-size:14px;color:var(--muted)">📍 ${c.addr}</div>
+    <div style="font-size:14px;color:var(--accent);margin-top:5px;font-weight:700">⏱ Espera: ${c.wait}</div>
+  </div>`).join('');
+}
+function selCenter(id){S.center=CENTERS.find(c=>c.id===id);renderCenters();document.getElementById('btn2').disabled=false}
+
+// ── STEP 3 ──
+const MONTHS=['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'];
+const DAYS=['Dom','Lun','Mar','Mié','Jue','Vie','Sáb'];
+function goStep3(){S.selectedDate=null;S.time=null;renderCal();showView('view-step3')}
+function renderCal(){
+  const m=S.month;
+  document.getElementById('cal-month').textContent=`${MONTHS[m.getMonth()]} ${m.getFullYear()}`;
+  const first=new Date(m.getFullYear(),m.getMonth(),1).getDay();
+  const days=new Date(m.getFullYear(),m.getMonth()+1,0).getDate();
+  const today=new Date();today.setHours(0,0,0,0);
+  let html=DAYS.map(d=>`<div class="cal-dn">${d}</div>`).join('');
+  for(let i=0;i<first;i++)html+=`<div class="cal-d empty"></div>`;
+  for(let d=1;d<=days;d++){
+    const date=new Date(m.getFullYear(),m.getMonth(),d);
+    const past=date<today,isToday=date.getTime()===today.getTime();
+    const isSel=S.date&&S.date.getTime()===date.getTime();
+    const hasSlot=!past&&date.getDay()!==0&&date.getDay()!==6;
+    const cls=['cal-d',past?'past':'',isToday?'today':'',isSel?'sel':'',hasSlot&&!past?'avail has-slots':''].filter(Boolean).join(' ');
+    html+=`<div class="${cls}" onclick="${!past&&hasSlot?`selDate(${d})`:''}">${d}</div>`;
   }
+  document.getElementById('cal-grid').innerHTML=html;
 }
-
-function cerrarAlerta() { document.getElementById('alert-cancel').style.display='none'; }
-function reagendarAlerta() {
-  const a = state.appointments.find(a => a.status==='cancelled-by-doctor');
-  if(a) a.status = 'upcoming';
-  saveState();
-  cerrarAlerta();
-  goStep1();
-}
-
-// =====================================================================
-// STEP 1 — SPECIALTY
-// =====================================================================
-function goStep1() {
-  renderSpecialties('');
-  showView('view-step1');
-}
-
-function renderSpecialties(query) {
-  const grid = document.getElementById('specialty-grid');
-  const filtered = query
-    ? SPECIALTIES.filter(s => s.keywords.some(k => k.includes(query.toLowerCase())) || s.name.toLowerCase().includes(query.toLowerCase()))
-    : SPECIALTIES;
-
-  grid.innerHTML = filtered.map(s => `
-    <div class="specialty-item ${state.selectedSpec?.id===s.id?'selected':''}" onclick="selectSpec('${s.id}')">
-      <span class="specialty-icon">${s.icon}</span>
-      <div class="specialty-name">${s.name}</div>
-    </div>`).join('');
-}
-
-function filterSpecialties() {
-  const q = document.getElementById('search-spec').value;
-  renderSpecialties(q);
-}
-
-function selectSpec(id) {
-  state.selectedSpec = SPECIALTIES.find(s=>s.id===id);
-  renderSpecialties(document.getElementById('search-spec').value);
-  const btn = document.getElementById('btn-next-step1');
-  btn.disabled = false; btn.style.opacity = '1';
-}
-
-// =====================================================================
-// STEP 2 — CENTER
-// =====================================================================
-function goStep2() {
-  if(!state.selectedSpec) return;
-  document.getElementById('selected-spec-badge').innerHTML =
-    `<span class="badge badge-primary">${state.selectedSpec.icon} ${state.selectedSpec.name}</span>`;
-  renderCenters();
-  showView('view-step2');
-}
-
-function renderCenters() {
-  const el = document.getElementById('centers-list');
-  el.innerHTML = CENTERS.map(c => `
-    <div class="card" style="cursor:pointer;border:2px solid ${state.selectedCenter?.id===c.id?'var(--primary)':'var(--border)'};margin-bottom:12px" onclick="selectCenter('${c.id}')">
-      <div style="display:flex;align-items:center;justify-content:space-between">
-        <div style="font-size:18px;font-weight:800">${c.name}</div>
-        <span class="badge badge-green">🟢 ${c.slots} cupos</span>
-      </div>
-      <div style="font-size:16px;color:var(--text-muted);margin-top:4px">📍 ${c.address}</div>
-      <div style="font-size:16px;color:var(--orange);margin-top:6px;font-weight:700">⏱ Espera estimada: ${c.wait}</div>
-    </div>`).join('');
-}
-
-function selectCenter(id) {
-  state.selectedCenter = CENTERS.find(c=>c.id===id);
-  renderCenters();
-  const btn = document.getElementById('btn-next-step2');
-  btn.disabled = false; btn.style.opacity = '1';
-}
-
-// =====================================================================
-// STEP 3 — CALENDAR
-// =====================================================================
-function goStep3() {
-  if(!state.selectedCenter) return;
-  state.currentMonth = new Date();
-  renderCalendar();
-  showView('view-step3');
-}
-
-const MONTHS_ES = ['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'];
-const DAYS_ES = ['Dom','Lun','Mar','Mié','Jue','Vie','Sáb'];
-
-function renderCalendar() {
-  const m = state.currentMonth;
-  document.getElementById('cal-month-label').textContent = `${MONTHS_ES[m.getMonth()]} ${m.getFullYear()}`;
-  const grid = document.getElementById('cal-grid');
-  let html = DAYS_ES.map(d=>`<div class="cal-day-name">${d}</div>`).join('');
-  const firstDay = new Date(m.getFullYear(), m.getMonth(), 1).getDay();
-  const daysInMonth = new Date(m.getFullYear(), m.getMonth()+1, 0).getDate();
-  const today = new Date(); today.setHours(0,0,0,0);
-
-  for(let i=0;i<firstDay;i++) html+=`<div class="cal-day empty"></div>`;
-  for(let d=1;d<=daysInMonth;d++) {
-    const date = new Date(m.getFullYear(), m.getMonth(), d);
-    const isPast = date < today;
-    const isToday = date.getTime()===today.getTime();
-    const isSelected = state.selectedDate && state.selectedDate.getTime()===date.getTime();
-    const hasSlots = !isPast && date.getDay()!==0 && date.getDay()!==6;
-    const cls = [
-      'cal-day',
-      isPast ? 'past' : '',
-      isToday ? 'today' : '',
-      isSelected ? 'selected' : '',
-      hasSlots && !isPast ? 'available has-slots' : '',
-    ].filter(Boolean).join(' ');
-    html += `<div class="${cls}" onclick="${!isPast&&hasSlots?`selectDate(${d})`:''}"> ${d}</div>`;
-  }
-  grid.innerHTML = html;
-}
-
-function selectDate(d) {
-  const m = state.currentMonth;
-  state.selectedDate = new Date(m.getFullYear(), m.getMonth(), d);
-  state.selectedTime = null;
-  renderCalendar();
-  renderTimeSlots();
-  document.getElementById('time-section').style.display = 'block';
-  const btn = document.getElementById('btn-next-step3');
-  btn.disabled = true; btn.style.opacity = '0.5';
-}
-
-function renderTimeSlots() {
-  const times = ['7:00 AM','7:30 AM','8:00 AM','8:30 AM','9:00 AM','9:30 AM',
-                  '10:00 AM','10:30 AM','11:00 AM','11:30 AM','2:00 PM','2:30 PM'];
-  const taken = [2,5,8];
-  const el = document.getElementById('time-slots-grid');
-  el.innerHTML = times.map((t,i) => {
-    const isTaken = taken.includes(i);
-    const isSelected = state.selectedTime===t;
-    const cls = `time-slot ${isTaken?'taken':''} ${isSelected?'selected':''}`;
-    return `<div class="${cls}" onclick="${!isTaken?`selectTime('${t}')`:''}">${t}${isTaken?'<br><small>Ocupado</small>':''}</div>`;
+function selDate(d){S.date=new Date(S.month.getFullYear(),S.month.getMonth(),d);S.time=null;renderCal();renderTSlots();document.getElementById('time-sec').style.display='block';document.getElementById('btn3').disabled=true}
+function renderTSlots(){
+  const times=['7:00 AM','7:30 AM','8:00 AM','8:30 AM','9:00 AM','9:30 AM','10:00 AM','10:30 AM','11:00 AM','11:30 AM','2:00 PM','2:30 PM'];
+  const taken=[2,5,8];
+  document.getElementById('tslots').innerHTML=times.map((t,i)=>{
+    const tk=taken.includes(i),sel=S.time===t;
+    return`<button class="tslot ${tk?'taken':''} ${sel?'sel':''}" onclick="${!tk?`selTime('${t}')`:''}">${t}${tk?'<br><small style="font-weight:400">Ocupado</small>':''}</button>`;
   }).join('');
 }
+function selTime(t){S.time=t;renderTSlots();document.getElementById('btn3').disabled=false}
+function changeMonth(dir){S.month=new Date(S.month.getFullYear(),S.month.getMonth()+dir,1);renderCal();document.getElementById('time-sec').style.display='none'}
 
-function selectTime(t) {
-  state.selectedTime = t;
-  renderTimeSlots();
-  const btn = document.getElementById('btn-next-step3');
-  btn.disabled = false; btn.style.opacity = '1';
-}
-
-function changeMonth(dir) {
-  const m = state.currentMonth;
-  state.currentMonth = new Date(m.getFullYear(), m.getMonth()+dir, 1);
-  renderCalendar();
-  document.getElementById('time-section').style.display = 'none';
-}
-
-// =====================================================================
-// CONFIRMATION
-// =====================================================================
-function goConfirm() {
-  if(!state.selectedDate||!state.selectedTime) return;
-  const dateStr = state.selectedDate.toLocaleDateString('es-SV',{weekday:'long',day:'numeric',month:'long',year:'numeric'});
-  document.getElementById('conf-spec').textContent = `${state.selectedSpec.icon} ${state.selectedSpec.name}`;
-  document.getElementById('conf-center').textContent = state.selectedCenter.name;
-  document.getElementById('conf-date').textContent = dateStr;
-  document.getElementById('conf-time').textContent = state.selectedTime;
-  document.getElementById('conf-name').textContent = state.user?.name || '';
+// ── CONFIRM ──
+function goConfirm(){
+  if(!S.date||!S.time)return;
+  const ds=S.date.toLocaleDateString('es-SV',{weekday:'long',day:'numeric',month:'long',year:'numeric'});
+  document.getElementById('cf-spec').textContent=`${S.spec.icon} ${S.spec.name}`;
+  document.getElementById('cf-center').textContent=S.center.name;
+  document.getElementById('cf-date').textContent=ds;
+  document.getElementById('cf-time').textContent=S.time;
+  document.getElementById('cf-name').textContent=S.user?.name||'';
   showView('view-confirm');
 }
+function toggleFamiliar(){const s=document.getElementById('fam-sec'),i=document.getElementById('fam-ico'),shown=s.style.display!=='none';s.style.display=shown?'none':'block';i.textContent=shown?'＋':'−'}
 
-function toggleFamiliarSection() {
-  const sec = document.getElementById('familiar-section');
-  const ico = document.getElementById('familiar-toggle-icon');
-  const shown = sec.style.display !== 'none';
-  sec.style.display = shown ? 'none' : 'block';
-  ico.textContent = shown ? '＋' : '−';
+function confirmAppt(){
+  const ds=S.date.toLocaleDateString('es-SV',{weekday:'long',day:'numeric',month:'long',year:'numeric'});
+  const code='ISSS-'+Math.random().toString(36).substring(2,8).toUpperCase();
+  const a={id:Date.now().toString(),spec:S.spec.name,specIcon:S.spec.icon,center:S.center.name,date:ds,time:S.time,code,status:'upcoming'};
+  S.appts.unshift(a);save();
+  document.getElementById('tk-code').textContent=code;
+  document.getElementById('tk-spec').textContent=`${a.specIcon} ${a.spec}`;
+  document.getElementById('tk-center').textContent=a.center;
+  document.getElementById('tk-date').textContent=a.date;
+  document.getElementById('tk-time').textContent=a.time;
+  showView('view-ticket');initHome();
 }
+function downloadTicket(){alert('📥 Comprobante guardado.\nCódigo: '+document.getElementById('tk-code').textContent)}
+function shareTicket(){const c=document.getElementById('tk-code').textContent;if(navigator.share)navigator.share({title:'ISSS Cita',text:`Mi cita ISSS. Código: ${c}`});else alert('Código: '+c)}
 
-function confirmAppointment() {
-  const dateStr = state.selectedDate.toLocaleDateString('es-SV',{weekday:'long',day:'numeric',month:'long',year:'numeric'});
-  const code = 'ISSS-' + Math.random().toString(36).substring(2,8).toUpperCase();
-  const appt = {
-    id: Date.now().toString(),
-    spec: state.selectedSpec.name,
-    specIcon: state.selectedSpec.icon,
-    center: state.selectedCenter.name,
-    date: dateStr,
-    time: state.selectedTime,
-    code,
-    status: 'upcoming',
-  };
-  state.appointments.unshift(appt);
-  saveState();
-
-  // Ticket view
-  document.getElementById('ticket-code').textContent = code;
-  document.getElementById('ticket-spec').textContent = `${appt.specIcon} ${appt.spec}`;
-  document.getElementById('ticket-center').textContent = appt.center;
-  document.getElementById('ticket-date').textContent = appt.date;
-  document.getElementById('ticket-time').textContent = appt.time;
-
-  showView('view-ticket');
-  setupHome();
-}
-
-function downloadTicket() {
-  alert('📥 Comprobante guardado en su galería.\n\nCódigo: ' + document.getElementById('ticket-code').textContent);
-}
-
-function shareTicket() {
-  const code = document.getElementById('ticket-code').textContent;
-  if(navigator.share) {
-    navigator.share({ title: 'ISSS Cita', text: `Mi cita ISSS. Código: ${code}` });
-  } else {
-    alert('Código: ' + code);
-  }
-}
-
-// =====================================================================
-// APPOINTMENTS
-// =====================================================================
-function renderAppointments() {
-  const sec = document.getElementById('appts-upcoming-section');
-  const empty = document.getElementById('appts-empty');
-  const upcoming = state.appointments.filter(a => a.status==='upcoming');
-  if (!upcoming.length) {
-    sec.innerHTML = ''; empty.style.display='block'; return;
-  }
-  empty.style.display = 'none';
-  sec.innerHTML = `<div class="section-title">Citas programadas</div>` +
-    upcoming.map(a => `
-      <div class="appt-card">
-        <div class="appt-header">
-          <div class="appt-spec">${a.specIcon} ${a.spec}</div>
-        </div>
-        <div class="appt-body">
-          <div class="appt-row"><span class="icon">🏥</span>${a.center}</div>
-          <div class="appt-row"><span class="icon">📅</span>${a.date}</div>
-          <div class="appt-row"><span class="icon">🕐</span>${a.time}</div>
-          <div class="appt-row"><span class="icon">🎟️</span><strong>${a.code}</strong></div>
-          <div style="margin-top:14px;display:flex;gap:10px;flex-wrap:wrap">
-            <button class="btn btn-primary btn-sm" onclick="showView('view-queue')">Ver turno en vivo</button>
-            <button class="btn btn-danger btn-sm" onclick="openCancelModal('${a.id}')">Cancelar / Reagendar</button>
-          </div>
-        </div>
-      </div>`).join('');
-}
-
-function openCancelModal(id) {
-  state.cancelTarget = id;
-  document.getElementById('modal-cancel').classList.add('open');
-}
-
-function cancelAppt() {
-  state.appointments = state.appointments.filter(a => a.id !== state.cancelTarget);
-  saveState();
-  closeModal('modal-cancel');
-  renderAppointments();
-  renderProximaCita();
-}
-
-function rescheduleAppt() {
-  state.appointments = state.appointments.filter(a => a.id !== state.cancelTarget);
-  saveState();
-  closeModal('modal-cancel');
-  goStep1();
-}
-
-// =====================================================================
-// QUEUE (SHOULD HAVE)
-// =====================================================================
-function renderQueue() {
-  const el = document.getElementById('queue-content');
-  const upcoming = state.appointments.filter(a => a.status==='upcoming')[0];
-  if (!upcoming) {
-    el.innerHTML = `<div class="empty-state">
-      <div class="empty-icon">🔢</div>
-      <div class="empty-title">Sin cita activa hoy</div>
-      <div class="empty-sub">Reserve una cita para ver su posición en fila en tiempo real.</div>
-      <button class="btn btn-primary" onclick="goStep1()">Reservar cita</button>
-    </div>`; return;
-  }
-  const pos = state.queuePosition;
-  const total = state.queueTotal;
-  const pct = Math.max(5, Math.round(((total-pos)/total)*100));
-  const espera = pos * 5;
-  el.innerHTML = `
-    <div class="alert alert-success"><span class="alert-icon">📍</span><div><strong>Usted está en la fila</strong><br>${upcoming.spec} — ${upcoming.center}</div></div>
-    <div class="card card-accent-top" style="text-align:center;padding:28px 20px">
-      <div style="font-size:16px;color:var(--text-muted);text-transform:uppercase;font-weight:700;margin-bottom:4px">Su número de turno</div>
-      <div class="queue-number">${pos}</div>
-      <div class="queue-label">de ${total} pacientes</div>
-      <div class="progress-bar-wrap"><div class="progress-bar-fill" style="width:${pct}%"></div></div>
-      <div style="font-size:16px;color:var(--text-muted);margin-top:8px">Avance: ${pct}%</div>
-    </div>
-    <div class="card">
-      <div class="appt-row"><span class="icon">⏱</span>Tiempo estimado de espera: <strong>~${espera} min</strong></div>
-      <div class="appt-row"><span class="icon">🕐</span>Hora de su cita: <strong>${upcoming.time}</strong></div>
-      <div class="appt-row"><span class="icon">🏥</span>${upcoming.center}</div>
-    </div>
-    <div class="alert alert-info"><span class="alert-icon">💡</span><div>Puede retirarse y regresar cuando falten 2 turnos. Le avisaremos.</div></div>
-    <button class="btn btn-secondary" onclick="simulateQueueMove()">🔄 Actualizar posición</button>`;
-
-  if(state.queueInterval) clearInterval(state.queueInterval);
-  state.queueInterval = setInterval(() => {
-    if(state.queuePosition > 1) { state.queuePosition--; renderQueue(); }
-    else clearInterval(state.queueInterval);
-  }, 8000);
-}
-
-function simulateQueueMove() {
-  if(state.queuePosition > 1) { state.queuePosition--; renderQueue(); }
-}
-
-// =====================================================================
-// HISTORY (SHOULD HAVE)
-// =====================================================================
-function renderHistory() {
-  const el = document.getElementById('history-list');
-  el.innerHTML = HISTORY_DATA.map((h,i) => `
-    <div class="hist-item" onclick="showHistoryDetail(${i})">
-      <div class="hist-icon">${h.icon}</div>
-      <div style="flex:1">
-        <div class="hist-spec">${h.spec}</div>
-        <div class="hist-date">${h.date}</div>
-        <div class="hist-date">${h.center} · ${h.doctor}</div>
+// ── APPOINTMENTS ──
+function renderAppts(){
+  const up=S.appts.filter(a=>a.status==='upcoming');
+  document.getElementById('appts-empty').style.display=up.length?'none':'block';
+  document.getElementById('appts-list').innerHTML=up.length?`<div class="st">Citas programadas</div>`+up.map(a=>`
+  <div class="ac">
+    <div class="ac-head"><div class="ac-spec">${a.specIcon} ${a.spec}</div></div>
+    <div class="ac-body">
+      <div class="ac-row"><span class="ic">🏥</span>${a.center}</div>
+      <div class="ac-row"><span class="ic">📅</span>${a.date}</div>
+      <div class="ac-row"><span class="ic">🕐</span>${a.time}</div>
+      <div class="ac-row"><span class="ic">🎟️</span><strong>${a.code}</strong></div>
+      <div style="margin-top:10px;display:flex;gap:8px;flex-wrap:wrap">
+        <button class="btn btn-navy btn-sm" onclick="showView('view-queue')">Ver turno</button>
+        <button class="btn btn-danger btn-sm" onclick="openCancel('${a.id}')">Cancelar / Reagendar</button>
       </div>
-      <div class="hist-arrow">›</div>
-    </div>`).join('');
-}
-
-function showHistoryDetail(i) {
-  const h = HISTORY_DATA[i];
-  document.getElementById('modal-history-content').innerHTML = `
-    <div class="section-title">${h.icon} ${h.spec}</div>
-    <div class="divider"></div>
-    <div class="appt-row"><span class="icon">📅</span>${h.date}</div>
-    <div class="appt-row"><span class="icon">👨‍⚕️</span>${h.doctor}</div>
-    <div class="appt-row"><span class="icon">🏥</span>${h.center}</div>
-    <div class="divider"></div>
-    <div style="font-size:17px;font-weight:700;margin-bottom:8px">Notas del médico</div>
-    <div style="font-size:17px;line-height:1.6;color:var(--text-muted)">${h.notes}</div>
-    <div class="divider"></div>
-    <div style="font-size:17px;font-weight:700;margin-bottom:8px">💊 Receta</div>
-    <div style="font-size:17px;line-height:1.6;color:var(--text-muted)">${h.prescription}</div>
-    <button class="btn btn-primary" onclick="downloadReceta('${h.spec}')" style="margin-top:16px">⬇️ Descargar receta</button>`;
-  document.getElementById('modal-history-detail').classList.add('open');
-}
-
-function downloadReceta(spec) {
-  alert(`📄 Receta de ${spec} descargada.\n(En producción se generaría un PDF firmado digitalmente)`);
-}
-
-// =====================================================================
-// RELATIVES (SHOULD HAVE)
-// =====================================================================
-function renderRelatives() {
-  const el = document.getElementById('relatives-list');
-  if(!state.relatives.length) {
-    el.innerHTML = `<div class="empty-state" style="padding:24px 0">
-      <div class="empty-icon">👨‍👩‍👧</div>
-      <div class="empty-title">Sin familiares guardados</div>
-      <div class="empty-sub">Agregue familiares para gestionar sus citas sin que ellos necesiten usar el teléfono.</div>
-    </div>`; return;
-  }
-  el.innerHTML = state.relatives.map(r => `
-    <div class="relative-item" onclick="bookForRelative('${r.dui}')">
-      <div class="relative-avatar">👤</div>
-      <div style="flex:1"><div class="relative-name">${r.name}</div><div class="relative-rel">${r.relation} · DUI: ${r.dui}</div></div>
-      <div class="relative-arrow">›</div>
-    </div>`).join('');
-}
-
-function openAddRelative() {
-  document.getElementById('rel-name').value='';
-  document.getElementById('rel-dui').value='';
-  document.getElementById('rel-relation').value='';
-  document.getElementById('modal-add-relative').classList.add('open');
-}
-
-function saveRelative() {
-  const name = document.getElementById('rel-name').value.trim();
-  const dui = document.getElementById('rel-dui').value.trim();
-  const relation = document.getElementById('rel-relation').value;
-  if(!name||!dui||!relation) { alert('Por favor complete todos los campos'); return; }
-  state.relatives.push({ name, dui, relation });
-  saveState();
-  closeModal('modal-add-relative');
-  renderRelatives();
-}
-
-function bookForRelative(dui) {
-  const rel = state.relatives.find(r=>r.dui===dui);
-  alert(`Agendando cita para: ${rel.name}\n\nSe abrirá el flujo de nueva cita. El familiar solo debe presentarse a la hora indicada.`);
-  goStep1();
-}
-
-// =====================================================================
-// APPOINTMENT DETAIL
-// =====================================================================
-function openApptDetail(id, backView) {
-  const a = state.appointments.find(x=>x.id===id);
-  if(!a) return;
-  document.getElementById('detail-back-btn').onclick = () => showView(backView);
-  document.getElementById('appt-detail-content').innerHTML = `
-    <div style="background:var(--primary);color:white;padding:24px 20px;margin:-20px -20px 20px">
-      <div style="font-size:28px;font-weight:900">${a.specIcon} ${a.spec}</div>
-      <div style="font-size:16px;opacity:0.85;margin-top:4px">${a.date}</div>
     </div>
-    <div class="card">
-      <div class="appt-row"><span class="icon">🏥</span>${a.center}</div>
-      <div class="appt-row"><span class="icon">🕐</span>${a.time}</div>
-      <div class="appt-row"><span class="icon">🎟️</span>Código: <strong>${a.code}</strong></div>
-    </div>
-    <div class="qr-container">
-      <div class="qr-box"><div class="qr-inner">🏥</div></div>
-    </div>
-    <div style="text-align:center;font-size:20px;font-weight:900;color:var(--primary);margin-bottom:20px">${a.code}</div>
-    <div style="display:flex;flex-direction:column;gap:12px">
-      <button class="btn btn-primary" onclick="showView('view-queue')">Ver turno en vivo</button>
-      <button class="btn btn-danger" onclick="openCancelModal('${a.id}')">Cancelar / Reagendar</button>
-    </div>`;
-  showView('view-appt-detail');
+  </div>`).join(''):'';
 }
 
-// =====================================================================
-// MODAL
-// =====================================================================
-function closeModal(id) { document.getElementById(id).classList.remove('open'); }
-document.querySelectorAll('.modal-overlay').forEach(m => {
-  m.addEventListener('click', e => { if(e.target===m) m.classList.remove('open'); });
-});
+function openCancel(id){S.cancelId=id;document.getElementById('m-cancel').classList.add('open')}
+function cancelAppt(){S.appts=S.appts.filter(a=>a.id!==S.cancelId);save();closeModal('m-cancel');renderAppts();renderProxima()}
+function rescheduleAppt(){S.appts=S.appts.filter(a=>a.id!==S.cancelId);save();closeModal('m-cancel');goStep1()}
 
-// =====================================================================
-// INIT
-// =====================================================================
-loadState();
-if(state.user) { setupHome(); showView('view-home'); }
+// ── QUEUE ──
+function renderQueue(){
+  const el=document.getElementById('queue-content');
+  const a=S.appts.find(x=>x.status==='upcoming');
+  if(!a){el.innerHTML=`<div class="empty"><div class="empty-icon">🔢</div><div class="empty-t">Sin cita activa</div><div class="empty-s">Reserve una cita para ver su turno en tiempo real.</div><button class="btn btn-navy" onclick="goStep1()">Reservar cita</button></div>`;return}
+  const pos=S.queuePos,total=S.queueTotal,pct=Math.max(5,Math.round(((total-pos)/total)*100));
+  el.innerHTML=`
+  <div class="al al-ok"><span class="al-ic">📍</span><div><strong>Está en fila</strong><br>${a.spec} — ${a.center}</div></div>
+  <div class="card card-l" style="text-align:center;padding:26px 18px">
+    <div style="font-size:13px;color:var(--muted);text-transform:uppercase;font-weight:700;margin-bottom:4px;letter-spacing:.5px">Su turno</div>
+    <div class="q-num">${pos}</div>
+    <div class="q-label">de ${total} pacientes</div>
+    <div class="prog-wrap"><div class="prog-fill" style="width:${pct}%"></div></div>
+    <div style="font-size:14px;color:var(--muted);margin-top:6px">Avance: ${pct}%</div>
+  </div>
+  <div class="card">
+    <div class="ac-row"><span class="ic">⏱</span>Espera estimada: <strong>~${pos*5} min</strong></div>
+    <div class="ac-row"><span class="ic">🕐</span>Hora de su cita: <strong>${a.time}</strong></div>
+    <div class="ac-row"><span class="ic">🏥</span>${a.center}</div>
+  </div>
+  <div class="al al-info"><span class="al-ic">💡</span><div>Puede retirarse y volver cuando falten 2 turnos.</div></div>
+  <button class="btn btn-ghost" onclick="simQueue()">🔄 Actualizar posición</button>`;
+  if(S.queueTimer)clearInterval(S.queueTimer);
+  S.queueTimer=setInterval(()=>{if(S.queuePos>1){S.queuePos--;renderQueue()}else clearInterval(S.queueTimer)},8000);
+}
+function simQueue(){if(S.queuePos>1){S.queuePos--;renderQueue()}}
 
-// Add demo cancelled-by-doctor appointment after 3s to demonstrate feature
-setTimeout(() => {
-  if(state.appointments.length === 0) {
-    // Add a sample upcoming appointment for demo
-    state.appointments.push({
-      id: 'demo1',
-      spec: 'Medicina General',
-      specIcon: '🩺',
-      center: 'ISSS Zacamil',
-      date: 'jueves, 28 mayo 2026',
-      time: '9:00 AM',
-      code: 'ISSS-DEMO01',
-      status: 'upcoming',
-    });
-    saveState();
-    if(document.getElementById('view-home').classList.contains('active')) {
-      renderProximaCita();
-    }
-  }
-}, 500);
+// ── HISTORY ──
+function renderHist(){
+  document.getElementById('hist-list').innerHTML=HIST.map((h,i)=>`<div class="hi" onclick="showHistDetail(${i})"><div class="hi-icon">${h.icon}</div><div style="flex:1"><div class="hi-spec">${h.spec}</div><div class="hi-date">${h.date}</div><div class="hi-date">${h.center} · ${h.doc}</div></div><div class="hi-arr">›</div></div>`).join('');
+}
+function showHistDetail(i){
+  const h=HIST[i];
+  document.getElementById('hist-modal-content').innerHTML=`
+  <div class="st">${h.icon} ${h.spec}</div>
+  <div class="divider"></div>
+  <div class="ac-row"><span class="ic">📅</span>${h.date}</div>
+  <div class="ac-row"><span class="ic">👨‍⚕️</span>${h.doc}</div>
+  <div class="ac-row"><span class="ic">🏥</span>${h.center}</div>
+  <div class="divider"></div>
+  <div style="font-size:15px;font-weight:700;margin-bottom:6px">Notas del médico</div>
+  <div style="font-size:16px;color:var(--muted);line-height:1.6">${h.notes}</div>
+  <div class="divider"></div>
+  <div style="font-size:15px;font-weight:700;margin-bottom:6px">💊 Receta</div>
+  <div style="font-size:16px;color:var(--muted)">${h.rx}</div>
+  <button class="btn btn-navy" onclick="alert('📄 Receta de ${h.spec} descargada.')" style="margin-top:14px">⬇️ Descargar receta</button>`;
+  document.getElementById('m-hist-detail').classList.add('open');
+}
+
+// ── RELATIVES ──
+function renderRels(){
+  const el=document.getElementById('rel-list');
+  if(!S.relatives.length){el.innerHTML=`<div class="empty"><div class="empty-icon">👨‍👩‍👧</div><div class="empty-t">Sin familiares</div><div class="empty-s">Agregue familiares para agendar sus citas sin que ellos usen el teléfono.</div></div>`;return}
+  el.innerHTML=S.relatives.map(r=>`<div class="ri" onclick="bookForRel('${r.dui}')"><div class="ri-av">${r.name.charAt(0)}</div><div style="flex:1"><div class="ri-name">${r.name}</div><div class="ri-sub">${r.relation} · ${r.dui}</div></div><div class="ri-arr">›</div></div>`).join('');
+}
+function openAddRel(){document.getElementById('rel-name').value='';document.getElementById('rel-dui').value='';document.getElementById('rel-rel').value='';document.getElementById('m-add-rel').classList.add('open')}
+function saveRel(){
+  const name=document.getElementById('rel-name').value.trim(),dui=document.getElementById('rel-dui').value.trim(),relation=document.getElementById('rel-rel').value;
+  if(!name||!dui||!relation){alert('Complete todos los campos');return}
+  S.relatives.push({name,dui,relation});save();closeModal('m-add-rel');renderRels();
+}
+function bookForRel(dui){const r=S.relatives.find(x=>x.dui===dui);alert(`Agendando para: ${r.name}\n\nSe abrirá el flujo de nueva cita. ${r.name} solo debe presentarse.`);goStep1()}
+
+// ── DETAIL ──
+function openDetail(id,back){
+  const a=S.appts.find(x=>x.id===id);if(!a)return;
+  document.getElementById('detail-back').onclick=()=>showView(back);
+  document.getElementById('detail-content').innerHTML=`
+  <div style="background:var(--navy);color:#fff;padding:22px 20px;margin:-20px -20px 18px">
+    <div style="font-size:24px;font-weight:900">${a.specIcon} ${a.spec}</div>
+    <div style="font-size:14px;opacity:.75;margin-top:4px">${a.date}</div>
+  </div>
+  <div class="card card-l">
+    <div class="ac-row"><span class="ic">🏥</span>${a.center}</div>
+    <div class="ac-row"><span class="ic">🕐</span>${a.time}</div>
+    <div class="ac-row"><span class="ic">🎟️</span>Código: <strong>${a.code}</strong></div>
+  </div>
+  <div class="qr-wrap"><div class="qr-box"><div class="qr-inner"><img src="https://cdn.brandfetch.io/id8LwMLHOF/w/400/h/400/theme/dark/icon.jpeg?c=1bxid64Mup7aczewSAYMX&t=1771715114286" style="width:36px;height:36px;border-radius:3px;object-fit:cover"></div></div></div>
+  <div style="text-align:center;font-size:18px;font-weight:900;color:var(--navy);margin-bottom:18px">${a.code}</div>
+  <div style="display:flex;flex-direction:column;gap:10px">
+    <button class="btn btn-navy" onclick="showView('view-queue')">Ver turno en vivo</button>
+    <button class="btn btn-danger" onclick="openCancel('${a.id}')">Cancelar / Reagendar</button>
+  </div>`;
+  showView('view-detail');
+}
+
+// ── MODAL ──
+function closeModal(id){document.getElementById(id).classList.remove('open')}
+document.querySelectorAll('.moverlay').forEach(m=>m.addEventListener('click',e=>{if(e.target===m)m.classList.remove('open')}));
+
+// ── INIT ──
+load();
+if(S.user){initHome();showView('view-home')}
 </script>
 </body>
 </html>
