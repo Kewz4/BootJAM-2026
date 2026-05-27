@@ -277,7 +277,7 @@ body {
 .cal-d.avail:active { transform: scale(0.85); }
 .cal-d.sel   { background: var(--navy) !important; color: #fff; border-radius: 50%; }
 .cal-d.today { border: 2px solid var(--navy); color: var(--navy); font-weight: 900; }
-.cal-d.sel.today { border-color: transparent; }
+.cal-d.sel.today { border-color: transparent; color: #fff !important; }
 .cal-d.has-slots::after {
   content: ''; position: absolute; bottom: 4px; left: 50%; transform: translateX(-50%);
   width: 4px; height: 4px; background: var(--green); border-radius: 50%;
@@ -316,13 +316,10 @@ body {
 .qr-wrap { display: flex; justify-content: center; padding: 20px 0; }
 .qr-box {
   width: 160px; height: 160px;
-  background: repeating-linear-gradient(0deg,#000 0,#000 4px,#fff 4px,#fff 8px),
-              repeating-linear-gradient(90deg,#000 0,#000 4px,#fff 4px,#fff 8px);
-  background-blend-mode: multiply;
-  border-radius: 10px; display: flex; align-items: center; justify-content: center;
-  border: 3px solid var(--navy);
+  border-radius: 12px; overflow: hidden;
+  border: 3px solid var(--navy); background: #fff; padding: 6px;
 }
-.qr-inner { width: 40px; height: 40px; background: #fff; border-radius: 4px; display: flex; align-items: center; justify-content: center; overflow: hidden; }
+.qr-box img { width: 100%; height: 100%; display: block; border-radius: 6px; }
 
 /* ─── TICKET ─── */
 .ticket {
@@ -888,7 +885,7 @@ body {
       <div class="ticket-sep"><hr class="ticket-line"></div>
       <div class="ticket-body">
         <div class="qr-wrap" style="padding:8px 0 12px">
-          <div class="qr-box"><div class="qr-inner"><img src="https://cdn.brandfetch.io/id8LwMLHOF/w/400/h/400/theme/dark/icon.jpeg?c=1bxid64Mup7aczewSAYMX&t=1771715114286" style="width:36px;height:36px;object-fit:cover;border-radius:3px"></div></div>
+          <div class="qr-box"><img id="tk-qr" src="" alt="Código QR" loading="lazy"></div>
         </div>
         <div style="text-align:center">
           <div id="tk-code" style="font-size:22px;font-weight:900;color:var(--navy);letter-spacing:2px">—</div>
@@ -1072,10 +1069,10 @@ const SPECS = [
   {id:'ninos', icon:'bi-balloon',          name:'Pediatría',           kw:['niño','bebe','infante','pediatr','menor']},
   {id:'piel',  icon:'bi-sun',              name:'Dermatología',        kw:['piel','acne','mancha','erupcion','dermat','alergia','sol']},
   {id:'neuro', icon:'bi-activity',         name:'Neurología',          kw:['cabeza','cerebro','migraña','epilepsia','mareo','neurol']},
-  {id:'gastro',icon:'bi-droplet-fill',     name:'Gastroenterología',   kw:['estomago','intestino','digestion','colitis','gastro','reflujo']},
+  {id:'gastro',icon:'bi-capsule-pill',     name:'Gastroenterología',   kw:['estomago','intestino','digestion','colitis','gastro','reflujo']},
   {id:'psiq',  icon:'bi-chat-heart',       name:'Psiquiatría',         kw:['mental','ansiedad','depresion','mente','psiq','estres']},
   {id:'urol',  icon:'bi-droplet-half',     name:'Urología',            kw:['rinon','urinario','vejiga','urol','prostata']},
-  {id:'dental',icon:'bi-brush',             name:'Odontología',         kw:['diente','muela','dental','boca','odonto','encía']},
+  {id:'dental',icon:'bi-tooth',             name:'Odontología',         kw:['diente','muela','dental','boca','odonto','encía']},
 ];
 
 const CENTERS = [
@@ -1307,6 +1304,7 @@ function confirmAppt(){
   document.getElementById('tk-date').textContent=a.date;
   document.getElementById('tk-time').textContent=a.time;
   document.getElementById('tk-code').textContent=code;
+  document.getElementById('tk-qr').src=`https://api.qrserver.com/v1/create-qr-code/?size=160x160&data=ISSS%3A${code}&color=002B5C&bgcolor=FFFFFF&margin=3`;
   document.getElementById('tk-status-chip').innerHTML=`<span class="chip chip-green"><i class="bi bi-check-circle-fill"></i> Confirmada</span>`;
   if('Notification' in window && Notification.permission==='granted'){
     new Notification('ISSS — ¡Cita confirmada! ✓',{
@@ -1454,7 +1452,7 @@ function openDetail(id,back){
     </div>
     <div class="ticket-sep"><hr class="ticket-line"></div>
     <div class="ticket-body">
-      <div class="qr-wrap" style="padding:8px 0 10px"><div class="qr-box"><div class="qr-inner"><img src="https://cdn.brandfetch.io/id8LwMLHOF/w/400/h/400/theme/dark/icon.jpeg?c=1bxid64Mup7aczewSAYMX&t=1771715114286" style="width:36px;height:36px;object-fit:cover;border-radius:3px"></div></div></div>
+      <div class="qr-wrap" style="padding:8px 0 10px"><div class="qr-box"><img src="https://api.qrserver.com/v1/create-qr-code/?size=160x160&data=ISSS%3A${a.code}&color=002B5C&bgcolor=FFFFFF&margin=3" alt="QR" loading="lazy"></div></div>
       <div style="text-align:center"><div style="font-size:20px;font-weight:900;color:var(--navy);letter-spacing:2px">${a.code}</div><div class="sub" style="margin-top:3px">Código de comprobante</div></div>
     </div>
   </div>
