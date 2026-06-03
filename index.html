@@ -1,1795 +1,420 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-<meta name="theme-color" content="#002B5C">
-<meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<meta name="apple-mobile-web-app-title" content="ISSS Citas">
-<link rel="icon" href="https://cdn.brandfetch.io/id8LwMLHOF/w/400/h/400/theme/dark/icon.jpeg?c=1bxid64Mup7aczewSAYMX&t=1771715114286" type="image/jpeg">
-<link rel="apple-touch-icon" href="https://cdn.brandfetch.io/id8LwMLHOF/w/400/h/400/theme/dark/icon.jpeg?c=1bxid64Mup7aczewSAYMX&t=1771715114286">
-<link rel="manifest" href="manifest.json">
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
-<title>ISSS Citas</title>
-<style>
-/* ─── TOKENS ─── */
-:root {
-  --navy:      #002B5C;
-  --navy-2:    #003F85;
-  --navy-3:    #EBF2FA;
-  --accent:    #D63B0A;
-  --green:     #059669;
-  --green-bg:  #ECFDF5;
-  --red:       #DC2626;
-  --red-bg:    #FEF2F2;
-  --yellow:    #D97706;
-  --yel-bg:    #FFFBEB;
-  --sky:       #0EA5E9;
-  --sky-bg:    #F0F9FF;
-  --bg:        #F1F5FB;
-  --surface:   #FFFFFF;
-  --border:    #E2E8F0;
-  --text:      #0D1B2A;
-  --muted:     #7D99B8;
-  --r:         14px;
-  --r-sm:      9px;
-  --r-lg:      20px;
-  /* easing */
-  --ease-out:    cubic-bezier(0.23, 1, 0.32, 1);
-  --ease-drawer: cubic-bezier(0.32, 0.72, 0, 1);
-  --ease-in-out: cubic-bezier(0.77, 0, 0.175, 1);
-}
-*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <meta name="theme-color" content="#002B5C">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="ISSS Citas">
+  <link rel="icon" href="https://cdn.brandfetch.io/id8LwMLHOF/w/400/h/400/theme/dark/icon.jpeg?c=1bxid64Mup7aczewSAYMX&t=1771715114286" type="image/jpeg">
+  <link rel="apple-touch-icon" href="https://cdn.brandfetch.io/id8LwMLHOF/w/400/h/400/theme/dark/icon.jpeg?c=1bxid64Mup7aczewSAYMX&t=1771715114286">
+  <link rel="manifest" href="manifest.json">
+  <title>ISSS Digital — Instalar</title>
+  <style>
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 
-body {
-  font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
-  font-size: 16px; line-height: 1.6;
-  color: var(--text); background: var(--bg);
-  min-height: 100vh; -webkit-font-smoothing: antialiased;
-  overscroll-behavior: none;
-}
+    :root{
+      --navy:  #002B5C;
+      --navy2: #003F85;
+      --green: #059669;
+      --g2:    #34D399;
+      --light: #F4F7FB;
+      --nbg:   #EBF2FA;
+      --white: #FFFFFF;
+      --slate: #475569;
+      --text:  #0D1B2A;
+      --bd:    #E2E8F0;
+    }
 
-/* ─── APP SHELL ─── */
-.app {
-  max-width: 430px; margin: 0 auto;
-  min-height: 100vh; background: var(--bg);
-  position: relative; overflow-x: hidden;
-}
+    html,body{
+      min-height:100%;
+      font-family:-apple-system,BlinkMacSystemFont,'Inter','Segoe UI',system-ui,sans-serif;
+      background:var(--light);
+      color:var(--text);
+      -webkit-tap-highlight-color:transparent;
+    }
 
-/* ─── VIEWS ─── */
-.view { display: none; flex-direction: column; height: 100vh; height: 100dvh; overflow: hidden; }
-.view.active { display: flex; }
+    /* ─── HERO ──────────────────────────────────── */
+    .hero{
+      background:var(--navy);
+      padding:env(safe-area-inset-top,0px) 0 0;
+      display:flex;flex-direction:column;align-items:center;
+      text-align:center;
+      position:relative;overflow:hidden;
+    }
+    .hero-inner{ padding:44px 24px 60px; position:relative;z-index:1;width:100%; }
+    .hero::before{
+      content:'';position:absolute;
+      width:340px;height:340px;
+      background:rgba(255,255,255,.025);border-radius:50%;
+      right:-100px;top:-100px;pointer-events:none;
+    }
+    .hero::after{
+      content:'';position:absolute;
+      width:160px;height:160px;
+      background:rgba(5,150,105,.08);border-radius:50%;
+      left:-40px;bottom:-40px;pointer-events:none;
+    }
 
-/* slide transition */
-.view.slide-in  { animation: slideIn .26s var(--ease-out) both; }
-.view.slide-out { animation: slideOut .18s var(--ease-in-out) both; }
-@keyframes slideIn  { from{transform:translateX(28px);opacity:0} to{transform:translateX(0);opacity:1} }
-@keyframes slideOut { from{transform:translateX(0);opacity:1} to{transform:translateX(-20px);opacity:0} }
+    /* ISSS wordmark badge */
+    .hero-wordmark{
+      display:inline-flex;align-items:center;gap:6px;
+      margin-bottom:30px;
+    }
+    .wordmark-isss{
+      font-size:13px;font-weight:900;color:white;letter-spacing:2px;
+    }
+    .wordmark-sep{ width:1px;height:12px;background:rgba(255,255,255,.2); }
+    .wordmark-tag{
+      font-size:10px;font-weight:600;letter-spacing:1px;text-transform:uppercase;
+      color:rgba(255,255,255,.35);
+    }
 
-/* ─── TOPBAR ─── */
-.topbar {
-  background: var(--surface);
-  border-bottom: 1px solid var(--border);
-  padding: env(safe-area-inset-top) 16px 0;
-  min-height: calc(56px + env(safe-area-inset-top));
-  display: flex; align-items: flex-end; justify-content: space-between;
-  padding-bottom: 10px;
-  position: sticky; top: 0; z-index: 90;
-  flex-shrink: 0;
-}
-.topbar-logo { height: 26px; width: auto; filter: brightness(0); }
-.topbar-center { display: flex; align-items: center; gap: 8px; }
-.topbar-title { font-size: 16px; font-weight: 700; color: var(--muted); }
-.sep { width: 1px; height: 20px; background: var(--border); }
-.tb-btn {
-  width: 44px; height: 44px; border-radius: var(--r-sm);
-  border: 1px solid var(--border); background: var(--surface);
-  cursor: pointer; display: flex; align-items: center; justify-content: center;
-  color: var(--text); font-size: 18px; transition: background .15s, transform 100ms ease-out;
-  -webkit-tap-highlight-color: transparent;
-}
-.tb-btn:active { transform: scale(0.93); }
-.tb-btn:hover { background: var(--bg); }
-.back-btn {
-  display: flex; align-items: center; gap: 5px;
-  background: none; border: none; cursor: pointer;
-  color: var(--navy); font-size: 16px; font-weight: 700;
-  padding: 6px 0; font-family: inherit;
-  -webkit-tap-highlight-color: transparent;
-}
-.back-btn:hover { color: var(--navy-2); }
+    /* App icon */
+    .hero-icon{
+      width:92px;height:92px;border-radius:22px;overflow:hidden;
+      box-shadow:0 12px 40px rgba(0,0,0,.35),0 0 0 1px rgba(255,255,255,.08);
+      margin:0 auto 20px;
+      background:var(--navy2);
+      display:flex;align-items:center;justify-content:center;
+    }
+    .hero-icon img{ width:100%;height:100%;object-fit:cover;display:block; }
+    .hero-icon-fallback{
+      font-size:32px;font-weight:900;color:white;letter-spacing:-1px;
+    }
 
-/* ─── SCROLL ─── */
-.scroll { flex: 1; min-height: 0; padding: 0 0 88px; overflow-y: auto; }
-.px { padding-left: 16px; padding-right: 16px; }
+    .hero-name{
+      font-size:26px;font-weight:900;color:white;
+      letter-spacing:-0.5px;line-height:1.1;margin-bottom:8px;
+    }
+    .hero-name em{font-style:normal;color:var(--g2);}
 
-/* ─── BOTTOM NAV ─── */
-.bnav {
-  position: fixed; bottom: 0; left: 50%; transform: translateX(-50%);
-  width: 100%; max-width: 430px;
-  background: var(--surface); z-index: 80;
-  border-top: 1px solid var(--border);
-  display: grid; grid-template-columns: repeat(3, 1fr);
-  padding-bottom: env(safe-area-inset-bottom);
-}
-.bn {
-  display: flex; flex-direction: column; align-items: center;
-  padding: 10px 6px 8px; cursor: pointer; border: none; background: none;
-  color: var(--muted); font-size: 12px; font-weight: 700;
-  position: relative; gap: 4px; transition: color .2s;
-  -webkit-tap-highlight-color: transparent; font-family: inherit;
-  min-height: 56px;
-}
-.bn i { font-size: 22px; }
-.bn.on { color: var(--navy); }
-.bn.on::before {
-  content: ''; position: absolute; top: 0; left: 50%; transform: translateX(-50%);
-  width: 32px; height: 3px; background: var(--navy); border-radius: 0 0 4px 4px;
-}
-.bn-dot {
-  position: absolute; top: 7px; right: calc(50% - 16px);
-  width: 8px; height: 8px; background: var(--accent); border-radius: 50%;
-  border: 2px solid var(--surface);
-}
+    .hero-sub{
+      font-size:14.5px;color:rgba(255,255,255,.5);
+      line-height:1.55;max-width:270px;margin:0 auto 26px;
+    }
 
-/* ─── TYPOGRAPHY ─── */
-.h1  { font-size: 24px; font-weight: 800; color: var(--text); }
-.h2  { font-size: 20px; font-weight: 800; color: var(--text); }
-.h3  { font-size: 17px; font-weight: 700; color: var(--text); }
-.sub { font-size: 14px; color: var(--muted); line-height: 1.5; }
-.label { font-size: 12px; font-weight: 700; color: var(--muted); text-transform: uppercase; letter-spacing: .5px; }
+    .pills{display:flex;gap:7px;flex-wrap:wrap;justify-content:center;}
+    .pill{
+      background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);
+      border-radius:99px;padding:4px 11px;
+      font-size:11px;font-weight:600;color:rgba(255,255,255,.55);
+      display:flex;align-items:center;gap:5px;
+    }
+    .pill-dot{width:5px;height:5px;background:var(--g2);border-radius:50%;flex-shrink:0;}
 
-/* ─── BUTTONS ─── */
-.btn {
-  display: flex; align-items: center; justify-content: center; gap: 8px;
-  padding: 16px 20px; border-radius: var(--r); border: none; cursor: pointer;
-  font-size: 16px; font-weight: 700; width: 100%;
-  transition: background .15s, border-color .15s, transform 100ms ease-out;
-  -webkit-tap-highlight-color: transparent; font-family: inherit;
-}
-.btn:active:not(:disabled) { transform: scale(0.97); }
-.btn i { font-size: 18px; }
-.btn-primary { background: var(--navy); color: #fff; }
-.btn-primary:hover { background: var(--navy-2); }
-.btn-primary:disabled { background: var(--border); color: var(--muted); cursor: not-allowed; }
-.btn-accent  { background: var(--accent); color: #fff; }
-.btn-accent:hover { background: #B33008; }
-.btn-outline { background: var(--surface); color: var(--navy); border: 2px solid var(--navy); }
-.btn-outline:hover { background: var(--navy-3); }
-.btn-ghost  { background: var(--bg); color: var(--text); border: 1px solid var(--border); }
-.btn-ghost:hover { background: var(--border); }
-.btn-danger { background: var(--red-bg); color: var(--red); border: 1px solid #FECACA; }
-.btn-danger:hover { background: #FEE2E2; }
-.btn-sm { padding: 10px 14px; font-size: 14px; border-radius: var(--r-sm); width: auto; }
-.btn-footer {
-  max-height: 0; overflow: hidden;
-  background: var(--surface);
-  transition: max-height 0.35s var(--ease-out);
-}
-.btn-footer > .btn {
-  display: block; margin: 12px 16px calc(12px + env(safe-area-inset-bottom));
-  width: calc(100% - 32px);
-}
-.btn-footer.show {
-  max-height: 100px;
-  border-top: 1px solid var(--border);
-}
+    /* ─── INSTALL CARD ───────────────────────────── */
+    .card-wrap{
+      padding:0 14px;
+      margin-top:-22px;
+      position:relative;z-index:10;
+    }
+    .card{
+      background:var(--white);
+      border:1px solid var(--bd);
+      border-radius:20px;
+      padding:22px;
+      box-shadow:0 8px 32px rgba(0,43,92,.1),0 2px 6px rgba(0,0,0,.05);
+    }
 
-/* ─── INPUT ─── */
-.fg { margin-bottom: 16px; }
-.fl { display: block; margin-bottom: 6px; }
-.fi {
-  width: 100%; padding: 14px 16px; border-radius: var(--r);
-  border: 1.5px solid var(--border); font-size: 17px;
-  font-family: inherit; color: var(--text); background: var(--surface);
-  outline: none; -webkit-appearance: none; appearance: none;
-  transition: border-color .2s, box-shadow .2s;
-  box-shadow: none;
-}
-.fi:focus { border-color: var(--navy); box-shadow: 0 0 0 3px rgba(0,43,92,.1); outline: none; }
-.fi::placeholder { color: #B0BAC8; }
-.input-wrap { position: relative; }
-.input-icon { position: absolute; left: 14px; top: 50%; transform: translateY(-50%); color: var(--muted); font-size: 18px; pointer-events: none; }
-.fi.with-icon { padding-left: 42px; }
+    .card-title{ font-size:17px;font-weight:800;color:var(--text);margin-bottom:5px; }
+    .card-sub{ font-size:13px;color:var(--slate);line-height:1.5;margin-bottom:20px; }
 
-/* ─── CARDS ─── */
-.card {
-  background: var(--surface); border-radius: var(--r);
-  border: 1px solid var(--border); overflow: hidden;
-  box-shadow: 0 1px 4px rgba(0,43,92,.06);
-}
-.card-p { padding: 16px; }
+    /* Android / Desktop install button */
+    .btn-install{
+      width:100%;display:flex;align-items:center;justify-content:center;gap:10px;
+      background:var(--navy);color:white;
+      border:none;border-radius:14px;
+      padding:15px 20px;
+      font-family:inherit;font-size:16px;font-weight:700;
+      cursor:pointer;
+      box-shadow:0 4px 20px rgba(0,43,92,.3);
+      transition:background .15s,transform .1s;
+      -webkit-tap-highlight-color:transparent;
+    }
+    .btn-install:active{background:var(--navy2);transform:scale(.98);}
+    .btn-install:disabled{opacity:.65;cursor:wait;}
 
-/* ─── BADGE / CHIP ─── */
-.chip {
-  display: inline-flex; align-items: center; gap: 4px;
-  padding: 3px 10px; border-radius: 100px;
-  font-size: 12px; font-weight: 700;
-}
-.chip i { font-size: 13px; }
-.chip-navy   { background: var(--navy-3); color: var(--navy); }
-.chip-green  { background: var(--green-bg); color: var(--green); }
-.chip-red    { background: var(--red-bg); color: var(--red); }
-.chip-orange { background: #FFF7ED; color: var(--accent); }
-.chip-yellow { background: var(--yel-bg); color: var(--yellow); }
-.chip-sky    { background: var(--sky-bg); color: var(--sky); }
+    /* iOS steps */
+    .ios-steps{display:flex;flex-direction:column;gap:14px;}
+    .ios-step{display:flex;align-items:flex-start;gap:11px;}
+    .step-num{
+      width:23px;height:23px;border-radius:50%;
+      background:var(--navy);color:white;
+      font-size:10.5px;font-weight:700;
+      display:flex;align-items:center;justify-content:center;
+      flex-shrink:0;margin-top:1px;
+    }
+    .step-text{font-size:13.5px;color:var(--text);line-height:1.55;}
+    .step-text strong{font-weight:700;}
+    .step-badge{
+      display:inline-flex;align-items:center;gap:3px;
+      background:var(--nbg);border-radius:6px;
+      padding:2px 6px;margin:0 1px;
+      vertical-align:middle;color:var(--navy);
+    }
+    .step-badge svg{display:block;}
 
-/* ─── ALERT ─── */
-.alert {
-  border-radius: var(--r-sm); padding: 12px 14px;
-  display: flex; align-items: flex-start; gap: 10px;
-  font-size: 15px; line-height: 1.4; margin-bottom: 12px;
-}
-.alert i { font-size: 18px; flex-shrink: 0; margin-top: 1px; }
-.a-ok   { background: var(--green-bg); border-left: 3px solid var(--green); color: #065F46; }
-.a-err  { background: var(--red-bg);   border-left: 3px solid var(--red);   color: #991B1B; }
-.a-info { background: var(--navy-3);   border-left: 3px solid var(--navy);  color: var(--navy); }
-.a-warn { background: var(--yel-bg);   border-left: 3px solid var(--yellow);color: #92400E; }
+    /* Installed success */
+    .success{display:flex;flex-direction:column;align-items:center;gap:14px;text-align:center;}
+    .success-ring{
+      width:54px;height:54px;border-radius:50%;
+      background:#ECFDF5;
+      display:flex;align-items:center;justify-content:center;
+    }
+    .success-title{font-size:17px;font-weight:800;color:var(--text);}
+    .success-sub{font-size:13px;color:var(--slate);line-height:1.5;}
+    .btn-open{
+      width:100%;display:flex;align-items:center;justify-content:center;gap:9px;
+      background:var(--green);color:white;text-decoration:none;
+      border-radius:14px;padding:15px 20px;
+      font-size:16px;font-weight:700;
+      transition:background .15s;
+    }
+    .btn-open:active{background:#047857;}
 
-/* ─── DIVIDER ─── */
-.divider { height: 1px; background: var(--border); margin: 14px 0; }
-.section-gap { height: 20px; }
+    /* ─── FEATURES ───────────────────────────────── */
+    .features{padding:22px 14px 14px;}
+    .section-label{
+      font-size:11px;font-weight:700;letter-spacing:1.2px;text-transform:uppercase;
+      color:var(--slate);text-align:center;margin-bottom:14px;
+    }
+    .feat-list{display:flex;flex-direction:column;gap:10px;}
+    .feat{
+      display:flex;align-items:center;gap:14px;
+      background:var(--white);border:1px solid var(--bd);border-radius:14px;
+      padding:13px 15px;
+    }
+    .feat-ico{
+      width:40px;height:40px;border-radius:11px;
+      background:var(--nbg);color:var(--navy);
+      display:flex;align-items:center;justify-content:center;
+      flex-shrink:0;
+    }
+    .feat-label{font-size:13.5px;font-weight:700;color:var(--text);margin-bottom:2px;}
+    .feat-desc{font-size:11.5px;color:var(--slate);line-height:1.45;}
 
-/* ─── STEP INDICATOR ─── */
-.steps {
-  display: flex; align-items: center; padding: 0 16px; margin-bottom: 20px;
-}
-.sd {
-  width: 28px; height: 28px; border-radius: 50%; flex-shrink: 0;
-  display: flex; align-items: center; justify-content: center;
-  font-size: 12px; font-weight: 800; transition: all .2s;
-  background: var(--border); color: var(--muted);
-}
-.sd.on { background: var(--navy); color: #fff; }
-.sd.ok { background: var(--green); color: #fff; }
-.sd.ok::before { content: none; }
-.sl { flex: 1; height: 2px; background: var(--border); margin: 0 4px; }
-.sl.ok { background: var(--green); }
+    /* ─── FOOTER ─────────────────────────────────── */
+    .footer{
+      padding:18px 16px calc(28px + env(safe-area-inset-bottom,0px));
+      text-align:center;font-size:10.5px;color:rgba(0,0,0,.22);line-height:1.7;
+    }
 
-/* ─── SPECIALTY ─── */
-.spec-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
-.spec-card {
-  background: var(--surface); border: 1.5px solid var(--border);
-  border-radius: var(--r); padding: 18px 12px; text-align: center;
-  cursor: pointer;
-  transition: border-color .15s, background .15s, transform 100ms ease-out;
-  -webkit-tap-highlight-color: transparent;
-}
-.spec-card:active { transform: scale(0.96); }
-.spec-card:hover  { border-color: var(--navy); }
-.spec-card.sel    { border-color: var(--navy); background: var(--navy-3); }
-.spec-icon { font-size: 28px; color: var(--navy); display: block; margin-bottom: 7px; }
-.spec-name { font-size: 14px; font-weight: 700; color: var(--text); line-height: 1.3; }
-
-/* ─── CALENDAR ─── */
-.cal-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; }
-.cal-nav {
-  width: 44px; height: 44px; border-radius: var(--r-sm);
-  border: 1px solid var(--border); background: var(--surface);
-  cursor: pointer; display: flex; align-items: center; justify-content: center;
-  color: var(--navy); font-size: 18px;
-  transition: background .15s, transform 100ms ease-out;
-  -webkit-tap-highlight-color: transparent;
-}
-.cal-nav:active { transform: scale(0.92); }
-.cal-nav:hover  { background: var(--bg); }
-.cal-month-label { font-size: 17px; font-weight: 800; }
-.cal-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 0; }
-.cal-dn { text-align: center; font-size: 12px; font-weight: 700; color: var(--muted); padding: 6px 0 8px; }
-.cal-d {
-  width: 44px; height: 44px;
-  justify-self: center;
-  display: flex; align-items: center; justify-content: center;
-  border-radius: 50%; font-size: 15px; font-weight: 600;
-  cursor: default; position: relative;
-  -webkit-tap-highlight-color: transparent;
-  transition: background .12s, transform 100ms ease-out;
-  user-select: none;
-}
-.cal-d.empty   { pointer-events: none; }
-.cal-d.past    { color: #C5CDD8; }
-.cal-d.no-slot { color: #C5CDD8; }
-.cal-d.today   { border: 2px solid var(--navy); color: var(--navy); font-weight: 900; }
-.cal-d.avail   { cursor: pointer; }
-@media (hover: hover) {
-  .cal-d.avail:hover { background: var(--navy-3); color: var(--navy); }
-}
-.cal-d.avail:active { transform: scale(0.85); }
-.cal-d.sel {
-  background: var(--navy) !important;
-  color: #fff !important;
-  border: none !important;
-  font-weight: 800;
-}
-.cal-dot {
-  position: absolute; bottom: 3px; left: 50%; transform: translateX(-50%);
-  width: 4px; height: 4px; background: var(--green); border-radius: 50%;
-  pointer-events: none;
-}
-.cal-d.sel .cal-dot { background: rgba(255,255,255,.7); }
-
-/* ─── TIME SLOTS ─── */
-.tslots { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
-.tslot {
-  padding: 14px 6px; border-radius: var(--r-sm); border: 1.5px solid var(--border);
-  text-align: center; cursor: pointer; font-size: 14px; font-weight: 700;
-  background: var(--surface);
-  transition: border-color .15s, background .15s, color .15s, transform 100ms ease-out;
-  -webkit-tap-highlight-color: transparent; font-family: inherit;
-}
-.tslot:not(.taken):active { transform: scale(0.95); }
-.tslot:hover  { border-color: var(--navy); color: var(--navy); background: var(--navy-3); }
-.tslot.sel    { border-color: var(--navy); background: var(--navy); color: #fff; }
-.tslot.taken  { background: var(--bg); color: #C5CDD8; border-color: transparent; cursor: not-allowed; font-size: 12px; }
-
-/* ─── CENTER CARD ─── */
-.center-card {
-  background: var(--surface); border-radius: var(--r);
-  border: 1.5px solid var(--border); padding: 14px 16px;
-  cursor: pointer; margin-bottom: 10px; transition: all .15s;
-}
-.center-card:hover { border-color: var(--navy); }
-.center-card.sel   { border-color: var(--navy); background: var(--navy-3); }
-.center-name  { font-size: 16px; font-weight: 800; margin-bottom: 4px; }
-.center-meta  { font-size: 13px; color: var(--muted); display: flex; flex-direction: column; gap: 3px; }
-.center-meta span { display: flex; align-items: center; gap: 5px; }
-.center-meta i { font-size: 14px; }
-.center-avail { margin-top: 8px; display: flex; gap: 6px; flex-wrap: wrap; }
-
-/* ─── QR ─── */
-.qr-wrap { display: flex; justify-content: center; padding: 20px 0; }
-.qr-box {
-  width: 160px; height: 160px;
-  border-radius: 12px; overflow: hidden;
-  border: 3px solid var(--navy); background: #fff; padding: 6px;
-}
-.qr-box img { width: 100%; height: 100%; display: block; border-radius: 6px; }
-
-/* ─── TICKET ─── */
-.ticket {
-  background: var(--surface); border-radius: var(--r-lg);
-  border: 1px solid var(--border); overflow: hidden; margin: 0 0 16px;
-  box-shadow: 0 4px 24px rgba(0,43,92,.10);
-}
-.ticket-head {
-  background: var(--navy); color: #fff;
-  padding: 20px 20px 16px;
-}
-.ticket-sep {
-  display: flex; align-items: center; margin: 0;
-  position: relative; height: 0;
-}
-.ticket-sep::before,.ticket-sep::after {
-  content: ''; width: 20px; height: 20px; background: var(--bg);
-  border-radius: 50%; position: absolute; top: -10px;
-  border: 1px solid var(--border);
-}
-.ticket-sep::before { left: -10px; }
-.ticket-sep::after  { right: -10px; }
-.ticket-line { flex: 1; border: none; border-top: 2px dashed var(--border); margin: 0 14px; }
-.ticket-body { padding: 16px 20px; }
-
-/* ─── APPT CARD ─── */
-.appt-item {
-  background: var(--surface); border-radius: var(--r);
-  border: 1px solid var(--border); margin-bottom: 12px; overflow: hidden;
-  box-shadow: 0 1px 4px rgba(0,43,92,.06);
-}
-.appt-item-head {
-  background: var(--navy); color: #fff;
-  padding: 12px 16px; display: flex; align-items: center; justify-content: space-between;
-}
-.appt-item-body { padding: 12px 16px; }
-.appt-row { display: flex; align-items: center; gap: 9px; font-size: 15px; margin-bottom: 6px; color: var(--text); }
-.appt-row i { font-size: 16px; color: var(--muted); width: 18px; flex-shrink: 0; }
-
-/* ─── QUEUE ─── */
-.q-card {
-  background: var(--navy); border-radius: var(--r-lg);
-  padding: 28px 24px; text-align: center; margin-bottom: 14px;
-  color: #fff;
-}
-.q-label { font-size: 13px; font-weight: 700; opacity: .6; text-transform: uppercase; letter-spacing: .5px; margin-bottom: 6px; }
-.q-number { font-size: 88px; font-weight: 900; line-height: 1; margin-bottom: 4px; }
-.q-of { font-size: 15px; opacity: .65; }
-.prog-wrap { background: rgba(255,255,255,.2); border-radius: 100px; height: 8px; overflow: hidden; margin: 16px 0 8px; }
-.prog-fill { height: 100%; background: #fff; border-radius: 100px; transition: width 1s ease; }
-.q-pct { font-size: 13px; opacity: .65; }
-
-/* ─── HISTORY ─── */
-.hist-item {
-  background: var(--surface); border-radius: var(--r);
-  border: 1px solid var(--border); padding: 14px 16px;
-  display: flex; align-items: center; gap: 12px; cursor: pointer;
-  margin-bottom: 10px;
-  transition: border-color .15s, transform 100ms ease-out;
-}
-.hist-item:hover  { border-color: var(--navy); }
-.hist-item:active { transform: scale(0.98); }
-.hist-icon {
-  width: 44px; height: 44px; border-radius: var(--r-sm);
-  background: var(--navy-3); display: flex; align-items: center; justify-content: center;
-  color: var(--navy); font-size: 20px; flex-shrink: 0;
-}
-.hist-arr { margin-left: auto; color: var(--muted); font-size: 16px; }
-
-/* ─── RELATIVES ─── */
-.rel-item {
-  background: var(--surface); border-radius: var(--r);
-  border: 1px solid var(--border); padding: 14px 16px;
-  display: flex; align-items: center; gap: 12px; cursor: pointer;
-  margin-bottom: 10px;
-  transition: border-color .15s, transform 100ms ease-out;
-}
-.rel-item:hover  { border-color: var(--navy); }
-.rel-item:active { transform: scale(0.98); }
-.rel-avatar {
-  width: 44px; height: 44px; border-radius: 50%;
-  background: var(--navy); color: #fff; font-size: 17px; font-weight: 800;
-  display: flex; align-items: center; justify-content: center; flex-shrink: 0;
-}
-.rel-arr { margin-left: auto; color: var(--muted); font-size: 16px; }
-
-/* ─── EMPTY STATE ─── */
-.empty { text-align: center; padding: 48px 20px; }
-.empty i { font-size: 56px; color: var(--border); display: block; margin-bottom: 14px; }
-.empty-t { font-size: 18px; font-weight: 800; margin-bottom: 8px; }
-.empty-s { font-size: 15px; color: var(--muted); margin-bottom: 20px; line-height: 1.5; }
-
-/* ─── SUCCESS ─── */
-.success-wrap { text-align: center; padding: 16px 0 8px; }
-.success-ring {
-  width: 80px; height: 80px; border-radius: 50%;
-  background: var(--green-bg); border: 3px solid var(--green);
-  display: flex; align-items: center; justify-content: center;
-  margin: 0 auto 14px; color: var(--green); font-size: 40px;
-}
-
-/* ─── CONFIRMATION ANIMATION ─── */
-@keyframes successPop {
-  0%   { transform: scale(0.3); opacity: 0; }
-  60%  { transform: scale(1.18); }
-  80%  { transform: scale(0.95); }
-  100% { transform: scale(1); opacity: 1; }
-}
-@keyframes ticketRise {
-  from { transform: translateY(28px); opacity: 0; }
-  to   { transform: translateY(0);    opacity: 1; }
-}
-#view-ticket.active .success-ring {
-  animation: successPop 0.55s var(--ease-out) both 0.06s;
-}
-#view-ticket.active .success-wrap .h2 {
-  opacity: 0; animation: staggerIn 0.38s var(--ease-out) both 0.24s;
-}
-#view-ticket.active .success-wrap .sub {
-  opacity: 0; animation: staggerIn 0.38s var(--ease-out) both 0.32s;
-}
-#view-ticket.active .ticket {
-  opacity: 0; animation: ticketRise 0.5s var(--ease-out) both 0.4s;
-}
-#view-ticket.active > .scroll > .alert {
-  opacity: 0; animation: staggerIn 0.38s var(--ease-out) both 0.56s;
-}
-#view-ticket.active > .scroll > div:last-child {
-  opacity: 0; animation: staggerIn 0.38s var(--ease-out) both 0.64s;
-}
-
-/* ─── LOGIN ─── */
-.login-top {
-  background: var(--navy);
-  padding: calc(52px + env(safe-area-inset-top)) 24px 36px;
-  text-align: center; color: #fff;
-}
-.login-top img { height: 44px; margin-bottom: 16px; display: block; margin-left: auto; margin-right: auto; }
-.login-tagline { font-size: 14px; color: rgba(255,255,255,.6); line-height: 1.6; }
-.login-bottom { padding: 28px 20px 40px; background: var(--surface); flex: 1; }
-
-/* ─── HOME HEADER ─── */
-.home-topbar {
-  background: #092244;
-  padding: env(safe-area-inset-top) 16px 0;
-  min-height: calc(56px + env(safe-area-inset-top));
-  display: flex; align-items: flex-end; justify-content: space-between;
-  padding-bottom: 10px;
-  position: sticky; top: 0; z-index: 90;
-  border-bottom: 1px solid rgba(255,255,255,.08);
-}
-.home-topbar img { height: 28px; }
-.htb-actions { display: flex; align-items: center; gap: 8px; }
-.htb-btn {
-  width: 44px; height: 44px; border-radius: var(--r-sm);
-  border: 1px solid rgba(255,255,255,.14); background: rgba(255,255,255,.07); color: #fff;
-  font-size: 18px; cursor: pointer; display: flex; align-items: center; justify-content: center;
-  -webkit-tap-highlight-color: transparent; position: relative;
-  transition: background .15s, transform 100ms ease-out;
-}
-.htb-btn:hover { background: rgba(255,255,255,.14); }
-.htb-btn:active { transform: scale(0.92); }
-
-.home-hero {
-  background: #092244; padding: 16px 16px 24px; color: #fff;
-  border-bottom: 1px solid rgba(255,255,255,.07);
-}
-.home-greet   { font-size: 13px; color: rgba(255,255,255,.5); letter-spacing: .3px; }
-.home-uname   { font-size: 23px; font-weight: 900; margin-top: 2px; letter-spacing: -.3px; }
-.home-next-label { font-size: 12px; font-weight: 700; opacity: .55; text-transform: uppercase; letter-spacing: .5px; margin: 16px 0 8px; }
-.next-card {
-  background: rgba(255,255,255,.1); border-radius: var(--r);
-  padding: 14px 16px; border: 1px solid rgba(255,255,255,.15); cursor: pointer;
-}
-.next-card:hover { background: rgba(255,255,255,.15); }
-.next-spec { font-size: 16px; font-weight: 800; }
-.next-meta { font-size: 13px; opacity: .7; margin-top: 3px; display: flex; align-items: center; gap: 6px; }
-.next-cta {
-  background: #fff; color: var(--navy);
-  border: none; border-radius: var(--r); padding: 13px 18px;
-  font-size: 15px; font-weight: 800; width: 100%; margin-top: 14px;
-  cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 7px;
-  transition: background .15s; font-family: inherit;
-}
-.next-cta:hover { background: var(--navy-3); }
-.next-cta i { font-size: 17px; }
-
-/* ─── QUICK ACTIONS ─── */
-.qa-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; padding: 0 16px; margin: 18px 0 20px; }
-.qa-item {
-  background: var(--surface); border-radius: var(--r);
-  padding: 14px 6px; text-align: center; cursor: pointer;
-  border: 1px solid var(--border); transition: all .15s;
-  -webkit-tap-highlight-color: transparent;
-}
-.qa-item { transition: border-color .15s, transform 100ms ease-out, box-shadow .15s; }
-.qa-item:hover { border-color: var(--navy); box-shadow: 0 2px 8px rgba(0,43,92,.1); }
-.qa-item:active { transform: scale(0.94); }
-.qa-icon { font-size: 22px; color: var(--navy); display: block; margin-bottom: 5px; }
-.qa-label { font-size: 13px; font-weight: 700; color: var(--text); }
-
-/* ─── MODAL ─── */
-.moverlay {
-  display: none; position: fixed; inset: 0;
-  background: rgba(0,27,61,.5); z-index: 500;
-  align-items: flex-end; justify-content: center;
-}
-.moverlay.open { display: flex; }
-.msheet {
-  background: var(--surface); border-radius: 20px 20px 0 0;
-  padding: 16px 20px calc(32px + env(safe-area-inset-bottom));
-  width: 100%; max-width: 430px;
-  max-height: 90vh; overflow-y: auto;
-  animation: sheetUp .32s var(--ease-drawer);
-}
-#m-hist .msheet { max-height: 68vh; }
-@keyframes sheetUp {
-  from { transform: translateY(100%); opacity: 0.6; }
-  to   { transform: translateY(0);    opacity: 1;   }
-}
-.mhandle { width: 36px; height: 4px; background: var(--border); border-radius: 100px; margin: 0 auto 18px; }
-
-/* ─── SECTION ROW ─── */
-.section-row { display: flex; align-items: center; justify-content: space-between; padding: 0 16px; margin-bottom: 10px; }
-.section-link { font-size: 14px; font-weight: 700; color: var(--navy); background: none; border: none; cursor: pointer; font-family: inherit; }
-
-/* ─── INFO ROW ─── */
-.info-row { display: flex; align-items: center; gap: 10px; padding: 10px 0; border-bottom: 1px solid var(--border); font-size: 15px; }
-.info-row:last-child { border-bottom: none; }
-.info-row i { font-size: 17px; color: var(--muted); width: 20px; flex-shrink: 0; }
-.info-label { font-size: 12px; color: var(--muted); }
-.info-val { font-weight: 700; font-size: 15px; }
-
-/* ─── TOAST ─── */
-.toast-msg {
-  position: fixed; top: 68px; left: 50%; transform: translateX(-50%);
-  background: #1A1A2E; color: #fff; padding: 10px 20px;
-  border-radius: 100px; font-size: 14px; font-weight: 700;
-  z-index: 990; white-space: nowrap;
-  box-shadow: 0 6px 20px rgba(0,0,0,.3);
-  animation: toastPop .25s ease;
-  max-width: calc(100% - 32px);
-}
-@keyframes toastPop { from{opacity:0;transform:translateX(-50%) translateY(-8px)} to{opacity:1;transform:translateX(-50%) translateY(0)} }
-
-/* ─── AUTH TABS ─── */
-.auth-tabs {
-  display: flex; gap: 4px; margin-bottom: 24px;
-  background: var(--bg); border-radius: var(--r-sm); padding: 4px;
-}
-.auth-tab {
-  flex: 1; padding: 12px 8px; border-radius: 7px; border: none;
-  font-size: 15px; font-weight: 700; cursor: pointer;
-  font-family: inherit; color: var(--muted); background: transparent;
-  transition: background .15s, color .15s, transform 100ms ease-out;
-  -webkit-tap-highlight-color: transparent;
-  display: flex; align-items: center; justify-content: center; gap: 6px;
-}
-.auth-tab.active { background: var(--surface); color: var(--navy); box-shadow: 0 1px 4px rgba(0,43,92,.12); }
-.auth-tab:active:not(.active) { transform: scale(0.97); }
-
-/* ─── MODAL CLOSE BTN ─── */
-.mclose {
-  position: absolute; right: 0; top: -2px;
-  width: 28px; height: 28px; border-radius: 50%;
-  background: var(--bg); border: 1px solid var(--border);
-  display: flex; align-items: center; justify-content: center;
-  cursor: pointer; color: var(--muted); font-size: 16px;
-  -webkit-tap-highlight-color: transparent;
-}
-.mclose:hover { background: var(--border); }
-
-/* ─── STAGGER ANIMATION ─── */
-.si {
-  opacity: 0;
-  transform: translateY(10px);
-  animation: staggerIn 300ms var(--ease-out) forwards;
-}
-@keyframes staggerIn {
-  to { opacity: 1; transform: translateY(0); }
-}
-
-/* accessibility */
-*:focus-visible { outline: 3px solid var(--navy); outline-offset: 3px; border-radius: 5px; box-shadow: 0 0 0 6px rgba(0,43,92,.12); }
-@media(prefers-reduced-motion:reduce){
-  .view.slide-in,.view.slide-out{animation:none!important}
-  .msheet{animation:none!important}
-  .si{animation:none!important;opacity:1!important;transform:none!important}
-}
-
-/* tablet: slightly wider */
-@media(min-width:600px){
-  .app{max-width:430px;box-shadow:0 0 40px rgba(0,0,0,.12);margin:0 auto}
-  body{background:#D8E3F0;display:flex;align-items:flex-start;justify-content:center;padding:20px}
-  .app{border-radius:24px;overflow:hidden;min-height:calc(100vh - 40px)}
-  .bnav{border-radius:0 0 24px 24px}
-}
-</style>
+    .hidden{display:none!important;}
+  </style>
 </head>
 <body>
-<div class="app" id="app">
 
-<!-- ═══════════════════════════ LOGIN ═══════════════════════════ -->
-<div class="view active" id="view-login">
-  <div class="login-top">
-    <img src="https://cdn.brandfetch.io/id8LwMLHOF/theme/dark/logo.svg?c=1bxid64Mup7aczewSAYMX&t=1771715114189" alt="ISSS"
-         onerror="this.outerHTML='<span style=\'font-size:22px;font-weight:900;color:#fff\'>ISSS</span>'">
-    <div style="font-size:20px;font-weight:800;margin-bottom:8px">Citas Médicas en Línea</div>
-    <div class="login-tagline">Reserve su cita desde su teléfono.<br>Sin filas. Sin madrugar.</div>
-  </div>
-  <div class="login-bottom">
-    <div class="auth-tabs">
-      <button class="auth-tab active" id="tab-login" onclick="switchTab('login')"><i class="bi bi-box-arrow-in-right"></i> Ingresar</button>
-      <button class="auth-tab" id="tab-reg" onclick="switchTab('reg')"><i class="bi bi-person-plus"></i> Crear cuenta</button>
+<!-- ── HERO ─────────────────────────────────────── -->
+<div class="hero">
+  <div class="hero-inner">
+    <div class="hero-wordmark">
+      <span class="wordmark-isss">ISSS</span>
+      <span class="wordmark-sep"></span>
+      <span class="wordmark-tag">Salud pública digital</span>
     </div>
 
-    <!-- ── Formulario de ingreso ── -->
-    <div id="form-login">
-      <div class="fg">
-        <label class="fl label" for="dui-in">Número de DUI</label>
-        <div class="input-wrap">
-          <i class="bi bi-shield-lock input-icon"></i>
-          <input class="fi with-icon" id="dui-in" type="text" placeholder="00000000-0" maxlength="10" inputmode="numeric" autocomplete="off">
-        </div>
-      </div>
-      <div class="fg">
-        <label class="fl label" for="phone-in">Número de teléfono</label>
-        <div class="input-wrap">
-          <i class="bi bi-phone input-icon"></i>
-          <input class="fi with-icon" id="phone-in" type="tel" placeholder="7000-0000" maxlength="9" inputmode="tel" autocomplete="tel">
-        </div>
-      </div>
-      <div id="login-err" class="alert a-err" style="display:none;margin-bottom:12px">
-        <i class="bi bi-exclamation-circle"></i><span id="login-err-msg">DUI o teléfono incorrecto.</span>
-      </div>
-      <button class="btn btn-primary" onclick="doLogin()"><i class="bi bi-box-arrow-in-right"></i> Ingresar</button>
+    <div class="hero-icon">
+      <img
+        src="https://cdn.brandfetch.io/id8LwMLHOF/w/400/h/400/theme/dark/icon.jpeg?c=1bxid64Mup7aczewSAYMX&t=1771715114286"
+        alt="ISSS"
+        onerror="this.style.display='none'">
     </div>
 
-    <!-- ── Formulario de registro ── -->
-    <div id="form-reg" style="display:none">
-      <div class="fg">
-        <label class="fl label" for="reg-name">Nombre completo</label>
-        <div class="input-wrap">
-          <i class="bi bi-person input-icon"></i>
-          <input class="fi with-icon" id="reg-name" type="text" placeholder="Ej: María García" autocomplete="name">
-        </div>
-      </div>
-      <div class="fg">
-        <label class="fl label" for="reg-dui">Número de DUI</label>
-        <div class="input-wrap">
-          <i class="bi bi-shield-lock input-icon"></i>
-          <input class="fi with-icon" id="reg-dui" type="text" placeholder="00000000-0" maxlength="10" inputmode="numeric" autocomplete="off">
-        </div>
-      </div>
-      <div class="fg">
-        <label class="fl label" for="reg-phone">Número de teléfono</label>
-        <div class="input-wrap">
-          <i class="bi bi-phone input-icon"></i>
-          <input class="fi with-icon" id="reg-phone" type="tel" placeholder="7000-0000" maxlength="9" inputmode="tel" autocomplete="tel">
-        </div>
-      </div>
-      <div id="reg-err" class="alert a-err" style="display:none;margin-bottom:12px">
-        <i class="bi bi-exclamation-circle"></i><span id="reg-err-msg">Complete todos los campos.</span>
-      </div>
-      <button class="btn btn-primary" onclick="doRegister()"><i class="bi bi-person-check"></i> Crear cuenta</button>
-    </div>
+    <div class="hero-name">ISSS <em>Digital</em></div>
+    <div class="hero-sub">Tu cita médica en 90 segundos.<br>Sin filas. Sin llamadas. Sin madrugar.</div>
 
-    <div style="text-align:center;margin-top:24px">
-      <div class="sub">¿Necesita ayuda?</div>
-      <a href="tel:132" style="color:var(--navy);font-weight:700;font-size:15px;text-decoration:none;display:flex;align-items:center;justify-content:center;gap:6px;margin-top:4px"><i class="bi bi-telephone"></i> Llamar al ISSS: 132</a>
+    <div class="pills">
+      <span class="pill"><span class="pill-dot"></span>Sin descarga</span>
+      <span class="pill"><span class="pill-dot"></span>Funciona offline</span>
+      <span class="pill"><span class="pill-dot"></span>100% gratuito</span>
     </div>
   </div>
 </div>
 
-<!-- ═══════════════════════════ HOME ═══════════════════════════ -->
-<div class="view" id="view-home">
-  <div class="home-topbar">
-    <img src="https://1rdekw89rj.ucarecd.net/10a0d7a7-5a0a-42fd-9f65-0a64ba5537ab/ISSSLogo.svg" alt="ISSS"
-         onerror="this.outerHTML='<span style=\'color:#fff;font-weight:900;font-size:18px\'>ISSS</span>'">
-    <div class="htb-actions">
-      <button class="htb-btn" id="bell-btn" title="Notificaciones" onclick="requestNotifications()"><i class="bi bi-bell"></i></button>
-    </div>
-  </div>
-  <div class="home-hero">
-    <div class="home-greet">Bienvenido/a,</div>
-    <div class="home-uname" id="home-uname">—</div>
-    <div id="next-appt-section"></div>
-    <button class="next-cta" onclick="goStep1()"><i class="bi bi-calendar-plus"></i> Pedir nueva cita</button>
-  </div>
+<!-- ── INSTALL CARD ────────────────────────────── -->
+<div class="card-wrap">
+  <div class="card">
 
-  <div id="alert-doctor-cancel" class="alert a-err px" style="display:none;margin:14px 16px 0">
-    <i class="bi bi-exclamation-triangle-fill"></i>
-    <div>
-      <strong>Su médico canceló la cita</strong><br>
-      <span id="alert-spec-text"></span> — <span id="alert-date-text"></span>
-      <div style="margin-top:8px;display:flex;gap:7px;flex-wrap:wrap">
-        <button class="btn btn-primary btn-sm" onclick="reagendarAlerta()"><i class="bi bi-calendar2"></i> Reagendar</button>
-        <button class="btn btn-ghost btn-sm" onclick="cerrarAlerta()">Cerrar</button>
-      </div>
+    <!-- STATE: Android / Chrome — native install prompt -->
+    <div id="s-android" class="hidden">
+      <div class="card-title">Agregar a pantalla de inicio</div>
+      <div class="card-sub">Un toque y tendrás ISSS Digital en tu teléfono, sin pasar por ninguna tienda de apps.</div>
+      <button class="btn-install" id="btn-install">
+        <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+          <rect x="5" y="2" width="14" height="20" rx="2"/>
+          <circle cx="12" cy="17" r="1"/>
+        </svg>
+        Agregar a pantalla de inicio
+      </button>
     </div>
-  </div>
 
-  <!-- Quick actions (rendered by JS) -->
-  <div id="qa-grid" class="qa-grid" style="margin-top:18px"></div>
-
-  <!-- Recent history -->
-  <div class="section-row">
-    <div class="h3">Consultas recientes</div>
-    <button class="section-link" onclick="showView('view-history')">Ver todo</button>
-  </div>
-  <div id="home-hist" class="px"></div>
-
-  <div class="scroll" style="padding-top:0;padding-bottom:88px"></div>
-
-  <nav class="bnav">
-    <button class="bn on" onclick="showView('view-home')"><i class="bi bi-house-fill"></i>Inicio</button>
-    <button class="bn" onclick="showView('view-appointments')" style="position:relative"><i class="bi bi-calendar2-check"></i>Citas<span class="bn-dot" id="bn-dot" style="display:none"></span></button>
-    <button class="bn" onclick="showView('view-history')"><i class="bi bi-journal-text"></i>Historial</button>
-  </nav>
-</div>
-
-<!-- ═══ STEP 1 — ESPECIALIDAD ═══ -->
-<div class="view" id="view-step1">
-  <div class="topbar">
-    <button class="back-btn" onclick="showView('view-home')"><i class="bi bi-arrow-left"></i> Inicio</button>
-    <div class="topbar-center">
-<span class="topbar-title">Nueva Cita</span>
-    </div>
-    <div style="width:70px"></div>
-  </div>
-  <div class="scroll px" style="padding-top:16px">
-    <div class="steps" style="padding:0">
-      <div class="sd on">1</div><div class="sl"></div>
-      <div class="sd">2</div><div class="sl"></div>
-      <div class="sd">3</div><div class="sl"></div>
-      <div class="sd"><i class="bi bi-check"></i></div>
-    </div>
-    <div class="h3" style="margin-bottom:4px">Especialidad</div>
-    <div class="sub" style="margin-bottom:14px">Seleccione o busque por síntoma</div>
-    <div class="fg">
-      <div class="input-wrap">
-        <i class="bi bi-search input-icon"></i>
-        <input class="fi with-icon" id="search-spec" type="text" placeholder="Ej: corazón, ojos, huesos…" oninput="filterSpecs()" autocomplete="off">
-      </div>
-    </div>
-    <div class="spec-grid" id="spec-grid"></div>
-  </div>
-  <div class="btn-footer" id="footer1">
-    <button class="btn btn-primary" id="btn1" onclick="goStep2()"><i class="bi bi-arrow-right"></i> Continuar</button>
-  </div>
-</div>
-
-<!-- ═══ STEP 2 — CENTRO ═══ -->
-<div class="view" id="view-step2">
-  <div class="topbar">
-    <button class="back-btn" onclick="showView('view-step1')"><i class="bi bi-arrow-left"></i> Especialidad</button>
-    <div class="topbar-center">
-<span class="topbar-title">Centro</span>
-    </div>
-    <div style="width:70px"></div>
-  </div>
-  <div class="scroll px" style="padding-top:16px">
-    <div class="steps" style="padding:0">
-      <div class="sd ok"><i class="bi bi-check"></i></div><div class="sl ok"></div>
-      <div class="sd on">2</div><div class="sl"></div>
-      <div class="sd">3</div><div class="sl"></div>
-      <div class="sd"><i class="bi bi-check"></i></div>
-    </div>
-    <div class="h3" style="margin-bottom:4px">Centro médico</div>
-    <div id="spec-badge-row" style="margin-bottom:14px"></div>
-    <div id="centers-list"></div>
-  </div>
-  <div class="btn-footer" id="footer2">
-    <button class="btn btn-primary" id="btn2" onclick="goStep3()"><i class="bi bi-arrow-right"></i> Continuar</button>
-  </div>
-</div>
-
-<!-- ═══ STEP 3 — FECHA / HORA ═══ -->
-<div class="view" id="view-step3">
-  <div class="topbar">
-    <button class="back-btn" id="step3-back-btn" onclick="showView('view-step2')"><i class="bi bi-arrow-left"></i> Centro</button>
-    <div class="topbar-center">
-<span class="topbar-title">Fecha y hora</span>
-    </div>
-    <div style="width:70px"></div>
-  </div>
-  <div class="scroll px" style="padding-top:16px">
-    <div class="steps" style="padding:0">
-      <div class="sd ok"><i class="bi bi-check"></i></div><div class="sl ok"></div>
-      <div class="sd ok"><i class="bi bi-check"></i></div><div class="sl ok"></div>
-      <div class="sd on">3</div><div class="sl"></div>
-      <div class="sd"><i class="bi bi-check"></i></div>
-    </div>
-    <div class="card card-p" style="margin-bottom:14px">
-      <div class="cal-header">
-        <button class="cal-nav" onclick="changeMonth(-1)"><i class="bi bi-chevron-left"></i></button>
-        <span class="cal-month-label" id="cal-month"></span>
-        <button class="cal-nav" onclick="changeMonth(1)"><i class="bi bi-chevron-right"></i></button>
-      </div>
-      <div class="cal-grid" id="cal-grid"></div>
-    </div>
-    <div id="time-section" style="display:none">
-      <div class="h3" style="margin-bottom:10px">Horarios disponibles</div>
-      <div class="tslots" id="tslots-grid"></div>
-    </div>
-  </div>
-  <div class="btn-footer" id="footer3">
-    <button class="btn btn-primary" id="btn3" onclick="goConfirm()"><i class="bi bi-arrow-right"></i> Ver resumen</button>
-  </div>
-</div>
-
-<!-- ═══ CONFIRMACIÓN ═══ -->
-<div class="view" id="view-confirm">
-  <div class="topbar">
-    <button class="back-btn" onclick="showView('view-step3')"><i class="bi bi-arrow-left"></i> Fecha</button>
-    <div class="topbar-center">
-<span class="topbar-title">Confirmar</span>
-    </div>
-    <div style="width:70px"></div>
-  </div>
-  <div class="scroll px" style="padding-top:16px">
-    <div class="steps" style="padding:0">
-      <div class="sd ok"><i class="bi bi-check"></i></div><div class="sl ok"></div>
-      <div class="sd ok"><i class="bi bi-check"></i></div><div class="sl ok"></div>
-      <div class="sd ok"><i class="bi bi-check"></i></div><div class="sl"></div>
-      <div class="sd on"><i class="bi bi-check"></i></div>
-    </div>
-    <div class="h3" style="margin-bottom:14px">Resumen de su cita</div>
-    <div class="card card-p" style="margin-bottom:12px">
-      <div id="conf-spec-chip" style="margin-bottom:12px"></div>
-      <div class="info-row"><i class="bi bi-hospital"></i><div><div class="info-label">Centro</div><div class="info-val" id="cf-center">—</div></div></div>
-      <div class="info-row"><i class="bi bi-calendar3"></i><div><div class="info-label">Fecha</div><div class="info-val" id="cf-date">—</div></div></div>
-      <div class="info-row"><i class="bi bi-clock"></i><div><div class="info-label">Hora</div><div class="info-val" id="cf-time">—</div></div></div>
-      <div class="info-row"><i class="bi bi-person-badge"></i><div><div class="info-label">Paciente</div><div class="info-val" id="cf-name">—</div></div></div>
-    </div>
-    <div class="alert a-info"><i class="bi bi-bell"></i><div>Recibirá un recordatorio <strong>24 horas antes</strong> de su cita.</div></div>
-    <!-- Familiar -->
-    <div class="card card-p" style="border:1.5px dashed var(--border);margin-bottom:12px">
-      <div style="display:flex;align-items:center;gap:10px;cursor:pointer" onclick="toggleFam()">
-        <div style="width:38px;height:38px;background:var(--navy-3);border-radius:var(--r-sm);display:flex;align-items:center;justify-content:center;color:var(--navy);font-size:20px;flex-shrink:0"><i class="bi bi-people"></i></div>
-        <div style="flex:1"><div style="font-size:15px;font-weight:800">¿Es para un familiar?</div><div class="sub" id="fam-toggle-sub">Agéndelo en su nombre</div></div>
-        <i class="bi bi-chevron-down" id="fam-toggle-ico" style="color:var(--navy);font-size:18px;transition:transform .2s"></i>
-      </div>
-      <div id="fam-form" style="display:none;margin-top:16px">
-        <div id="fam-rel-picker"></div>
-        <button class="btn btn-ghost btn-sm" id="fam-add-btn" onclick="toggleAddRelForm()" style="margin-bottom:12px;gap:6px"><i class="bi bi-person-plus"></i> Agregar nuevo familiar</button>
-        <div id="fam-add-form" style="display:none">
-          <div class="fg"><label class="fl label">Nombre completo</label><input class="fi" id="fam-name" type="text" placeholder="Nombre del familiar" autocomplete="off"></div>
-          <div class="fg"><label class="fl label">DUI del familiar</label><input class="fi" id="fam-dui-inp" type="text" placeholder="00000000-0" maxlength="10" inputmode="numeric" autocomplete="off"></div>
-          <div class="fg" style="margin-bottom:0"><label class="fl label">Parentesco</label>
-            <select class="fi" id="fam-rel-sel"><option value="">Seleccione…</option><option>Madre</option><option>Padre</option><option>Hijo / Hija</option><option>Abuelo / Abuela</option><option>Cónyuge</option><option>Otro familiar</option></select>
+    <!-- STATE: iOS Safari — manual steps -->
+    <div id="s-ios" class="hidden">
+      <div class="card-title">Instalar en iPhone o iPad</div>
+      <div class="card-sub">Safari te permite guardar esta app sin el App Store.</div>
+      <div class="ios-steps">
+        <div class="ios-step">
+          <div class="step-num">1</div>
+          <div class="step-text">
+            Toca
+            <span class="step-badge">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12v8a2 2 0 002 2h12a2 2 0 002-2v-8"/><polyline points="16 6 12 2 8 6"/><line x1="12" y1="2" x2="12" y2="15"/></svg>
+              Compartir
+            </span>
+            en la barra inferior de Safari.
           </div>
         </div>
-      </div>
-    </div>
-  </div>
-  <div class="btn-footer show" style="border-top:1px solid var(--border)">
-    <button class="btn btn-accent" onclick="confirmAppt()"><i class="bi bi-check-circle"></i> Confirmar cita</button>
-  </div>
-</div>
-
-<!-- ═══ COMPROBANTE ═══ -->
-<div class="view" id="view-ticket">
-  <div class="topbar">
-    <button class="back-btn" onclick="showView('view-home')"><i class="bi bi-house"></i> Inicio</button>
-    <div class="topbar-center">
-<span class="topbar-title">Comprobante</span>
-    </div>
-    <button class="tb-btn" onclick="shareTicket()"><i class="bi bi-share"></i></button>
-  </div>
-  <div class="scroll px" style="padding-top:20px">
-    <div class="success-wrap">
-      <div class="success-ring"><i class="bi bi-check-lg"></i></div>
-      <div class="h2" style="margin-bottom:4px">¡Cita confirmada!</div>
-      <div class="sub" style="margin-bottom:20px">Guarde su comprobante</div>
-    </div>
-    <div class="ticket">
-      <div class="ticket-head">
-        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px">
-          <img src="https://1rdekw89rj.ucarecd.net/10a0d7a7-5a0a-42fd-9f65-0a64ba5537ab/ISSSLogo.svg" alt="ISSS" style="height:22px;filter:brightness(0) invert(1);opacity:.9">
-          <span style="font-size:11px;font-weight:700;color:rgba(255,255,255,.4);letter-spacing:1px">COMPROBANTE</span>
+        <div class="ios-step">
+          <div class="step-num">2</div>
+          <div class="step-text">
+            Desplázate y toca
+            <span class="step-badge">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5H9a2 2 0 00-2 2v12a2 2 0 002 2h6a2 2 0 002-2v-3M9 12h9M15 9l3 3-3 3"/></svg>
+              Agregar a pantalla de inicio
+            </span>.
+          </div>
         </div>
-        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px">
-          <div><div class="label" style="color:rgba(255,255,255,.8)">ESPECIALIDAD</div><div style="font-size:18px;font-weight:800;margin-top:2px" id="tk-spec">—</div></div>
-          <div id="tk-status-chip"></div>
-        </div>
-        <div class="info-row" style="border:none;padding:4px 0;color:#fff"><i class="bi bi-geo-alt" style="color:rgba(255,255,255,.6)"></i><div><div style="font-size:12px;color:rgba(255,255,255,.8)">Centro</div><div style="font-weight:700;font-size:14px" id="tk-center">—</div></div></div>
-        <div style="display:flex;gap:16px;margin-top:4px">
-          <div class="info-row" style="border:none;padding:4px 0;color:#fff;flex:1"><i class="bi bi-calendar3" style="color:rgba(255,255,255,.6)"></i><div><div style="font-size:12px;color:rgba(255,255,255,.8)">Fecha</div><div style="font-weight:700;font-size:14px" id="tk-date">—</div></div></div>
-          <div class="info-row" style="border:none;padding:4px 0;color:#fff"><i class="bi bi-clock" style="color:rgba(255,255,255,.6)"></i><div><div style="font-size:12px;color:rgba(255,255,255,.8)">Hora</div><div style="font-weight:700;font-size:18px" id="tk-time">—</div></div></div>
-        </div>
-      </div>
-      <div class="ticket-sep"><hr class="ticket-line"></div>
-      <div class="ticket-body">
-        <div class="qr-wrap" style="padding:8px 0 12px">
-          <div class="qr-box"><img id="tk-qr" src="" alt="Código QR" loading="lazy"></div>
-        </div>
-        <div style="text-align:center">
-          <div id="tk-code" style="font-size:22px;font-weight:900;color:var(--navy);letter-spacing:2px">—</div>
-          <div class="sub" style="margin-top:3px">Código de comprobante</div>
+        <div class="ios-step">
+          <div class="step-num">3</div>
+          <div class="step-text">Confirma tocando <strong>"Agregar"</strong> arriba a la derecha. ¡Listo!</div>
         </div>
       </div>
     </div>
-    <div class="alert a-ok"><i class="bi bi-bell-fill"></i><div>Le avisaremos el día anterior. Guarde o comparta su comprobante.</div></div>
-    <div id="tk-fam-share" style="display:none;margin-bottom:12px">
-      <div class="alert a-info" style="margin-bottom:8px"><i class="bi bi-people"></i><div>Esta cita es para un familiar. Comparta el comprobante para que pueda presentarse.</div></div>
-    </div>
-    <div style="display:flex;flex-direction:column;gap:10px">
-      <button class="btn btn-primary" onclick="downloadTicket()"><i class="bi bi-download"></i> Guardar comprobante</button>
-      <button class="btn btn-outline" id="tk-share-fam-btn" style="display:none" onclick="shareTicket()"><i class="bi bi-share"></i> Compartir con familiar</button>
-      <button class="btn btn-ghost" onclick="showView('view-home')"><i class="bi bi-house"></i> Ir al inicio</button>
-    </div>
-  </div>
-</div>
 
-<!-- ═══ MIS CITAS ═══ -->
-<div class="view" id="view-appointments">
-  <div class="topbar">
-    <button class="back-btn" onclick="showView('view-home')"><i class="bi bi-arrow-left"></i> Inicio</button>
-    <div class="topbar-center">
-<span class="topbar-title">Mis Citas</span>
-    </div>
-    <button class="tb-btn" onclick="goStep1()"><i class="bi bi-plus-lg"></i></button>
-  </div>
-  <div class="scroll px" style="padding-top:16px">
-    <div id="appts-list"></div>
-    <div id="appts-empty" style="display:none">
-      <div class="empty"><i class="bi bi-calendar-x"></i><div class="empty-t">Sin citas programadas</div><div class="empty-s">Reserve su cita médica en línea y evite las filas.</div><button class="btn btn-primary" onclick="goStep1()"><i class="bi bi-calendar-plus"></i> Reservar ahora</button></div>
-    </div>
-  </div>
-  <nav class="bnav">
-    <button class="bn" onclick="showView('view-home')"><i class="bi bi-house"></i>Inicio</button>
-    <button class="bn on" onclick="showView('view-appointments')"><i class="bi bi-calendar2-check"></i>Citas</button>
-    <button class="bn" onclick="showView('view-history')"><i class="bi bi-journal-text"></i>Historial</button>
-  </nav>
-</div>
-
-<!-- ═══ TURNO EN VIVO ═══ -->
-<div class="view" id="view-queue">
-  <div class="topbar">
-    <button class="back-btn" onclick="showView('view-home')"><i class="bi bi-arrow-left"></i> Inicio</button>
-    <div class="topbar-center">
-<span class="topbar-title">Turno en Vivo</span>
-    </div>
-    <button class="tb-btn" onclick="renderQueue()"><i class="bi bi-arrow-clockwise"></i></button>
-  </div>
-  <div class="scroll px" style="padding-top:16px"><div id="queue-content"></div></div>
-  <nav class="bnav">
-    <button class="bn" onclick="showView('view-home')"><i class="bi bi-house"></i>Inicio</button>
-    <button class="bn" onclick="showView('view-appointments')"><i class="bi bi-calendar2-check"></i>Citas</button>
-    <button class="bn" onclick="showView('view-history')"><i class="bi bi-journal-text"></i>Historial</button>
-  </nav>
-</div>
-
-<!-- ═══ HISTORIAL ═══ -->
-<div class="view" id="view-history">
-  <div class="topbar">
-    <button class="back-btn" onclick="showView('view-home')"><i class="bi bi-arrow-left"></i> Inicio</button>
-    <div class="topbar-center">
-<span class="topbar-title">Historial</span>
-    </div>
-    <div style="width:38px"></div>
-  </div>
-  <div class="scroll px" style="padding-top:16px">
-    <div class="h3" style="margin-bottom:12px">Consultas anteriores</div>
-    <div id="hist-list"></div>
-  </div>
-  <nav class="bnav">
-    <button class="bn" onclick="showView('view-home')"><i class="bi bi-house"></i>Inicio</button>
-    <button class="bn" onclick="showView('view-appointments')"><i class="bi bi-calendar2-check"></i>Citas</button>
-    <button class="bn on" onclick="showView('view-history')"><i class="bi bi-journal-text"></i>Historial</button>
-  </nav>
-</div>
-
-<!-- ═══ FAMILIARES ═══ -->
-<div class="view" id="view-relatives">
-  <div class="topbar">
-    <button class="back-btn" onclick="showView('view-home')"><i class="bi bi-arrow-left"></i> Inicio</button>
-    <div class="topbar-center">
-<span class="topbar-title">Familiares</span>
-    </div>
-    <button class="tb-btn" onclick="openAddRel()"><i class="bi bi-plus-lg"></i></button>
-  </div>
-  <div class="scroll px" style="padding-top:16px">
-    <div class="alert a-info"><i class="bi bi-info-circle"></i><div>Agende citas a nombre de sus familiares. Ellos solo deben presentarse a la hora indicada.</div></div>
-    <div id="rel-list"></div>
-    <button class="btn btn-outline" onclick="openAddRel()" style="margin-top:4px"><i class="bi bi-person-plus"></i> Agregar familiar</button>
-  </div>
-</div>
-
-<!-- ═══ DETALLE CITA ═══ -->
-<div class="view" id="view-detail">
-  <div class="topbar">
-    <button class="back-btn" id="detail-back"><i class="bi bi-arrow-left"></i> Volver</button>
-    <div class="topbar-center">
-<span class="topbar-title">Detalle</span>
-    </div>
-    <div style="width:70px"></div>
-  </div>
-  <div class="scroll px" style="padding-top:16px" id="detail-content"></div>
-</div>
-
-</div><!-- .app -->
-
-<!-- ═══════════════ TOAST ═══════════════ -->
-<div id="toast-msg" class="toast-msg" style="display:none"></div>
-
-<!-- ═══════════════ MODALS ═══════════════ -->
-<div class="moverlay" id="m-cancel">
-  <div class="msheet">
-    <div style="position:relative;margin-bottom:18px"><div class="mhandle"></div><button class="mclose" onclick="closeModal('m-cancel')"><i class="bi bi-x"></i></button></div>
-    <div id="m-cancel-main">
-      <div class="h3" style="margin-bottom:4px">Gestionar cita</div>
-      <div class="sub" style="margin-bottom:16px">¿Qué desea hacer con esta cita?</div>
-      <div style="display:flex;flex-direction:column;gap:10px">
-        <button class="btn btn-primary" onclick="rescheduleAppt()"><i class="bi bi-calendar2-check"></i> Reagendar fecha u hora</button>
-        <button class="btn btn-danger" onclick="showCancelConfirm()"><i class="bi bi-trash"></i> Cancelar cita</button>
-        <button class="btn btn-ghost" onclick="closeModal('m-cancel')">Volver sin cambios</button>
+    <!-- STATE: Already installed / Standalone -->
+    <div id="s-installed" class="hidden">
+      <div class="success">
+        <div class="success-ring">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#059669" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>
+        </div>
+        <div>
+          <div class="success-title">Ya está instalada</div>
+          <div class="success-sub">ISSS Digital está en tu pantalla de inicio y lista para usar.</div>
+        </div>
+        <a href="./app.html" class="btn-open">
+          Abrir ISSS Digital
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+        </a>
       </div>
     </div>
-    <div id="m-cancel-confirm" style="display:none">
-      <div style="text-align:center;padding:8px 0 16px">
-        <div style="width:56px;height:56px;border-radius:50%;background:var(--red-bg);display:flex;align-items:center;justify-content:center;margin:0 auto 14px;color:var(--red);font-size:28px"><i class="bi bi-exclamation-triangle"></i></div>
-        <div class="h3" style="margin-bottom:6px">¿Cancelar definitivamente?</div>
-        <div class="sub">Esta acción no se puede deshacer. Su cupo quedará disponible para otros pacientes.</div>
+
+    <!-- STATE: Fallback (desktop, other browser, already dismissed) -->
+    <div id="s-default" class="hidden">
+      <div class="card-title">Disponible como app</div>
+      <div class="card-sub">Abre esta página en <strong>Chrome</strong> (Android) o <strong>Safari</strong> (iPhone) para agregar ISSS Digital a tu pantalla de inicio sin descargar nada.</div>
+      <a href="./app.html" class="btn-open" style="margin-top:4px">
+        Continuar en el navegador
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+      </a>
+    </div>
+
+  </div>
+</div>
+
+<!-- ── FEATURES ────────────────────────────────── -->
+<div class="features">
+  <div class="section-label">¿Por qué instalarlo?</div>
+  <div class="feat-list">
+
+    <div class="feat">
+      <div class="feat-ico">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3"/></svg>
       </div>
-      <div style="display:flex;flex-direction:column;gap:10px;margin-top:4px">
-        <button class="btn btn-danger" onclick="cancelApptConfirmed()"><i class="bi bi-trash"></i> Sí, cancelar cita</button>
-        <button class="btn btn-ghost" onclick="showCancelMain()"><i class="bi bi-arrow-left"></i> No, regresar</button>
+      <div>
+        <div class="feat-label">Cita en 90 segundos</div>
+        <div class="feat-desc">Especialidad → Centro médico → Fecha → comprobante QR. Sin llamadas ni filas.</div>
       </div>
     </div>
+
+    <div class="feat">
+      <div class="feat-ico">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="7" r="3"/><path d="M3 20v-1a6 6 0 0112 0v1"/><circle cx="17" cy="8" r="2.5"/><path d="M21 20v-1a4 4 0 00-5.6-3.7"/></svg>
+      </div>
+      <div>
+        <div class="feat-label">Agenda para toda la familia</div>
+        <div class="feat-desc">Gestiona las citas de tus adultos mayores. El QR se comparte directamente por WhatsApp.</div>
+      </div>
+    </div>
+
+    <div class="feat">
+      <div class="feat-ico">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1018 0 9 9 0 00-18 0"/><path d="M3 12h4M17 12h4M12 3v4M12 17v4"/></svg>
+      </div>
+      <div>
+        <div class="feat-label">Sin App Store, sin datos extra</div>
+        <div class="feat-desc">Es una PWA. Se instala desde el navegador, pesa poco y funciona sin conexión.</div>
+      </div>
+    </div>
+
   </div>
 </div>
 
-<div class="moverlay" id="m-add-rel">
-  <div class="msheet">
-    <div style="position:relative;margin-bottom:18px"><div class="mhandle"></div><button class="mclose" onclick="closeModal('m-add-rel')"><i class="bi bi-x"></i></button></div>
-    <div class="h3" style="margin-bottom:16px">Agregar familiar</div>
-    <div class="fg"><label class="fl label">Nombre completo</label><input class="fi" id="rel-name" type="text" placeholder="Nombre del familiar"></div>
-    <div class="fg"><label class="fl label">DUI del familiar</label><input class="fi" id="rel-dui" type="text" placeholder="00000000-0" maxlength="10" inputmode="numeric" autocomplete="off"></div>
-    <div class="fg"><label class="fl label">Parentesco</label>
-      <select class="fi" id="rel-rel"><option value="">Seleccione…</option><option>Madre</option><option>Padre</option><option>Hijo / Hija</option><option>Abuelo / Abuela</option><option>Cónyuge</option><option>Otro familiar</option></select>
-    </div>
-    <div style="display:flex;flex-direction:column;gap:10px">
-      <button class="btn btn-primary" onclick="saveRel()"><i class="bi bi-person-check"></i> Guardar</button>
-      <button class="btn btn-ghost" onclick="closeModal('m-add-rel')">Cancelar</button>
-    </div>
-  </div>
-</div>
-
-<div class="moverlay" id="m-book-rel">
-  <div class="msheet">
-    <div style="position:relative;margin-bottom:18px"><div class="mhandle"></div><button class="mclose" onclick="closeModal('m-book-rel')"><i class="bi bi-x"></i></button></div>
-    <div class="h3" style="margin-bottom:4px">Agendar cita para familiar</div>
-    <div class="sub" style="margin-bottom:16px">Se iniciará el proceso de cita a nombre de:</div>
-    <div id="m-book-rel-card" style="margin-bottom:20px"></div>
-    <div style="display:flex;flex-direction:column;gap:10px">
-      <button class="btn btn-primary" onclick="confirmBookForRel()"><i class="bi bi-calendar-plus"></i> Continuar</button>
-      <button class="btn btn-ghost" onclick="closeModal('m-book-rel')">Cancelar</button>
-    </div>
-  </div>
-</div>
-
-<div class="moverlay" id="m-hist">
-  <div class="msheet">
-    <div style="position:relative;margin-bottom:18px"><div class="mhandle"></div><button class="mclose" onclick="closeModal('m-hist')"><i class="bi bi-x"></i></button></div>
-    <div id="hist-modal"></div>
-    <button class="btn btn-ghost" onclick="closeModal('m-hist')" style="margin-top:14px">Cerrar</button>
-  </div>
+<!-- ── FOOTER ──────────────────────────────────── -->
+<div class="footer">
+  ISSS Digital · BootJAM 2026 · Universidad Mónica Herrera<br>
+  Solución de citas médicas para la salud pública de El Salvador
 </div>
 
 <script>
-// ─── DATA ───
-const TOOTH_SVG = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" width="1em" height="1em" style="vertical-align:-.1em"><path d="M12 3C9.5 3 7.5 4.8 7 7.2c-.4-.6-1.1-1-1.9-.8-1.3.3-2 1.7-1.8 3 .1.8.5 1.5 1 2 .4.5.7 1.1.7 1.8 0 2.1.5 7.2 2 8.8.5.5 1.1.5 1.6.1.4-.3.7-1.1.7-1.8 0-1.1.8-1.8 1.7-1.8s1.7.7 1.7 1.8c0 .7.3 1.5.7 1.8.5.4 1.1.4 1.6-.1 1.5-1.6 2-6.7 2-8.8 0-.7.3-1.3.7-1.8.5-.5.9-1.2 1-2 .2-1.3-.5-2.7-1.8-3-.8-.2-1.5.2-1.9.8C16.5 4.8 14.5 3 12 3z"/></svg>`;
-
-const SPECS = [
-  {id:'gen',   icon:'bi-clipboard2-pulse', name:'Medicina General',    kw:['general','fiebre','gripe','dolor','malestar','tos','resfrio']},
-  {id:'cardio',icon:'bi-heart-pulse',      name:'Cardiología',         kw:['corazón','pecho','presión','cardio','corazon','hipertension']},
-  {id:'ojos',  icon:'bi-eye',              name:'Oftalmología',        kw:['ojos','vista','lentes','oftalmol','retina']},
-  {id:'huesos',icon:'bi-bandaid',          name:'Ortopedia',           kw:['huesos','rodilla','columna','fractura','cadera','espalda']},
-  {id:'gineco',icon:'bi-gender-female',    name:'Ginecología',         kw:['gineco','mujer','embarazo','utero','menstruacion']},
-  {id:'ninos', icon:'bi-balloon',          name:'Pediatría',           kw:['niño','bebe','infante','pediatr','menor']},
-  {id:'piel',  icon:'bi-sun',              name:'Dermatología',        kw:['piel','acne','mancha','erupcion','dermat','alergia','sol']},
-  {id:'neuro', icon:'bi-activity',         name:'Neurología',          kw:['cabeza','cerebro','migraña','epilepsia','mareo','neurol']},
-  {id:'gastro',icon:'bi-capsule-pill',     name:'Gastroenterología',   kw:['estomago','intestino','digestion','colitis','gastro','reflujo']},
-  {id:'psiq',  icon:'bi-chat-heart',       name:'Psiquiatría',         kw:['mental','ansiedad','depresion','mente','psiq','estres']},
-  {id:'urol',  icon:'bi-droplet-half',     name:'Urología',            kw:['rinon','urinario','vejiga','urol','prostata']},
-  {id:'dental',icon:TOOTH_SVG,               name:'Odontología',         kw:['diente','muela','dental','boca','odonto','encía']},
-];
-
-const CENTERS = [
-  {id:'zacamil',    name:'ISSS Zacamil',     addr:'Col. Zacamil, San Salvador',    wait:'~45 min', slots:8,  rating:4.2},
-  {id:'policlinica',name:'Policlínica Arce', addr:'2ª C. Pte., San Salvador',      wait:'~30 min', slots:12, rating:4.5},
-  {id:'san-marcos', name:'ISSS San Marcos',  addr:'Av. Circunvalación, San Marcos', wait:'~60 min', slots:5,  rating:3.8},
-  {id:'santa-ana',  name:'ISSS Santa Ana',   addr:'Av. Independencia, Santa Ana',   wait:'~20 min', slots:15, rating:4.6},
-  {id:'soyapango',  name:'ISSS Soyapango',   addr:'Blvd. Del Ejército, Soyapango', wait:'~50 min', slots:6,  rating:4.0},
-];
-
-const HIST = [
-  {spec:'Medicina General', icon:'bi-clipboard2-pulse', date:'12 mar 2026', fullDate:'12 marzo 2026', doc:'Dr. Carlos Martínez', center:'ISSS Zacamil',   notes:'Control de presión arterial. Valores normales. Continuar tratamiento actual.', rx:'Enalapril 10mg — 1 vez al día en ayunas.', diag:'Hipertensión arterial controlada'},
-  {spec:'Cardiología',      icon:'bi-heart-pulse',      date:'5 feb 2026',  fullDate:'5 febrero 2026', doc:'Dra. Patricia López',center:'Policlínica Arce',notes:'Electrocardiograma dentro de parámetros normales. Control en 6 meses.',         rx:'Aspirina 100mg — 1 vez al día con alimentos.', diag:'Cardiopatía isquémica estable'},
-  {spec:'Oftalmología',     icon:'bi-eye',              date:'18 ene 2026', fullDate:'18 enero 2026',  doc:'Dr. Roberto García', center:'ISSS Zacamil',   notes:'Miopía leve bilateral. Se recomienda uso de lentes correctivos.', rx:'Receta óptica: OD -0.75 OS -1.00', diag:'Miopía leve'},
-];
-
-// ─── HELPERS ───
-function iconEl(icon, cls=''){
-  if(!icon) return '';
-  if(icon.startsWith('bi-')) return `<i class="bi ${icon}${cls?' '+cls:''}"></i>`;
-  if(icon.startsWith('<svg')) return `<span${cls?` class="${cls}"`:''}style="display:inline-flex;align-items:center;line-height:1">${icon}</span>`;
-  return `<span${cls?` class="${cls}"`:''}style="font-size:inherit;line-height:1;font-style:normal">${icon}</span>`;
-}
-function isApptToday(a){
-  if(!a.dateISO) return false;
-  return a.dateISO===new Date().toISOString().slice(0,10);
+if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.register('./sw.js').catch(() => {});
 }
 
-// ─── STATE ───
-let S = {
-  users:[], user:null, spec:null, center:null, date:null, time:null,
-  month: new Date(), appts:[], relatives:[],
-  cancelId:null, rescheduleId:null, famIdx:-1, preselectedFamIdx:-1,
-  queuePos:8, queueTotal:30, queueTimer:null
-};
+const sAndroid   = document.getElementById('s-android');
+const sIOS       = document.getElementById('s-ios');
+const sInstalled = document.getElementById('s-installed');
+const sDefault   = document.getElementById('s-default');
+const btnInstall = document.getElementById('btn-install');
 
-function save(){try{localStorage.setItem('isss_a',JSON.stringify(S.appts));localStorage.setItem('isss_r',JSON.stringify(S.relatives));localStorage.setItem('isss_u',JSON.stringify(S.user));localStorage.setItem('isss_us',JSON.stringify(S.users));}catch(e){}}
-function load(){try{const a=localStorage.getItem('isss_a'),r=localStorage.getItem('isss_r'),u=localStorage.getItem('isss_u'),us=localStorage.getItem('isss_us');if(a)S.appts=JSON.parse(a);if(r)S.relatives=JSON.parse(r);if(u)S.user=JSON.parse(u);if(us)S.users=JSON.parse(us);}catch(e){}}
+let deferredPrompt = null;
 
-// ─── AUTH ───
-function fmtDui(e){let v=e.target.value.replace(/[^0-9]/g,'');if(v.length>9)v=v.slice(0,9);if(v.length>8)v=v.slice(0,8)+'-'+v.slice(8);e.target.value=v}
-function fmtPhone(e){let v=e.target.value.replace(/[^0-9]/g,'');if(v.length>8)v=v.slice(0,8);if(v.length>4)v=v.slice(0,4)+'-'+v.slice(4);e.target.value=v}
-document.getElementById('dui-in').addEventListener('input',fmtDui);
-document.getElementById('reg-dui').addEventListener('input',fmtDui);
-document.getElementById('phone-in').addEventListener('input',fmtPhone);
-document.getElementById('reg-phone').addEventListener('input',fmtPhone);
-document.getElementById('fam-dui-inp').addEventListener('input',fmtDui);
-document.getElementById('rel-dui').addEventListener('input',fmtDui);
-document.getElementById('dui-in').addEventListener('keypress',e=>{if(e.key==='Enter')document.getElementById('phone-in').focus()});
-document.getElementById('phone-in').addEventListener('keypress',e=>{if(e.key==='Enter')doLogin()});
-document.getElementById('reg-phone').addEventListener('keypress',e=>{if(e.key==='Enter')doRegister()});
+const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
+const isStandalone = window.navigator.standalone === true
+                  || window.matchMedia('(display-mode: standalone)').matches;
 
-function switchTab(tab){
-  document.getElementById('form-login').style.display=tab==='login'?'block':'none';
-  document.getElementById('form-reg').style.display=tab==='reg'?'block':'none';
-  document.getElementById('tab-login').classList.toggle('active',tab==='login');
-  document.getElementById('tab-reg').classList.toggle('active',tab==='reg');
-  document.getElementById('login-err').style.display='none';
-  document.getElementById('reg-err').style.display='none';
+function show(el) {
+  [sAndroid, sIOS, sInstalled, sDefault].forEach(s => s.classList.add('hidden'));
+  el.classList.remove('hidden');
 }
 
-function doLogin(){
-  const dui=document.getElementById('dui-in').value.trim();
-  const phone=document.getElementById('phone-in').value.replace(/\D/g,'');
-  const errEl=document.getElementById('login-err');
-  const errMsg=document.getElementById('login-err-msg');
-  if(!/^\d{8}-\d$/.test(dui)){errMsg.textContent='DUI inválido. Use el formato 00000000-0';errEl.style.display='flex';return;}
-  if(phone.length<8){errMsg.textContent='Ingrese su número de teléfono (8 dígitos).';errEl.style.display='flex';return;}
-  const found=S.users.find(u=>u.dui===dui&&u.phone===phone);
-  if(!found){errMsg.textContent='DUI o teléfono incorrecto. ¿Primera vez? Use "Crear cuenta".';errEl.style.display='flex';return;}
-  errEl.style.display='none';
-  S.user=found; save(); initHome(); showView('view-home');
-}
-
-function doRegister(){
-  const name=document.getElementById('reg-name').value.trim();
-  const dui=document.getElementById('reg-dui').value.trim();
-  const phone=document.getElementById('reg-phone').value.replace(/\D/g,'');
-  const errEl=document.getElementById('reg-err');
-  const errMsg=document.getElementById('reg-err-msg');
-  if(name.length<2){errMsg.textContent='Ingrese su nombre completo.';errEl.style.display='flex';return;}
-  if(!/^\d{8}-\d$/.test(dui)){errMsg.textContent='DUI inválido. Use el formato 00000000-0';errEl.style.display='flex';return;}
-  if(phone.length<8){errMsg.textContent='Ingrese un teléfono válido (8 dígitos).';errEl.style.display='flex';return;}
-  if(S.users.find(u=>u.dui===dui)){errMsg.textContent='Ya existe una cuenta con este DUI. Use "Ingresar".';errEl.style.display='flex';return;}
-  errEl.style.display='none';
-  const newUser={dui,name,phone};
-  S.users.push(newUser); S.user=newUser;
-  save(); initHome(); showView('view-home');
-}
-
-// ─── ROUTER ───
-function showView(id){
-  document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));
-  const el=document.getElementById(id);
-  el.classList.add('active');
-  window.scrollTo(0,0);
-  if(id==='view-appointments') renderAppts();
-  if(id==='view-history')      renderHist();
-  if(id==='view-queue'){if(S.queueTimer)clearInterval(S.queueTimer);renderQueue();}
-  if(id==='view-relatives')    renderRels();
-}
-
-// ─── HOME ───
-function initHome(){
-  document.getElementById('home-uname').textContent = S.user?.name || '—';
-  renderNextAppt(); renderHomeHist(); checkAlerts(); renderQaGrid();
-  if(!S.appts.length){
-    S.appts.push({id:'demo1',spec:'Medicina General',specIcon:'bi-clipboard2-pulse',center:'ISSS Zacamil',date:'jueves, 29 mayo 2026',time:'9:00 AM',code:'ISSS-DEMO01',status:'upcoming'});
-    save(); renderNextAppt(); renderQaGrid();
-  }
-}
-
-function renderNextAppt(){
-  const sec=document.getElementById('next-appt-section');
-  const a=S.appts.find(x=>x.status==='upcoming');
-  if(!a){sec.innerHTML='';return;}
-  const today=isApptToday(a);
-  const badge=today
-    ?`<span class="chip" style="background:rgba(255,255,255,.2);color:#fff;border:1px solid rgba(255,255,255,.4)"><i class="bi bi-circle-fill" style="font-size:8px;color:#4ADE80"></i> Hoy</span>`
-    :`<span class="chip chip-green"><i class="bi bi-check-circle"></i> Confirmada</span>`;
-  sec.innerHTML=`
-  <div class="home-next-label"><i class="bi bi-calendar-event" style="margin-right:4px"></i>Próxima cita</div>
-  <div class="next-card" onclick="openDetail('${a.id}','view-home')">
-    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px">
-      <div class="next-spec">${iconEl(a.specIcon)} ${a.spec}</div>
-      ${badge}
-    </div>
-    ${a.forFamiliar?`<div style="margin-bottom:6px"><span class="chip" style="background:rgba(255,255,255,.2);color:#fff;border:1px solid rgba(255,255,255,.3);font-size:12px"><i class="bi bi-people"></i> ${a.patient}</span></div>`:''}
-    <div class="next-meta"><i class="bi bi-hospital"></i>${a.center}</div>
-    <div class="next-meta" style="margin-top:4px"><i class="bi bi-calendar3"></i>${a.date} &nbsp;·&nbsp; <i class="bi bi-clock"></i> ${a.time}</div>
-    <div style="margin-top:10px;display:flex;gap:8px">
-      ${today?`<button class="btn btn-ghost btn-sm" style="color:#fff;background:rgba(255,255,255,.18);border-color:rgba(255,255,255,.3);font-size:13px" onclick="event.stopPropagation();showView('view-queue')"><i class="bi bi-hourglass-split"></i> Ver turno</button>`:''}
-      <button class="btn btn-ghost btn-sm" style="color:#fff;background:rgba(255,255,255,.1);border-color:rgba(255,255,255,.2);font-size:13px" onclick="event.stopPropagation();openCancel('${a.id}')"><i class="bi bi-sliders"></i> Gestionar</button>
-    </div>
-  </div>`;
-}
-
-function renderQaGrid(){
-  const today=S.appts.find(x=>x.status==='upcoming'&&isApptToday(x));
-  const items=[
-    {icon:'bi-calendar2-check',label:'Mis citas',  fn:"showView('view-appointments')"},
-    today?{icon:'bi-hourglass-split',label:'Mi turno',fn:"showView('view-queue')"}:null,
-    {icon:'bi-people',          label:'Familiares', fn:"showView('view-relatives')"},
-  ].filter(Boolean);
-  document.getElementById('qa-grid').innerHTML=items.map(it=>
-    `<div class="qa-item" onclick="${it.fn}"><i class="bi ${it.icon} qa-icon"></i><div class="qa-label">${it.label}</div></div>`
-  ).join('');
-}
-
-function renderHomeHist(){
-  const el=document.getElementById('home-hist');
-  el.innerHTML=HIST.slice(0,2).map((h,i)=>`
-  <div class="hist-item si" onclick="showHistDetail(${i})" style="animation-delay:${i*70}ms">
-    <div class="hist-icon"><i class="bi ${h.icon}"></i></div>
-    <div style="flex:1">
-      <div class="h3" style="font-size:15px">${h.spec}</div>
-      <div class="sub" style="font-size:13px">${h.date} · ${h.center}</div>
-    </div>
-    <i class="bi bi-chevron-right hist-arr"></i>
-  </div>`).join('');
-}
-
-function checkAlerts(){
-  const a=S.appts.find(x=>x.status==='cancelled-by-doctor');
-  const el=document.getElementById('alert-doctor-cancel');
-  if(a){document.getElementById('alert-spec-text').textContent=a.spec;document.getElementById('alert-date-text').textContent=a.date;el.style.display='flex';}
-  else el.style.display='none';
-}
-function cerrarAlerta(){document.getElementById('alert-doctor-cancel').style.display='none'}
-function reagendarAlerta(){const a=S.appts.find(x=>x.status==='cancelled-by-doctor');if(a)a.status='upcoming';save();cerrarAlerta();goStep1()}
-
-// ─── STEP 1 ───
-function showFooter(id,show){const f=document.getElementById(id);if(f){f.classList.toggle('show',show);}}
-function goStep1(){S.spec=null;renderSpecs('',true);document.getElementById('search-spec').value='';showFooter('footer1',false);showView('view-step1')}
-function renderSpecs(q,animate){
-  const f=q?SPECS.filter(s=>s.kw.some(k=>k.includes(q.toLowerCase()))||s.name.toLowerCase().includes(q.toLowerCase())):SPECS;
-  document.getElementById('spec-grid').innerHTML=f.map((s,i)=>`
-  <div class="spec-card${animate?' si':''} ${S.spec?.id===s.id?'sel':''}" onclick="selSpec('${s.id}')"${animate?` style="animation-delay:${i*32}ms"`:''}">
-    ${iconEl(s.icon,'spec-icon')}
-    <div class="spec-name">${s.name}</div>
-  </div>`).join('');
-}
-function filterSpecs(){renderSpecs(document.getElementById('search-spec').value,true)}
-function selSpec(id){S.spec=SPECS.find(s=>s.id===id);renderSpecs(document.getElementById('search-spec').value,false);showFooter('footer1',true);}
-
-// ─── STEP 2 ───
-function goStep2(){
-  if(!S.spec)return;
-  document.getElementById('spec-badge-row').innerHTML=`<span class="chip chip-navy">${iconEl(S.spec.icon)} ${S.spec.name}</span>`;
-  renderCenters();
-  showFooter('footer2', !!S.center);
-  showView('view-step2');
-}
-function renderCenters(){
-  document.getElementById('centers-list').innerHTML=CENTERS.map(c=>`
-  <div class="center-card ${S.center?.id===c.id?'sel':''}" onclick="selCenter('${c.id}')">
-    <div style="display:flex;align-items:center;justify-content:space-between">
-      <div class="center-name">${c.name}</div>
-      ${S.center?.id===c.id?`<i class="bi bi-check-circle-fill" style="color:var(--navy);font-size:20px"></i>`:''}
-    </div>
-    <div class="center-meta">
-      <span><i class="bi bi-geo-alt"></i>${c.addr}</span>
-      <span><i class="bi bi-star-fill" style="color:#F59E0B"></i> ${c.rating} · <i class="bi bi-clock"></i> Espera ${c.wait}</span>
-    </div>
-    <div class="center-avail">
-      <span class="chip chip-green"><i class="bi bi-calendar-check"></i> ${c.slots} cupos hoy</span>
-      ${c.slots<7?`<span class="chip chip-orange"><i class="bi bi-exclamation-circle"></i> Pocos cupos</span>`:''}
-    </div>
-  </div>`).join('');
-}
-function selCenter(id){S.center=CENTERS.find(c=>c.id===id);renderCenters();showFooter('footer2',true);}
-
-// ─── STEP 3 ───
-const MES=['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'];
-const DIA=['Dom','Lun','Mar','Mié','Jue','Vie','Sáb'];
-
-function goStep3(){
-  S.date=null;S.time=null;
-  const today=new Date(); today.setHours(0,0,0,0);
-  const endOfMonth=new Date(S.month.getFullYear(),S.month.getMonth()+1,0);
-  if(endOfMonth.getTime()-today.getTime()<6*864e5) S.month=new Date(today.getFullYear(),today.getMonth()+1,1);
-  renderCal();
-  document.getElementById('time-section').style.display='none';
-  showFooter('footer3',false);
-  const backBtn=document.getElementById('step3-back-btn');
-  if(S.rescheduleId){
-    backBtn.onclick=()=>{ S.rescheduleId=null; showView('view-appointments'); };
-    backBtn.innerHTML='<i class="bi bi-x"></i> Cancelar';
-  } else {
-    backBtn.onclick=()=>showView('view-step2');
-    backBtn.innerHTML='<i class="bi bi-arrow-left"></i> Centro';
-  }
-  showView('view-step3');
-}
-
-function renderCal(){
-  const y=S.month.getFullYear(),mo=S.month.getMonth();
-  const today=new Date(); today.setHours(0,0,0,0);
-  const firstDay=new Date(y,mo,1).getDay();
-  const lastDate=new Date(y,mo+1,0).getDate();
-  document.getElementById('cal-month').textContent=`${MES[mo]} ${y}`;
-  let html=DIA.map(d=>`<div class="cal-dn">${d}</div>`).join('');
-  for(let i=0;i<firstDay;i++) html+=`<div class="cal-d empty"></div>`;
-  for(let d=1;d<=lastDate;d++){
-    const date=new Date(y,mo,d);
-    const isPast=date<today;
-    const isToday=date.getTime()===today.getTime();
-    const isSel=S.date&&S.date.getTime()===date.getTime();
-    const isWknd=date.getDay()===0||date.getDay()===6;
-    const hasSlot=!isPast&&!isWknd;
-    let cls='cal-d';
-    if(isSel)       cls+=' sel';
-    else if(isToday)cls+=' today';
-    if(isPast)      cls+=' past';
-    else if(!hasSlot)cls+=' no-slot';
-    else            cls+=' avail';
-    const dot=hasSlot?'<span class="cal-dot"></span>':'';
-    html+=`<div class="${cls}"${hasSlot?` onclick="selDate(${d})"`:''}>${d}${dot}</div>`;
-  }
-  document.getElementById('cal-grid').innerHTML=html;
-}
-
-function selDate(d){
-  S.date=new Date(S.month.getFullYear(),S.month.getMonth(),d);
-  S.time=null;
-  renderCal();
-  renderTSlots();
-  document.getElementById('time-section').style.display='block';
-  showFooter('footer3',false);
-  setTimeout(()=>document.getElementById('time-section').scrollIntoView({behavior:'smooth',block:'nearest'}),100);
-}
-
-function renderTSlots(){
-  const times=['7:00 AM','7:30 AM','8:00 AM','8:30 AM','9:00 AM','9:30 AM','10:00 AM','10:30 AM','11:00 AM','11:30 AM','2:00 PM','2:30 PM'];
-  const taken=[2,5,8];
-  document.getElementById('tslots-grid').innerHTML=times.map((t,i)=>{
-    const tk=taken.includes(i), sel=S.time===t;
-    return`<button class="tslot${tk?' taken':''}${sel?' sel':''}" onclick="${!tk?`selTime('${t}')`:''}">
-      ${t}${tk?'<br><span style="font-size:10px;font-weight:400;color:#C5CDD8">Ocupado</span>':''}
-    </button>`;
-  }).join('');
-}
-function selTime(t){S.time=t;renderTSlots();showFooter('footer3',true);}
-function changeMonth(dir){S.month=new Date(S.month.getFullYear(),S.month.getMonth()+dir,1);renderCal();document.getElementById('time-section').style.display='none';S.date=null;S.time=null}
-
-// ─── CONFIRM ───
-function goConfirm(){
-  if(!S.date||!S.time)return;
-  const ds=S.date.toLocaleDateString('es-SV',{weekday:'long',day:'numeric',month:'long',year:'numeric'});
-  document.getElementById('conf-spec-chip').innerHTML=`<span class="chip chip-navy" style="font-size:14px;padding:5px 12px">${iconEl(S.spec.icon)} ${S.spec.name}</span>`;
-  document.getElementById('cf-center').textContent=S.center.name;
-  document.getElementById('cf-date').textContent=ds;
-  document.getElementById('cf-time').textContent=S.time;
-  document.getElementById('cf-name').textContent=S.user?.name||'—';
-  if(S.preselectedFamIdx>=0 && S.relatives[S.preselectedFamIdx]){
-    S.famIdx=S.preselectedFamIdx;
-    const r=S.relatives[S.famIdx];
-    document.getElementById('cf-name').textContent=r.name;
-    document.getElementById('fam-form').style.display='block';
-    document.getElementById('fam-toggle-ico').style.transform='rotate(180deg)';
-    document.getElementById('fam-toggle-sub').textContent=`Para: ${r.name}`;
-    setTimeout(()=>renderFamPicker(),0);
-  } else {
-    S.famIdx=-1;
-    document.getElementById('fam-form').style.display='none';
-    document.getElementById('fam-toggle-ico').style.transform='';
-    document.getElementById('fam-toggle-sub').textContent='Agéndelo en su nombre';
-  }
-  S.preselectedFamIdx=-1;
-  showView('view-confirm');
-}
-function toggleFam(){
-  const f=document.getElementById('fam-form');
-  const ico=document.getElementById('fam-toggle-ico');
-  const show=f.style.display==='none'||!f.style.display;
-  f.style.display=show?'block':'none';
-  ico.style.transform=show?'rotate(180deg)':'';
-  if(show) renderFamPicker();
-}
-function renderFamPicker(){
-  const el=document.getElementById('fam-rel-picker');
-  const addBtn=document.getElementById('fam-add-btn');
-  if(!S.relatives.length){
-    el.innerHTML='';
-    addBtn.style.display='none';
-    document.getElementById('fam-add-form').style.display='block';
-    return;
-  }
-  el.innerHTML=`<div class="label" style="margin-bottom:8px">Familiar guardado</div>`+
-    S.relatives.map((r,i)=>`
-    <div class="rel-item" style="margin-bottom:8px;padding:10px 14px;${S.famIdx===i?'border-color:var(--navy);background:var(--navy-3)':''}" onclick="selFam(${i})">
-      <div class="rel-avatar" style="width:36px;height:36px;font-size:14px">${r.name.charAt(0)}</div>
-      <div style="flex:1"><div style="font-weight:700;font-size:14px">${r.name}</div><div class="sub" style="font-size:12px">${r.relation}</div></div>
-      ${S.famIdx===i?'<i class="bi bi-check-circle-fill" style="color:var(--navy)"></i>':'<i class="bi bi-circle" style="color:var(--border)"></i>'}
-    </div>`).join('');
-  addBtn.style.display='flex';
-}
-function selFam(i){
-  S.famIdx=i;
-  const r=S.relatives[i];
-  document.getElementById('cf-name').textContent=r.name;
-  document.getElementById('fam-toggle-sub').textContent=`Para: ${r.name}`;
-  renderFamPicker();
-}
-function toggleAddRelForm(){
-  const f=document.getElementById('fam-add-form');
-  f.style.display=f.style.display==='none'?'block':'none';
-}
-function confirmAppt(){
-  const ds=S.date.toLocaleDateString('es-SV',{weekday:'long',day:'numeric',month:'long',year:'numeric'});
-  const dateISO=S.date.toISOString().slice(0,10);
-  // Resolve patient
-  let patientName=S.user?.name||'—';
-  let forFamiliar=false;
-  if(S.famIdx>=0&&S.relatives[S.famIdx]){
-    patientName=S.relatives[S.famIdx].name; forFamiliar=true;
-  } else {
-    const fn=document.getElementById('fam-name')?.value.trim();
-    const fd=document.getElementById('fam-dui-inp')?.value.trim();
-    const fr=document.getElementById('fam-rel-sel')?.value;
-    if(fn&&fd&&fr){
-      if(!S.relatives.find(x=>x.dui===fd)) S.relatives.push({name:fn,dui:fd,relation:fr});
-      patientName=fn; forFamiliar=true; save();
-    }
-  }
-  // Create or update appointment
-  let code,specName=S.spec.name,specIcon=S.spec.icon,centerName=S.center.name;
-  if(S.rescheduleId){
-    const idx=S.appts.findIndex(x=>x.id===S.rescheduleId);
-    if(idx>-1){S.appts[idx].date=ds;S.appts[idx].time=S.time;S.appts[idx].dateISO=dateISO;code=S.appts[idx].code;specName=S.appts[idx].spec;specIcon=S.appts[idx].specIcon;centerName=S.appts[idx].center;}
-    S.rescheduleId=null; save();
-    document.getElementById('tk-status-chip').innerHTML=`<span class="chip chip-green"><i class="bi bi-check-circle-fill"></i> Reagendada</span>`;
-  } else {
-    code='ISSS-'+Math.random().toString(36).slice(2,8).toUpperCase();
-    const a={id:Date.now().toString(),spec:specName,specIcon,center:centerName,date:ds,dateISO,time:S.time,code,status:'upcoming',doctor:'Por asignar',patient:patientName,forFamiliar};
-    S.appts.unshift(a); save();
-    document.getElementById('tk-status-chip').innerHTML=`<span class="chip chip-green"><i class="bi bi-check-circle-fill"></i> Confirmada</span>`;
-  }
-  document.getElementById('tk-spec').textContent=specName;
-  document.getElementById('tk-center').textContent=centerName;
-  document.getElementById('tk-date').textContent=ds;
-  document.getElementById('tk-time').textContent=S.time;
-  document.getElementById('tk-code').textContent=code;
-  document.getElementById('tk-qr').src=`https://api.qrserver.com/v1/create-qr-code/?size=160x160&data=ISSS%3A${code}&color=002B5C&bgcolor=FFFFFF&margin=3`;
-  document.getElementById('tk-fam-share').style.display=forFamiliar?'block':'none';
-  document.getElementById('tk-share-fam-btn').style.display=forFamiliar?'flex':'none';
-  if('Notification' in window&&Notification.permission==='granted'){
-    new Notification('ISSS — ¡Cita confirmada! ✓',{
-      body:`${specName} • ${ds} a las ${S.time}\n${centerName} · Código: ${code}`,
-      icon:'https://cdn.brandfetch.io/id8LwMLHOF/w/400/h/400/theme/dark/icon.jpeg?c=1bxid64Mup7aczewSAYMX&t=1771715114286'
-    });
-  }
-  S.famIdx=-1;
-  showView('view-ticket'); initHome();
-}
-function downloadTicket(){alert('📥 Comprobante guardado.\nCódigo: '+document.getElementById('tk-code').textContent)}
-function shareTicket(){const c=document.getElementById('tk-code').textContent;if(navigator.share)navigator.share({title:'ISSS Cita',text:`Mi cita ISSS — Código: ${c}`});else alert('Código: '+c)}
-
-// ─── APPOINTMENTS ───
-function renderAppts(){
-  const up=S.appts.filter(a=>a.status==='upcoming');
-  const empty=document.getElementById('appts-empty');
-  const list=document.getElementById('appts-list');
-  if(!up.length){empty.style.display='block';list.innerHTML='';return;}
-  empty.style.display='none';
-  list.innerHTML=`<div class="h3" style="margin-bottom:12px">Citas programadas</div>`+up.map((a,i)=>{
-    const tod=isApptToday(a);
-    const badge=tod
-      ?`<span class="chip chip-green" style="font-size:12px"><i class="bi bi-circle-fill" style="font-size:8px"></i> Hoy</span>`
-      :`<span class="chip chip-navy" style="font-size:12px"><i class="bi bi-check-circle"></i> Confirmada</span>`;
-    const famBadge=a.forFamiliar?`<div style="margin-top:6px"><span class="chip chip-navy" style="font-size:12px"><i class="bi bi-people"></i> ${a.patient}</span></div>`:'';
-    return`<div class="appt-item si" style="animation-delay:${i*70}ms">
-    <div class="appt-item-head">
-      <div><div style="font-size:15px;font-weight:800">${iconEl(a.specIcon)} ${a.spec}</div><div style="font-size:12px;opacity:.65;margin-top:2px">${a.date}</div>${famBadge}</div>
-      ${badge}
-    </div>
-    <div class="appt-item-body">
-      <div class="appt-row"><i class="bi bi-hospital"></i>${a.center}</div>
-      <div class="appt-row"><i class="bi bi-clock"></i>${a.time}</div>
-      <div class="appt-row"><i class="bi bi-upc-scan"></i><strong>${a.code}</strong></div>
-      <div style="margin-top:10px;display:flex;gap:8px;flex-wrap:wrap">
-        ${tod?`<button class="btn btn-primary btn-sm" onclick="showView('view-queue')"><i class="bi bi-hourglass-split"></i> Ver turno</button>`:''}
-        <button class="btn btn-outline btn-sm" onclick="openCancel('${a.id}')"><i class="bi bi-sliders"></i> Gestionar</button>
-      </div>
-    </div>
-  </div>`;}).join('');
-}
-function openCancel(id){
-  S.cancelId=id;
-  showCancelMain();
-  document.getElementById('m-cancel').classList.add('open');
-}
-function showCancelMain(){
-  document.getElementById('m-cancel-main').style.display='block';
-  document.getElementById('m-cancel-confirm').style.display='none';
-}
-function showCancelConfirm(){
-  document.getElementById('m-cancel-main').style.display='none';
-  document.getElementById('m-cancel-confirm').style.display='block';
-}
-function cancelApptConfirmed(){
-  S.appts=S.appts.filter(a=>a.id!==S.cancelId);
-  save(); closeModal('m-cancel');
-  renderAppts(); renderNextAppt(); renderQaGrid();
-}
-function rescheduleAppt(){
-  const a=S.appts.find(x=>x.id===S.cancelId);
-  if(!a){closeModal('m-cancel');return;}
-  S.spec=SPECS.find(s=>s.name===a.spec)||S.spec;
-  S.center=CENTERS.find(c=>c.name===a.center)||S.center;
-  S.rescheduleId=S.cancelId;
-  S.date=null; S.time=null;
-  closeModal('m-cancel');
-  goStep3();
-}
-
-// ─── QUEUE ───
-function renderQueue(){
-  const el=document.getElementById('queue-content');
-  const a=S.appts.find(x=>x.status==='upcoming');
-  if(!a){el.innerHTML=`<div class="empty"><i class="bi bi-hourglass"></i><div class="empty-t">Sin cita activa</div><div class="empty-s">Reserve una cita para ver su turno en tiempo real.</div><button class="btn btn-primary" onclick="goStep1()"><i class="bi bi-calendar-plus"></i> Reservar cita</button></div>`;return}
-  const pos=S.queuePos,tot=S.queueTotal,pct=Math.max(4,Math.round(((tot-pos)/tot)*100));
-  el.innerHTML=`
-  <div class="q-card">
-    <div class="q-label"><i class="bi bi-broadcast" style="margin-right:5px"></i>Su número de turno</div>
-    <div class="q-number">${pos}</div>
-    <div class="q-of">de ${tot} pacientes en fila</div>
-    <div class="prog-wrap"><div class="prog-fill" id="qfill" style="width:${pct}%"></div></div>
-    <div class="q-pct">${pct}% de avance</div>
-  </div>
-  <div class="card card-p" style="margin-bottom:12px">
-    <div class="info-row"><i class="bi bi-stopwatch"></i><div><div class="info-label">Tiempo estimado de espera</div><div class="info-val">~${pos*5} minutos</div></div></div>
-    <div class="info-row"><i class="bi bi-clock"></i><div><div class="info-label">Hora de su cita</div><div class="info-val">${a.time}</div></div></div>
-    <div class="info-row"><i class="bi bi-hospital"></i><div><div class="info-label">Centro</div><div class="info-val">${a.center}</div></div></div>
-    <div class="info-row"><i class="bi bi-clipboard2-pulse"></i><div><div class="info-label">Especialidad</div><div class="info-val">${a.spec}</div></div></div>
-  </div>
-  <div class="alert a-info"><i class="bi bi-info-circle"></i><div>Puede alejarse y volver <strong>cuando falten 2 turnos</strong>. Le notificaremos con tiempo.</div></div>
-  <div class="alert a-warn" id="q-close-warn" style="display:${pos<=3?'flex':'none'}"><i class="bi bi-exclamation-triangle"></i><div><strong>¡Ya casi es su turno!</strong> Preséntese al módulo de atención.</div></div>
-  ${a.spec==='Dermatología'?`<button class="btn btn-ghost btn-sm" style="margin-top:4px;color:var(--navy);gap:6px" onclick="showSmsNotification(${pos})"><i class="bi bi-bell" style="font-size:16px"></i> Simular aviso de turno</button>`:''}`;
-  if(S.queueTimer)clearInterval(S.queueTimer);
-  S.queueTimer=setInterval(()=>{
-    if(S.queuePos>1){
-      S.queuePos--;
-      if(S.queuePos===3 && a.spec==='Dermatología'){
-        setTimeout(()=>showSmsNotification(S.queuePos),800);
-      }
-      renderQueue();
-    } else clearInterval(S.queueTimer);
-  },7000);
-}
-
-// ─── HISTORY ───
-function renderHist(){
-  document.getElementById('hist-list').innerHTML=HIST.map((h,i)=>`
-  <div class="hist-item si" onclick="showHistDetail(${i})" style="animation-delay:${i*70}ms">
-    <div class="hist-icon"><i class="bi ${h.icon}"></i></div>
-    <div style="flex:1">
-      <div style="display:flex;align-items:center;gap:6px;margin-bottom:3px">
-        <span class="h3" style="font-size:15px">${h.spec}</span>
-      </div>
-      <div class="sub" style="font-size:14px">${h.date} · ${h.doc}</div>
-      <div class="sub" style="font-size:13px">${h.center}</div>
-    </div>
-    <i class="bi bi-chevron-right hist-arr"></i>
-  </div>`).join('');
-}
-function showHistDetail(i){
-  const h=HIST[i];
-  document.getElementById('hist-modal').innerHTML=`
-  <div style="display:flex;align-items:center;gap:10px;margin-bottom:14px">
-    <div style="width:44px;height:44px;background:var(--navy-3);border-radius:var(--r-sm);display:flex;align-items:center;justify-content:center;color:var(--navy);font-size:22px;flex-shrink:0"><i class="bi ${h.icon}"></i></div>
-    <div><div class="h3">${h.spec}</div><div class="sub" style="font-size:13px">${h.fullDate}</div></div>
-  </div>
-  <div class="chip chip-navy" style="margin-bottom:14px"><i class="bi bi-patch-check"></i> ${h.diag}</div>
-  <div class="divider"></div>
-  <div class="info-row"><i class="bi bi-person-badge"></i><div><div class="info-label">Médico</div><div class="info-val">${h.doc}</div></div></div>
-  <div class="info-row"><i class="bi bi-hospital"></i><div><div class="info-label">Centro</div><div class="info-val">${h.center}</div></div></div>
-  <div class="divider"></div>
-  <div class="label" style="margin-bottom:6px">Notas del médico</div>
-  <div class="sub" style="font-size:15px;line-height:1.6">${h.notes}</div>
-  <div class="divider"></div>
-  <div class="label" style="margin-bottom:6px">Receta médica</div>
-  <div class="alert a-info" style="margin-bottom:10px"><i class="bi bi-capsule"></i><div style="font-size:15px">${h.rx}</div></div>
-  <button class="btn btn-primary btn-sm" style="width:auto" onclick="alert('📄 Receta de ${h.spec} descargada.')"><i class="bi bi-download"></i> Descargar receta PDF</button>`;
-  document.getElementById('m-hist').classList.add('open');
-}
-
-// ─── RELATIVES ───
-function renderRels(){
-  const el=document.getElementById('rel-list');
-  if(!S.relatives.length){el.innerHTML=`<div class="empty"><i class="bi bi-person-plus"></i><div class="empty-t">Sin familiares guardados</div><div class="empty-s">Agregue familiares para gestionar sus citas sin que ellos necesiten el teléfono.</div></div>`;return;}
-  el.innerHTML=S.relatives.map((r,i)=>`
-  <div class="rel-item si" onclick="bookForRel('${r.dui}')" style="animation-delay:${i*60}ms">
-    <div class="rel-avatar">${r.name.charAt(0).toUpperCase()}</div>
-    <div style="flex:1"><div class="h3" style="font-size:15px">${r.name}</div><div class="sub" style="font-size:14px">${r.relation} · DUI: ${r.dui}</div></div>
-    <i class="bi bi-chevron-right rel-arr"></i>
-  </div>`).join('');
-}
-function openAddRel(){document.getElementById('rel-name').value='';document.getElementById('rel-dui').value='';document.getElementById('rel-rel').value='';document.getElementById('m-add-rel').classList.add('open')}
-function saveRel(){
-  const n=document.getElementById('rel-name').value.trim(),d=document.getElementById('rel-dui').value.trim(),r=document.getElementById('rel-rel').value;
-  if(!n||!d||!r){alert('Complete todos los campos');return;}
-  S.relatives.push({name:n,dui:d,relation:r}); save(); closeModal('m-add-rel'); renderRels();
-}
-let _bookRelDui=null;
-function bookForRel(dui){
-  const r=S.relatives.find(x=>x.dui===dui); if(!r) return;
-  _bookRelDui=dui;
-  document.getElementById('m-book-rel-card').innerHTML=`
-    <div class="card card-p" style="background:var(--navy-3);border-color:transparent;display:flex;align-items:center;gap:14px">
-      <div style="width:44px;height:44px;background:var(--navy);border-radius:50%;display:flex;align-items:center;justify-content:center;color:#fff;font-size:20px;font-weight:900;flex-shrink:0">${r.name.charAt(0).toUpperCase()}</div>
-      <div><div style="font-size:16px;font-weight:800">${r.name}</div><div class="sub" style="font-size:13px">${r.relation} · DUI: ${r.dui}</div></div>
-    </div>
-    <p class="sub" style="margin:10px 0 0;font-size:13px">${r.name} solo debe presentarse en el centro médico a la hora asignada.</p>`;
-  document.getElementById('m-book-rel').classList.add('open');
-}
-function confirmBookForRel(){
-  const r=S.relatives.find(x=>x.dui===_bookRelDui);
-  if(r) S.preselectedFamIdx=S.relatives.indexOf(r);
-  closeModal('m-book-rel'); goStep1();
-}
-
-// ─── DETAIL ───
-function openDetail(id,back){
-  const a=S.appts.find(x=>x.id===id); if(!a)return;
-  document.getElementById('detail-back').onclick=()=>showView(back);
-  const tod=isApptToday(a);
-  document.getElementById('detail-content').innerHTML=`
-  <div class="ticket">
-    <div class="ticket-head">
-      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px">
-        <img src="https://1rdekw89rj.ucarecd.net/10a0d7a7-5a0a-42fd-9f65-0a64ba5537ab/ISSSLogo.svg" alt="ISSS" style="height:22px;filter:brightness(0) invert(1);opacity:.9">
-        <span style="font-size:11px;font-weight:700;color:rgba(255,255,255,.4);letter-spacing:1px">COMPROBANTE</span>
-      </div>
-      <div style="font-size:18px;font-weight:900;margin-bottom:8px">${iconEl(a.specIcon)} ${a.spec}</div>
-      <div class="info-row" style="border:none;padding:3px 0;color:#fff"><i class="bi bi-hospital" style="color:rgba(255,255,255,.6)"></i><div><div style="font-size:12px;color:rgba(255,255,255,.8)">Centro</div><div style="font-weight:700;font-size:14px">${a.center}</div></div></div>
-      <div style="display:flex;gap:16px;margin-top:4px">
-        <div class="info-row" style="border:none;padding:3px 0;color:#fff;flex:1"><i class="bi bi-calendar3" style="color:rgba(255,255,255,.6)"></i><div><div style="font-size:12px;color:rgba(255,255,255,.8)">Fecha</div><div style="font-weight:700;font-size:14px">${a.date}</div></div></div>
-        <div class="info-row" style="border:none;padding:3px 0;color:#fff"><i class="bi bi-clock" style="color:rgba(255,255,255,.6)"></i><div><div style="font-size:12px;color:rgba(255,255,255,.8)">Hora</div><div style="font-weight:700;font-size:18px">${a.time}</div></div></div>
-      </div>
-    </div>
-    <div class="ticket-sep"><hr class="ticket-line"></div>
-    <div class="ticket-body">
-      <div class="qr-wrap" style="padding:8px 0 10px"><div class="qr-box"><img src="https://api.qrserver.com/v1/create-qr-code/?size=160x160&data=ISSS%3A${a.code}&color=002B5C&bgcolor=FFFFFF&margin=3" alt="QR" loading="lazy"></div></div>
-      <div style="text-align:center"><div style="font-size:20px;font-weight:900;color:var(--navy);letter-spacing:2px">${a.code}</div><div class="sub" style="margin-top:3px">Código de comprobante</div></div>
-    </div>
-  </div>
-  <div style="display:flex;flex-direction:column;gap:10px;margin-top:4px">
-    ${tod?`<button class="btn btn-primary" onclick="showView('view-queue')"><i class="bi bi-hourglass-split"></i> Ver turno en vivo</button>`:''}
-    <button class="btn btn-outline" onclick="openCancel('${a.id}')"><i class="bi bi-sliders"></i> Gestionar cita</button>
-  </div>`;
-  showView('view-detail');
-}
-
-// ─── MODALS ───
-function closeModal(id){document.getElementById(id).classList.remove('open')}
-document.querySelectorAll('.moverlay').forEach(m=>m.addEventListener('click',e=>{if(e.target===m)m.classList.remove('open')}));
-
-// ─── TOAST ───
-let _toastT;
-function showToast(msg,dur=2800){
-  const el=document.getElementById('toast-msg');
-  el.textContent=msg; el.style.display='block';
-  clearTimeout(_toastT);
-  _toastT=setTimeout(()=>{el.style.display='none'},dur);
-}
-
-// ─── NOTIFICATIONS ───
-function requestNotifications(){
-  const btn=document.getElementById('bell-btn');
-  if(!('Notification' in window)){showToast('Su navegador no soporta notificaciones');return;}
-  if(Notification.permission==='granted'){
-    btn.innerHTML='<i class="bi bi-bell-fill"></i>';
-    new Notification('ISSS Citas',{
-      body:'Notificaciones activas. Le avisaremos de sus próximas citas.',
-      icon:'https://cdn.brandfetch.io/id8LwMLHOF/w/400/h/400/theme/dark/icon.jpeg?c=1bxid64Mup7aczewSAYMX&t=1771715114286'
-    });
-    showToast('Notificaciones ya están activas ✓');
-    return;
-  }
-  Notification.requestPermission().then(p=>{
-    if(p==='granted'){
-      btn.innerHTML='<i class="bi bi-bell-fill"></i>';
-      showToast('Notificaciones activadas ✓');
-      new Notification('ISSS Citas',{
-        body:'¡Listo! Le avisaremos antes de sus citas médicas.',
-        icon:'https://cdn.brandfetch.io/id8LwMLHOF/w/400/h/400/theme/dark/icon.jpeg?c=1bxid64Mup7aczewSAYMX&t=1771715114286'
-      });
-    } else {
-      showToast('Notificaciones denegadas');
-    }
+// Determine initial state
+if (isStandalone) {
+  show(sInstalled);
+} else if (isIOS) {
+  show(sIOS);
+} else {
+  // Android/Chrome/Edge: wait for the browser's install prompt
+  window.addEventListener('beforeinstallprompt', e => {
+    e.preventDefault();
+    deferredPrompt = e;
+    show(sAndroid);
   });
+
+  // If no prompt fires within 600ms → show fallback (desktop, dismissed, not eligible)
+  setTimeout(() => {
+    if (sAndroid.classList.contains('hidden') && sInstalled.classList.contains('hidden')) {
+      show(sDefault);
+    }
+  }, 600);
 }
 
-// ─── TURNO NOTIFICATION ───
-function showSmsNotification(pos){
-  if('Notification' in window && Notification.permission==='granted'){
-    new Notification('ISSS Citas — ¡Su turno se acerca!',{
-      body:`Dermatología: quedan ${pos} paciente(s) antes que usted. ¡Preséntese al módulo ahora!`,
-      icon:'https://cdn.brandfetch.io/id8LwMLHOF/w/400/h/400/theme/dark/icon.jpeg?c=1bxid64Mup7aczewSAYMX&t=1771715114286',
-      tag:'isss-turno', requireInteraction:true
-    });
+btnInstall.addEventListener('click', async () => {
+  if (!deferredPrompt) return;
+  btnInstall.disabled = true;
+  deferredPrompt.prompt();
+  const { outcome } = await deferredPrompt.userChoice;
+  deferredPrompt = null;
+  if (outcome === 'accepted') {
+    show(sInstalled);
+  } else {
+    // User dismissed — hide the card, show fallback
+    show(sDefault);
   }
-  showToast(`¡Turno próximo! Quedan ${pos} paciente(s) antes que usted.`, 5000);
-}
+});
 
-// ─── INIT ───
-load();
-if(S.user){
-  if(!S.user.phone) S.user=null; // require re-login if old session had no phone
-  else { if(!S.users.find(u=>u.dui===S.user.dui))S.users.push(S.user); save(); initHome(); showView('view-home'); }
-}
-
-// Register service worker for PWA
-if('serviceWorker' in navigator){
-  navigator.serviceWorker.register('sw.js').catch(()=>{});
-}
+window.addEventListener('appinstalled', () => show(sInstalled));
 </script>
 </body>
 </html>

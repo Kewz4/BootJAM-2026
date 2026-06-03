@@ -2,7 +2,7 @@
   "name": "ISSS Citas Médicas",
   "short_name": "ISSS Citas",
   "description": "Reserve su cita médica del ISSS en línea. Sin filas. Sin madrugar.",
-  "start_url": "./index.html",
+  "start_url": "./app.html",
   "display": "standalone",
   "background_color": "#002B5C",
   "theme_color": "#002B5C",
@@ -28,7 +28,7 @@
       "name": "Nueva cita",
       "short_name": "Cita",
       "description": "Reservar una nueva cita médica",
-      "url": "./index.html#nueva-cita",
+      "url": "./app.html#nueva-cita",
       "icons": [{ "src": "https://cdn.brandfetch.io/id8LwMLHOF/w/400/h/400/theme/dark/icon.jpeg?c=1bxid64Mup7aczewSAYMX&t=1771715114286", "sizes": "96x96" }]
     }
   ]
