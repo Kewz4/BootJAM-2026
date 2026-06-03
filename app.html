@@ -757,7 +757,7 @@ body {
     <div id="qa-grid" class="qa-grid" style="margin-top:18px"></div>
 
     <!-- Recent history -->
-    <div class="section-row">
+    <div class="section-row" id="home-hist-row">
       <div class="h3">Consultas recientes</div>
       <button class="section-link" onclick="showView('view-history')">Ver todo</button>
     </div>
@@ -1266,10 +1266,6 @@ function showView(id){
 function initHome(){
   document.getElementById('home-uname').textContent = S.user?.name || '—';
   renderNextAppt(); renderHomeHist(); checkAlerts(); renderQaGrid();
-  if(!S.appts.length){
-    S.appts.push({id:'demo1',spec:'Medicina General',specIcon:'bi-clipboard2-pulse',center:'ISSS Zacamil',date:'jueves, 29 mayo 2026',time:'9:00 AM',code:'ISSS-DEMO01',status:'upcoming'});
-    save(); renderNextAppt(); renderQaGrid();
-  }
 }
 
 function renderNextAppt(){
@@ -1311,6 +1307,10 @@ function renderQaGrid(){
 
 function renderHomeHist(){
   const el=document.getElementById('home-hist');
+  const row=document.getElementById('home-hist-row');
+  const isDemo=S.user?.dui===DEMO_DUI;
+  if(!isDemo){el.innerHTML='';row.style.display='none';return;}
+  row.style.display='';
   el.innerHTML=HIST.slice(0,2).map((h,i)=>`
   <div class="hist-item si" onclick="showHistDetail(${i})" style="animation-delay:${i*70}ms">
     <div class="hist-icon"><i class="bi ${h.icon}"></i></div>
@@ -1653,6 +1653,11 @@ function renderQueue(){
 
 // ─── HISTORY ───
 function renderHist(){
+  const isDemo=S.user?.dui===DEMO_DUI;
+  if(!isDemo){
+    document.getElementById('hist-list').innerHTML=`<div class="empty"><i class="bi bi-journal-text"></i><div class="empty-t">Sin historial</div><div class="empty-s">Aquí aparecerán sus consultas médicas anteriores.</div></div>`;
+    return;
+  }
   document.getElementById('hist-list').innerHTML=HIST.map((h,i)=>`
   <div class="hist-item si" onclick="showHistDetail(${i})" style="animation-delay:${i*70}ms">
     <div class="hist-icon"><i class="bi ${h.icon}"></i></div>
