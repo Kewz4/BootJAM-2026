@@ -1908,14 +1908,11 @@ function renderSpotlight(){
     const ch=card.offsetHeight;
     const cardLeft=Math.max(16, Math.min(rx+(rw-cardW)/2, vw-cardW-16));
     let cardTop;
-    // Place above hole if there's room, otherwise below
-    if(ry-gap-ch>=16){
-      cardTop=ry-gap-ch;
-    } else if(ry+rh+gap+ch<=vh-16){
-      cardTop=ry+rh+gap;
+    const preferBelow = ry < vh / 2; // elements in upper half → card below; lower half → card above
+    if(preferBelow){
+      cardTop = (ry+rh+gap+ch <= vh-16) ? ry+rh+gap : Math.max(16, ry-gap-ch);
     } else {
-      // Tight screen — go above, clamped
-      cardTop=Math.max(16, ry-gap-ch);
+      cardTop = (ry-gap-ch >= 16) ? ry-gap-ch : ry+rh+gap;
     }
     card.style.left=cardLeft+'px';
     card.style.top=cardTop+'px';
