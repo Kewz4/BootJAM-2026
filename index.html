@@ -31,7 +31,7 @@
   --surface:   #FFFFFF;
   --border:    #E2E8F0;
   --text:      #0D1B2A;
-  --muted:     #64748B;
+  --muted:     #7D99B8;
   --r:         14px;
   --r-sm:      9px;
   --r-lg:      20px;
@@ -472,7 +472,7 @@ body {
 
 /* ─── HOME HEADER ─── */
 .home-topbar {
-  background: #0D1B2E;
+  background: #092244;
   padding: env(safe-area-inset-top) 16px 0;
   min-height: calc(56px + env(safe-area-inset-top));
   display: flex; align-items: flex-end; justify-content: space-between;
@@ -902,6 +902,10 @@ body {
     </div>
     <div class="ticket">
       <div class="ticket-head">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px">
+          <img src="https://1rdekw89rj.ucarecd.net/10a0d7a7-5a0a-42fd-9f65-0a64ba5537ab/ISSSLogo.svg" alt="ISSS" style="height:22px;filter:brightness(0) invert(1);opacity:.9">
+          <span style="font-size:11px;font-weight:700;color:rgba(255,255,255,.4);letter-spacing:1px">COMPROBANTE</span>
+        </div>
         <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px">
           <div><div class="label" style="color:rgba(255,255,255,.5)">ESPECIALIDAD</div><div style="font-size:18px;font-weight:800;margin-top:2px" id="tk-spec">—</div></div>
           <div id="tk-status-chip"></div>
@@ -1628,6 +1632,10 @@ function openDetail(id,back){
   document.getElementById('detail-content').innerHTML=`
   <div class="ticket">
     <div class="ticket-head">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px">
+        <img src="https://1rdekw89rj.ucarecd.net/10a0d7a7-5a0a-42fd-9f65-0a64ba5537ab/ISSSLogo.svg" alt="ISSS" style="height:22px;filter:brightness(0) invert(1);opacity:.9">
+        <span style="font-size:11px;font-weight:700;color:rgba(255,255,255,.4);letter-spacing:1px">COMPROBANTE</span>
+      </div>
       <div style="font-size:18px;font-weight:900;margin-bottom:8px">${iconEl(a.specIcon)} ${a.spec}</div>
       <div class="info-row" style="border:none;padding:3px 0;color:rgba(255,255,255,.8)"><i class="bi bi-hospital" style="color:rgba(255,255,255,.5)"></i><div><div style="font-size:12px;opacity:.5">Centro</div><div style="font-weight:700;font-size:14px">${a.center}</div></div></div>
       <div style="display:flex;gap:16px;margin-top:4px">
