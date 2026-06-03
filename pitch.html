@@ -503,11 +503,11 @@ body{
      FLOATING UI — hidden in print
 ════════════════════════════════ -->
 <div id="ui-bar">
-  <button id="btn-pdf" onclick="window.print()">
-    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+  <button id="btn-pdf">
+    <svg id="btn-icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
       <path d="M12 3v13M5 14l7 7 7-7"/><path d="M3 20h18"/>
     </svg>
-    Descargar PDF
+    <span id="btn-label">Descargar PDF</span>
   </button>
   <div id="canva-tip">
     <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" style="flex-shrink:0;margin-top:1px"><circle cx="12" cy="12" r="9"/><path d="M12 8v4M12 16h.01"/></svg>
@@ -516,7 +516,6 @@ body{
 </div>
 
 <style>
-/* ── FLOATING BAR ── */
 #ui-bar {
   position: fixed;
   bottom: 28px; right: 28px;
@@ -524,7 +523,6 @@ body{
   display: flex; flex-direction: column; align-items: flex-end; gap: 10px;
   font-family: 'Inter', -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
 }
-
 #btn-pdf {
   background: #002B5C; color: white;
   border: none; border-radius: 10px;
@@ -535,9 +533,9 @@ body{
   box-shadow: 0 4px 24px rgba(0,43,92,.4);
   transition: background .15s, transform .1s;
 }
-#btn-pdf:hover { background: #003F85; transform: translateY(-1px); }
-#btn-pdf:active { transform: translateY(0); }
-
+#btn-pdf:hover:not(:disabled) { background: #003F85; transform: translateY(-1px); }
+#btn-pdf:active:not(:disabled) { transform: translateY(0); }
+#btn-pdf:disabled { opacity: .7; cursor: wait; }
 #canva-tip {
   background: white; border: 1px solid #E2E8F0;
   border-radius: 10px; padding: 10px 14px;
@@ -548,21 +546,47 @@ body{
 }
 #canva-tip a { color: #059669; font-weight: 600; text-decoration: none; }
 #canva-tip a:hover { text-decoration: underline; }
-
-/* ── PRINT SETUP ── */
-@media print {
-  #ui-bar { display: none !important; }
-  body { background: none !important; }
-
-  /* Force font fallback if Google Fonts blocked during print */
-  * { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif; }
-}
 </style>
 
+<!-- jsPDF + html2canvas — renders each slide to canvas then builds landscape A4 PDF -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 <script>
-/* Confirm PDF print settings for the user */
-window.addEventListener('beforeprint', () => {
-  /* Nothing needed — @page CSS handles A4 landscape */
+document.getElementById('btn-pdf').addEventListener('click', async function () {
+  const btn = this;
+  const label = document.getElementById('btn-label');
+  const icon  = document.getElementById('btn-icon');
+
+  btn.disabled = true;
+  icon.style.display = 'none';
+  label.textContent = 'Generando…';
+
+  try {
+    const { jsPDF } = window.jspdf;
+    const doc = new jsPDF({ orientation: 'landscape', unit: 'mm', format: 'a4' });
+    const slides = document.querySelectorAll('.slide');
+
+    for (let i = 0; i < slides.length; i++) {
+      label.textContent = `Slide ${i + 1}/${slides.length}…`;
+      const canvas = await html2canvas(slides[i], {
+        scale: 2,
+        useCORS: true,
+        backgroundColor: null,
+        logging: false
+      });
+      const img = canvas.toDataURL('image/jpeg', 0.97);
+      if (i > 0) doc.addPage();
+      doc.addImage(img, 'JPEG', 0, 0, 297, 210);
+    }
+
+    doc.save('ISSS-BootJAM-2026.pdf');
+  } catch (e) {
+    alert('Error generando el PDF: ' + e.message);
+  } finally {
+    btn.disabled = false;
+    icon.style.display = '';
+    label.textContent = 'Descargar PDF';
+  }
 });
 </script>
 </body>
