@@ -201,6 +201,14 @@
       text-align:center;font-size:10.5px;color:rgba(0,0,0,.22);line-height:1.7;
     }
 
+    .skip-link{
+      display:flex;align-items:center;justify-content:center;gap:6px;
+      margin-top:14px;padding:10px;
+      font-size:13px;font-weight:600;color:var(--slate);text-decoration:none;
+      transition:color .15s;
+    }
+    .skip-link:active{color:var(--navy);}
+
     .hidden{display:none!important;}
   </style>
 </head>
@@ -311,6 +319,12 @@
     </div>
 
   </div>
+
+  <!-- Always-visible skip link — hidden only after install -->
+  <a href="./app.html" id="skip-link" class="skip-link">
+    Continuar en el navegador
+    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+  </a>
 </div>
 
 <!-- ── FEATURES ────────────────────────────────── -->
@@ -374,14 +388,19 @@ const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
 const isStandalone = window.navigator.standalone === true
                   || window.matchMedia('(display-mode: standalone)').matches;
 
+const skipLink = document.getElementById('skip-link');
+
 function show(el) {
   [sAndroid, sIOS, sInstalled, sDefault].forEach(s => s.classList.add('hidden'));
   el.classList.remove('hidden');
+  // Hide skip link when installed state is showing (redundant) or default (has its own CTA)
+  skipLink.classList.toggle('hidden', el === sInstalled || el === sDefault);
 }
 
 // Determine initial state
 if (isStandalone) {
-  show(sInstalled);
+  // Already running as installed PWA — go straight to the app
+  window.location.replace('./app.html');
 } else if (isIOS) {
   show(sIOS);
 } else {
