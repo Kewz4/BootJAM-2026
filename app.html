@@ -1442,7 +1442,7 @@ function renderTSlots(){
   const hardTaken=[2,5,8];
   const now=new Date();
   const isToday=S.date&&S.date.getFullYear()===now.getFullYear()&&S.date.getMonth()===now.getMonth()&&S.date.getDate()===now.getDate();
-  const cutoff=isToday?(now.getHours()*60+now.getMinutes()+60):0; // +1 hr buffer
+  const cutoff=(isToday&&S.user?.dui!==DEMO_DUI)?(now.getHours()*60+now.getMinutes()+60):0;
   document.getElementById('tslots-grid').innerHTML=times.map((t,i)=>{
     const tk=hardTaken.includes(i)||(isToday&&slotMinutes(t)<=cutoff);
     const sel=S.time===t;
