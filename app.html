@@ -275,7 +275,7 @@ body {
 .cal-nav:active { transform: scale(0.92); }
 .cal-nav:hover  { background: var(--bg); }
 .cal-month-label { font-size: 17px; font-weight: 800; }
-.cal-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 0; }
+.cal-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 0; grid-auto-rows: 44px; }
 .cal-dn { text-align: center; font-size: 12px; font-weight: 700; color: var(--muted); padding: 6px 0 8px; }
 .cal-d {
   width: 44px; height: 44px;
@@ -532,6 +532,8 @@ body {
 .next-cta:hover { background: var(--navy-3); }
 .next-cta i { font-size: 17px; }
 
+.home-scroll { flex: 1; overflow-y: auto; -webkit-overflow-scrolling: touch; }
+
 /* ─── QUICK ACTIONS ─── */
 .qa-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; padding: 0 16px; margin: 18px 0 20px; }
 .qa-item {
@@ -677,6 +679,9 @@ body {
           <input class="fi with-icon" id="phone-in" type="tel" placeholder="7000-0000" maxlength="9" inputmode="tel" autocomplete="tel">
         </div>
       </div>
+      <div style="margin-top:-4px;margin-bottom:8px;padding:10px 14px;background:#EBF2FA;border-radius:10px;font-size:12px;color:#475569;text-align:center">
+        <strong>Cuenta demo:</strong> DUI <code style="background:#fff;padding:1px 5px;border-radius:4px">00000000-0</code> · Tel <code style="background:#fff;padding:1px 5px;border-radius:4px">7000-0000</code>
+      </div>
       <div id="login-err" class="alert a-err" style="display:none;margin-bottom:12px">
         <i class="bi bi-exclamation-circle"></i><span id="login-err-msg">DUI o teléfono incorrecto.</span>
       </div>
@@ -747,17 +752,19 @@ body {
     </div>
   </div>
 
-  <!-- Quick actions (rendered by JS) -->
-  <div id="qa-grid" class="qa-grid" style="margin-top:18px"></div>
+  <div class="home-scroll">
+    <!-- Quick actions (rendered by JS) -->
+    <div id="qa-grid" class="qa-grid" style="margin-top:18px"></div>
 
-  <!-- Recent history -->
-  <div class="section-row">
-    <div class="h3">Consultas recientes</div>
-    <button class="section-link" onclick="showView('view-history')">Ver todo</button>
+    <!-- Recent history -->
+    <div class="section-row">
+      <div class="h3">Consultas recientes</div>
+      <button class="section-link" onclick="showView('view-history')">Ver todo</button>
+    </div>
+    <div id="home-hist" class="px"></div>
+
+    <div style="height:88px"></div>
   </div>
-  <div id="home-hist" class="px"></div>
-
-  <div class="scroll" style="padding-top:0;padding-bottom:88px"></div>
 
   <nav class="bnav">
     <button class="bn on" onclick="showView('view-home')"><i class="bi bi-house-fill"></i>Inicio</button>
@@ -1149,6 +1156,18 @@ const HIST = [
   {spec:'Oftalmología',     icon:'bi-eye',              date:'18 ene 2026', fullDate:'18 enero 2026',  doc:'Dr. Roberto García', center:'ISSS Zacamil',   notes:'Miopía leve bilateral. Se recomienda uso de lentes correctivos.', rx:'Receta óptica: OD -0.75 OS -1.00', diag:'Miopía leve'},
 ];
 
+// ─── DEMO ACCOUNT ───
+const DEMO_DUI  = '00000000-0';
+const DEMO_USER = {dui:DEMO_DUI, name:'Ana García Morales', phone:'70000000'};
+const DEMO_APPTS = [
+  {id:'demo-up1', spec:'Cardiología', specIcon:'bi-heart-pulse', center:'Policlínica Arce', date:'lunes, 8 junio 2026', dateISO:'2026-06-08', time:'10:30 AM', code:'ISSS-CARD01', status:'upcoming', patient:'Ana García Morales'},
+  {id:'demo-up2', spec:'Medicina General', specIcon:'bi-clipboard2-pulse', center:'ISSS Zacamil', date:'miércoles, 17 junio 2026', dateISO:'2026-06-17', time:'8:00 AM', code:'ISSS-MG02', status:'upcoming', patient:'Rosa Morales (abuela)', forFamiliar:true},
+  {id:'demo-past', spec:'Oftalmología', specIcon:'bi-eye', center:'ISSS Santa Ana', date:'martes, 20 mayo 2026', dateISO:'2026-05-20', time:'9:00 AM', code:'ISSS-OFT03', status:'completed'},
+];
+const DEMO_RELS = [
+  {name:'Rosa Morales', rel:'Abuela', dui:'11111111-1', age:'72'},
+];
+
 // ─── HELPERS ───
 function iconEl(icon, cls=''){
   if(!icon) return '';
@@ -1204,7 +1223,12 @@ function doLogin(){
   const found=S.users.find(u=>u.dui===dui&&u.phone===phone);
   if(!found){errMsg.textContent='DUI o teléfono incorrecto. ¿Primera vez? Use "Crear cuenta".';errEl.style.display='flex';return;}
   errEl.style.display='none';
-  S.user=found; save(); initHome(); showView('view-home');
+  S.user=found;
+  if(found.dui===DEMO_DUI){
+    S.appts=[...DEMO_APPTS.map(a=>({...a}))];
+    S.relatives=[...DEMO_RELS.map(r=>({...r}))];
+  }
+  save(); initHome(); showView('view-home');
 }
 
 function doRegister(){
@@ -1220,7 +1244,9 @@ function doRegister(){
   errEl.style.display='none';
   const newUser={dui,name,phone};
   S.users.push(newUser); S.user=newUser;
+  S.appts=[]; S.relatives=[];
   save(); initHome(); showView('view-home');
+  setTimeout(()=>startTutorial(),400);
 }
 
 // ─── ROUTER ───
@@ -1781,6 +1807,7 @@ function showSmsNotification(pos){
 
 // ─── INIT ───
 load();
+if(!S.users.find(u=>u.dui===DEMO_DUI)) { S.users.push({...DEMO_USER}); save(); }
 if(S.user){
   if(!S.user.phone) S.user=null; // require re-login if old session had no phone
   else { if(!S.users.find(u=>u.dui===S.user.dui))S.users.push(S.user); save(); initHome(); showView('view-home'); }
@@ -1790,6 +1817,48 @@ if(S.user){
 if('serviceWorker' in navigator){
   navigator.serviceWorker.register('sw.js').catch(()=>{});
 }
+// ─── TUTORIAL ───
+const T_STEPS=[
+  {icon:'👋',title:'¡Bienvenida/o a ISSS Digital!',desc:'Agenda tus citas médicas del ISSS en menos de 90 segundos. Sin filas, sin llamadas, desde tu teléfono.'},
+  {icon:'📅',title:'Pide tu primera cita',desc:'Toca el botón azul "Pedir nueva cita". Elige especialidad, centro médico y horario. Solo 3 pasos rápidos.'},
+  {icon:'👨‍👩‍👧',title:'Agenda para tu familia',desc:'¿Cuidas a alguien mayor? Agrega familiares y gestiona sus citas. El comprobante QR se comparte por WhatsApp.'},
+];
+let tStep=0;
+function startTutorial(){
+  tStep=0;
+  const ov=document.getElementById('tutorial-overlay');
+  ov.style.display='flex';
+  renderTutorialStep();
+}
+function renderTutorialStep(){
+  const s=T_STEPS[tStep];
+  document.getElementById('t-icon').textContent=s.icon;
+  document.getElementById('t-title').textContent=s.title;
+  document.getElementById('t-desc').textContent=s.desc;
+  document.getElementById('t-btn').textContent=tStep<T_STEPS.length-1?'Siguiente →':'¡Entendido!';
+  const dots=document.getElementById('t-dots');
+  dots.innerHTML=T_STEPS.map((_,i)=>`<div style="width:${i===tStep?20:6}px;height:6px;border-radius:3px;background:${i===tStep?'#002B5C':'#E2E8F0'};transition:all .2s"></div>`).join('');
+}
+function tutorialNext(){
+  tStep++;
+  if(tStep>=T_STEPS.length){ tutorialSkip(); return; }
+  renderTutorialStep();
+}
+function tutorialSkip(){
+  document.getElementById('tutorial-overlay').style.display='none';
+}
 </script>
+
+<!-- ═══ TUTORIAL ONBOARDING ═══ -->
+<div id="tutorial-overlay" style="display:none;position:fixed;inset:0;z-index:9998;background:rgba(0,27,58,.88);backdrop-filter:blur(3px);-webkit-backdrop-filter:blur(3px);align-items:flex-end;justify-content:center;padding:16px">
+  <div style="background:#fff;border-radius:24px;padding:32px 24px 28px;width:100%;max-width:400px;text-align:center">
+    <div id="t-dots" style="display:flex;justify-content:center;gap:6px;margin-bottom:22px"></div>
+    <div id="t-icon" style="font-size:52px;margin-bottom:14px;line-height:1"></div>
+    <div id="t-title" style="font-size:20px;font-weight:900;color:#0D1B2A;margin-bottom:8px;line-height:1.2"></div>
+    <div id="t-desc" style="font-size:14px;color:#475569;line-height:1.65;margin-bottom:26px"></div>
+    <button id="t-btn" onclick="tutorialNext()" style="width:100%;background:#002B5C;color:#fff;border:none;border-radius:14px;padding:15px;font-family:inherit;font-size:16px;font-weight:700;cursor:pointer;-webkit-tap-highlight-color:transparent"></button>
+    <button onclick="tutorialSkip()" style="margin-top:12px;background:none;border:none;color:#94A3B8;font-family:inherit;font-size:13px;cursor:pointer;padding:4px">Saltar tutorial</button>
+  </div>
+</div>
 </body>
 </html>
