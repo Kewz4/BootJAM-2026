@@ -1817,47 +1817,122 @@ if(S.user){
 if('serviceWorker' in navigator){
   navigator.serviceWorker.register('sw.js').catch(()=>{});
 }
-// ─── TUTORIAL ───
+// ─── SPOTLIGHT TUTORIAL ───
 const T_STEPS=[
-  {icon:'👋',title:'¡Bienvenida/o a ISSS Digital!',desc:'Agenda tus citas médicas del ISSS en menos de 90 segundos. Sin filas, sin llamadas, desde tu teléfono.'},
-  {icon:'📅',title:'Pide tu primera cita',desc:'Toca el botón azul "Pedir nueva cita". Elige especialidad, centro médico y horario. Solo 3 pasos rápidos.'},
-  {icon:'👨‍👩‍👧',title:'Agenda para tu familia',desc:'¿Cuidas a alguien mayor? Agrega familiares y gestiona sus citas. El comprobante QR se comparte por WhatsApp.'},
+  {sel:'.next-cta',   title:'Pide tu primera cita',      desc:'Toca este botón para reservar una cita médica en 3 pasos rápidos. Elige especialidad, centro y horario.', pos:'above'},
+  {sel:'#qa-grid',    title:'Acciones rápidas',           desc:'Desde aquí puedes ver tus citas, agregar familiares y compartir tu comprobante QR por WhatsApp.', pos:'above'},
+  {sel:'.bnav',       title:'Navegación',                 desc:'Usa la barra inferior para moverte entre tus citas, historial y perfil en cualquier momento.', pos:'above'},
 ];
-let tStep=0;
+let tStep=0, tActive=false;
+
 function startTutorial(){
-  tStep=0;
-  const ov=document.getElementById('tutorial-overlay');
-  ov.style.display='flex';
-  renderTutorialStep();
+  tStep=0; tActive=true;
+  document.getElementById('tut-overlay').style.display='block';
+  renderSpotlight();
 }
-function renderTutorialStep(){
-  const s=T_STEPS[tStep];
-  document.getElementById('t-icon').textContent=s.icon;
-  document.getElementById('t-title').textContent=s.title;
-  document.getElementById('t-desc').textContent=s.desc;
-  document.getElementById('t-btn').textContent=tStep<T_STEPS.length-1?'Siguiente →':'¡Entendido!';
-  const dots=document.getElementById('t-dots');
-  dots.innerHTML=T_STEPS.map((_,i)=>`<div style="width:${i===tStep?20:6}px;height:6px;border-radius:3px;background:${i===tStep?'#002B5C':'#E2E8F0'};transition:all .2s"></div>`).join('');
+
+function renderSpotlight(){
+  if(!tActive) return;
+  const step=T_STEPS[tStep];
+  const el=document.querySelector(step.sel);
+  const overlay=document.getElementById('tut-overlay');
+  const card=document.getElementById('tut-card');
+  const pulse=document.getElementById('tut-pulse');
+
+  if(!el){ tutorialSkip(); return; }
+
+  // Scroll element into view before measuring (skip for fixed elements like bnav)
+  const elPos=window.getComputedStyle(el).position;
+  if(elPos!=='fixed') el.scrollIntoView({block:'nearest',behavior:'instant'});
+  const r=el.getBoundingClientRect();
+  const vw=window.innerWidth, vh=window.innerHeight;
+  const pad=10;
+  const rx=r.left-pad, ry=r.top-pad, rw=r.width+pad*2, rh=r.height+pad*2, rr=14;
+
+  // Update SVG mask cutout
+  const rect=document.getElementById('tut-hole');
+  rect.setAttribute('x', rx);
+  rect.setAttribute('y', ry);
+  rect.setAttribute('width', rw);
+  rect.setAttribute('height', rh);
+  rect.setAttribute('rx', rr);
+
+  // Position pulse ring
+  pulse.style.left=rx+'px';
+  pulse.style.top=ry+'px';
+  pulse.style.width=rw+'px';
+  pulse.style.height=rh+'px';
+  pulse.style.borderRadius=rr+'px';
+  pulse.style.display='block';
+
+  // Position tooltip card
+  const cardW=Math.min(320, vw-32);
+  card.style.width=cardW+'px';
+  const cardLeft=Math.max(16, Math.min(rx+(rw-cardW)/2, vw-cardW-16));
+
+  let cardTop;
+  const spaceAbove=ry-16;
+  const cardEstH=150;
+  if(spaceAbove>cardEstH || step.pos==='above'){
+    cardTop=ry-cardEstH-16;
+    if(cardTop<16) cardTop=ry+rh+16;
+  } else {
+    cardTop=ry+rh+16;
+    if(cardTop+cardEstH>vh-16) cardTop=ry-cardEstH-16;
+  }
+  card.style.left=cardLeft+'px';
+  card.style.top=Math.max(16,cardTop)+'px';
+
+  // Update card content
+  document.getElementById('tut-title').textContent=step.title;
+  document.getElementById('tut-desc').textContent=step.desc;
+  document.getElementById('tut-btn').textContent=tStep<T_STEPS.length-1?'Siguiente →':'¡Entendido!';
+  const dots=document.getElementById('tut-dots');
+  dots.innerHTML=T_STEPS.map((_,i)=>`<div style="width:${i===tStep?18:6}px;height:6px;border-radius:3px;background:${i===tStep?'#002B5C':'#E2E8F0'};transition:all .25s"></div>`).join('');
 }
+
 function tutorialNext(){
   tStep++;
   if(tStep>=T_STEPS.length){ tutorialSkip(); return; }
-  renderTutorialStep();
+  renderSpotlight();
 }
+
 function tutorialSkip(){
-  document.getElementById('tutorial-overlay').style.display='none';
+  tActive=false;
+  document.getElementById('tut-overlay').style.display='none';
+  document.getElementById('tut-pulse').style.display='none';
 }
+window.addEventListener('resize',()=>{ if(tActive) renderSpotlight(); });
 </script>
 
-<!-- ═══ TUTORIAL ONBOARDING ═══ -->
-<div id="tutorial-overlay" style="display:none;position:fixed;inset:0;z-index:9998;background:rgba(0,27,58,.88);backdrop-filter:blur(3px);-webkit-backdrop-filter:blur(3px);align-items:flex-end;justify-content:center;padding:16px">
-  <div style="background:#fff;border-radius:24px;padding:32px 24px 28px;width:100%;max-width:400px;text-align:center">
-    <div id="t-dots" style="display:flex;justify-content:center;gap:6px;margin-bottom:22px"></div>
-    <div id="t-icon" style="font-size:52px;margin-bottom:14px;line-height:1"></div>
-    <div id="t-title" style="font-size:20px;font-weight:900;color:#0D1B2A;margin-bottom:8px;line-height:1.2"></div>
-    <div id="t-desc" style="font-size:14px;color:#475569;line-height:1.65;margin-bottom:26px"></div>
-    <button id="t-btn" onclick="tutorialNext()" style="width:100%;background:#002B5C;color:#fff;border:none;border-radius:14px;padding:15px;font-family:inherit;font-size:16px;font-weight:700;cursor:pointer;-webkit-tap-highlight-color:transparent"></button>
-    <button onclick="tutorialSkip()" style="margin-top:12px;background:none;border:none;color:#94A3B8;font-family:inherit;font-size:13px;cursor:pointer;padding:4px">Saltar tutorial</button>
+<!-- ═══ SPOTLIGHT TUTORIAL ═══ -->
+<style>
+@keyframes tut-ring{0%{box-shadow:0 0 0 0 rgba(255,255,255,.55)}70%{box-shadow:0 0 0 12px rgba(255,255,255,0)}100%{box-shadow:0 0 0 0 rgba(255,255,255,0)}}
+#tut-pulse{animation:tut-ring 1.4s ease-out infinite;pointer-events:none}
+</style>
+
+<!-- dark overlay with SVG cutout mask -->
+<div id="tut-overlay" style="display:none;position:fixed;inset:0;z-index:9998;pointer-events:auto">
+  <svg id="tut-svg" style="position:absolute;inset:0;width:100%;height:100%;pointer-events:none" xmlns="http://www.w3.org/2000/svg">
+    <defs>
+      <mask id="tut-mask">
+        <rect width="100%" height="100%" fill="white"/>
+        <rect id="tut-hole" x="0" y="0" width="0" height="0" rx="14" fill="black"/>
+      </mask>
+    </defs>
+    <rect width="100%" height="100%" fill="rgba(0,10,30,.82)" mask="url(#tut-mask)"/>
+  </svg>
+
+  <!-- pulse ring on highlighted element -->
+  <div id="tut-pulse" style="display:none;position:absolute;border:2px solid rgba(255,255,255,.7);box-sizing:border-box;border-radius:14px"></div>
+
+  <!-- tooltip card -->
+  <div id="tut-card" style="position:absolute;background:#fff;border-radius:20px;padding:22px 20px 18px;box-shadow:0 8px 40px rgba(0,0,0,.35);max-width:320px">
+    <div id="tut-dots" style="display:flex;justify-content:center;gap:6px;margin-bottom:14px"></div>
+    <div id="tut-title" style="font-size:17px;font-weight:800;color:#0D1B2A;margin-bottom:6px;line-height:1.25"></div>
+    <div id="tut-desc" style="font-size:13px;color:#475569;line-height:1.6;margin-bottom:18px"></div>
+    <button id="tut-btn" onclick="tutorialNext()" style="width:100%;background:#002B5C;color:#fff;border:none;border-radius:12px;padding:13px;font-family:inherit;font-size:15px;font-weight:700;cursor:pointer;-webkit-tap-highlight-color:transparent"></button>
+    <button onclick="tutorialSkip()" style="display:block;margin:10px auto 0;background:none;border:none;color:#94A3B8;font-family:inherit;font-size:12px;cursor:pointer;padding:4px">Saltar tutorial</button>
   </div>
 </div>
 </body>
