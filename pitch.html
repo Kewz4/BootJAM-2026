@@ -503,44 +503,47 @@ body{
      FLOATING UI — hidden in print
 ════════════════════════════════ -->
 <div id="ui-bar">
-  <button id="btn-pdf">
-    <svg id="btn-icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-      <path d="M12 3v13M5 14l7 7 7-7"/><path d="M3 20h18"/>
-    </svg>
-    <span id="btn-label">Descargar PDF</span>
-  </button>
+  <div id="btn-group">
+    <button id="btn-pptx">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="18" rx="2"/><path d="M8 3v18M2 9h6"/></svg>
+      <span id="pptx-label">Descargar PPTX</span>
+    </button>
+    <button id="btn-pdf">
+      <svg id="btn-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M12 3v13M5 14l7 7 7-7"/><path d="M3 20h18"/>
+      </svg>
+      <span id="btn-label">Descargar PDF</span>
+    </button>
+  </div>
   <div id="canva-tip">
-    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" style="flex-shrink:0;margin-top:1px"><circle cx="12" cy="12" r="9"/><path d="M12 8v4M12 16h.01"/></svg>
-    <span>Para editar en <strong>Canva</strong>: descarga el PDF y súbelo en <a href="https://www.canva.com" target="_blank">canva.com</a> → Crear diseño → Importar archivo PDF. Cada slide queda editable.</span>
+    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" style="flex-shrink:0;margin-top:2px"><circle cx="12" cy="12" r="9"/><path d="M12 8v4M12 16h.01"/></svg>
+    <span>Para editar en <strong>Canva</strong>: descarga el <strong>PPTX</strong> → súbelo en <a href="https://www.canva.com" target="_blank">canva.com</a> → Importar archivo. Texto y fondos quedan editables.</span>
   </div>
 </div>
 
 <style>
 #ui-bar {
-  position: fixed;
-  bottom: 28px; right: 28px;
-  z-index: 9999;
+  position: fixed; bottom: 28px; right: 28px; z-index: 9999;
   display: flex; flex-direction: column; align-items: flex-end; gap: 10px;
   font-family: 'Inter', -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
 }
-#btn-pdf {
-  background: #002B5C; color: white;
-  border: none; border-radius: 10px;
-  padding: 12px 22px;
-  font-family: inherit; font-size: 14px; font-weight: 700;
-  cursor: pointer;
-  display: flex; align-items: center; gap: 8px;
-  box-shadow: 0 4px 24px rgba(0,43,92,.4);
+#btn-group { display: flex; gap: 8px; }
+#btn-pdf, #btn-pptx {
+  border: none; border-radius: 10px; padding: 11px 18px;
+  font-family: inherit; font-size: 13.5px; font-weight: 700; cursor: pointer;
+  display: flex; align-items: center; gap: 7px;
+  box-shadow: 0 4px 20px rgba(0,0,0,.25);
   transition: background .15s, transform .1s;
 }
-#btn-pdf:hover:not(:disabled) { background: #003F85; transform: translateY(-1px); }
-#btn-pdf:active:not(:disabled) { transform: translateY(0); }
-#btn-pdf:disabled { opacity: .7; cursor: wait; }
+#btn-pdf  { background: #002B5C; color: white; }
+#btn-pptx { background: #059669; color: white; }
+#btn-pdf:hover:not(:disabled)  { background: #003F85; transform: translateY(-1px); }
+#btn-pptx:hover:not(:disabled) { background: #047857; transform: translateY(-1px); }
+#btn-pdf:disabled, #btn-pptx:disabled { opacity: .65; cursor: wait; }
 #canva-tip {
-  background: white; border: 1px solid #E2E8F0;
-  border-radius: 10px; padding: 10px 14px;
-  font-size: 11.5px; color: #475569;
-  max-width: 280px; line-height: 1.55;
+  background: white; border: 1px solid #E2E8F0; border-radius: 10px;
+  padding: 10px 14px; font-size: 11.5px; color: #475569;
+  max-width: 300px; line-height: 1.55;
   box-shadow: 0 2px 12px rgba(0,0,0,.07);
   display: flex; align-items: flex-start; gap: 8px;
 }
@@ -548,45 +551,277 @@ body{
 #canva-tip a:hover { text-decoration: underline; }
 </style>
 
-<!-- jsPDF + html2canvas — renders each slide to canvas then builds landscape A4 PDF -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/pptxgenjs@3.12.0/dist/pptxgen.bundle.js"></script>
 <script>
+// ── PDF (image-based, color-exact) ──────────────────────────────────────────
 document.getElementById('btn-pdf').addEventListener('click', async function () {
-  const btn = this;
-  const label = document.getElementById('btn-label');
-  const icon  = document.getElementById('btn-icon');
-
-  btn.disabled = true;
-  icon.style.display = 'none';
-  label.textContent = 'Generando…';
-
+  const btn=this, label=document.getElementById('btn-label'), icon=document.getElementById('btn-icon');
+  btn.disabled=true; icon.style.display='none'; label.textContent='Generando…';
   try {
-    const { jsPDF } = window.jspdf;
-    const doc = new jsPDF({ orientation: 'landscape', unit: 'mm', format: 'a4' });
-    const slides = document.querySelectorAll('.slide');
+    const {jsPDF}=window.jspdf;
+    const doc=new jsPDF({orientation:'landscape',unit:'mm',format:'a4'});
+    const slides=document.querySelectorAll('.slide');
+    for(let i=0;i<slides.length;i++){
+      label.textContent=`Slide ${i+1}/${slides.length}…`;
+      const cv=await html2canvas(slides[i],{scale:2,useCORS:true,backgroundColor:null,logging:false});
+      if(i>0)doc.addPage();
+      doc.addImage(cv.toDataURL('image/jpeg',0.97),'JPEG',0,0,297,210);
+    }
+    doc.save('ISSS-BootJAM-2026.pdf');
+  } catch(e){alert('Error PDF: '+e.message);}
+  finally{btn.disabled=false;icon.style.display='';label.textContent='Descargar PDF';}
+});
 
-    for (let i = 0; i < slides.length; i++) {
-      label.textContent = `Slide ${i + 1}/${slides.length}…`;
-      const canvas = await html2canvas(slides[i], {
-        scale: 2,
-        useCORS: true,
-        backgroundColor: null,
-        logging: false
+// ── PPTX (editable text + shapes via PptxGenJS) ─────────────────────────────
+document.getElementById('btn-pptx').addEventListener('click', async function () {
+  const btn=this, lbl=document.getElementById('pptx-label');
+  btn.disabled=true; lbl.textContent='Generando…';
+  try {
+    const pptx=new PptxGenJS();
+    pptx.defineLayout({name:'A4L',width:11.69,height:8.27});
+    pptx.layout='A4L'; pptx.title='ISSS Digital — BootJAM 2026';
+
+    const W=11.69,H=8.27;
+    const NAVY='002B5C',GREEN='059669',G2='34D399',LIGHT='F4F7FB',
+          NBG='EBF2FA',SLATE='475569',TXT='0D1B2A',WHITE='FFFFFF',BD='E2E8F0';
+    const F='Calibri';
+
+    const bg=(s,c)=>s.addShape('rect',{x:0,y:0,w:W,h:H,fill:{color:c},line:{color:c,width:0}});
+
+    const nav=(s,dk)=>{
+      s.addShape('rect',{x:0,y:0,w:W,h:0.54,fill:{color:dk?NAVY:WHITE},line:{color:dk?'1a3a5c':BD,width:0.3}});
+      s.addText([{text:'ISSS',options:{bold:true,color:dk?G2:NAVY}},{text:' Digital',options:{color:dk?'96B0CC':SLATE}}],
+        {x:0.45,y:0.08,w:2,h:0.38,fontSize:13,fontFace:F});
+    };
+
+    const tag=(s,text,x,y)=>{
+      const w=Math.max(1.1,text.length*0.086+0.26);
+      s.addShape('roundRect',{x,y,w,h:0.23,fill:{color:GREEN,transparency:85},line:{color:GREEN,transparency:50,width:0.5},rectRadius:0.5});
+      s.addText(text.toUpperCase(),{x,y,w,h:0.23,fontSize:7.5,color:GREEN,bold:true,fontFace:F,align:'center',valign:'middle',charSpacing:1.2});
+    };
+
+    const card=(s,x,y,w,h,fill,line,lw)=>
+      s.addShape('roundRect',{x,y,w,h,fill:{color:fill||WHITE},line:{color:line||BD,width:lw||0.5},rectRadius:0.06});
+
+    // ─ S1 COVER ──────────────────────────────────────────────────────────────
+    lbl.textContent='Slide 1…';
+    {
+      const s=pptx.addSlide(); bg(s,NAVY);
+      const lw=W*0.60, rx=lw+0.25, rw=W-rx-0.3;
+
+      s.addText([{text:'ISSS',options:{bold:true,color:WHITE}},{text:' Digital',options:{color:G2}}],
+        {x:0.45,y:0.35,w:2.2,h:0.4,fontSize:13,fontFace:F});
+
+      s.addShape('roundRect',{x:0.45,y:0.88,w:3.9,h:0.25,fill:{color:GREEN,transparency:80},line:{color:G2,transparency:60,width:0.3},rectRadius:0.5});
+      s.addText('● BootJAM 2026 · Universidad Mónica Herrera',
+        {x:0.45,y:0.88,w:3.9,h:0.25,fontSize:8.5,color:G2,fontFace:F,align:'center',valign:'middle'});
+
+      s.addText([
+        {text:'ISSS',options:{color:WHITE}},
+        {text:'.',options:{color:G2,breakLine:true}},
+        {text:'Digital',options:{color:G2}}
+      ],{x:0.45,y:1.28,w:lw-0.65,h:2.95,fontSize:60,bold:true,fontFace:F,lineSpacingMultiple:0.9,charSpacing:-1.5});
+
+      s.addText('El sistema de citas médicas que El Salvador no tiene todavía — diseñado para quienes realmente lo necesitan.',
+        {x:0.45,y:4.35,w:lw-0.7,h:0.9,fontSize:12,color:'96B0CC',fontFace:F,lineSpacingMultiple:1.45});
+      s.addText('"El tiempo de espera de mi abuela termina hoy."',
+        {x:0.45,y:5.42,w:lw-0.7,h:0.48,fontSize:11,color:'6B8FB5',fontFace:F,italic:true});
+      s.addText('01 / 06',{x:0.45,y:H-0.44,w:1.2,h:0.28,fontSize:8.5,color:'1a3a5c',fontFace:F,charSpacing:1.5});
+
+      s.addShape('rect',{x:lw+0.01,y:H*0.08,w:0.007,h:H*0.84,fill:{color:WHITE,transparency:88},line:{color:WHITE,transparency:88,width:0}});
+
+      [{y:1.4,n:'1.2M',l:'Cotizantes activos ISSS'},{y:3.1,n:'34%',l:'Mayores de 55 años'},{y:4.8,n:'90s',l:'Para agendar con nosotros'}]
+      .forEach(({y:sy,n,l})=>{
+        s.addShape('roundRect',{x:rx,y:sy,w:rw,h:1.42,fill:{color:WHITE,transparency:93},line:{color:WHITE,transparency:88,width:0.5},rectRadius:0.06});
+        s.addText(n,{x:rx+0.18,y:sy+0.1,w:rw-0.36,h:0.78,fontSize:34,bold:true,color:G2,fontFace:F,charSpacing:-1});
+        s.addText(l,{x:rx+0.18,y:sy+0.9,w:rw-0.36,h:0.35,fontSize:9.5,color:WHITE,fontFace:F});
       });
-      const img = canvas.toDataURL('image/jpeg', 0.97);
-      if (i > 0) doc.addPage();
-      doc.addImage(img, 'JPEG', 0, 0, 297, 210);
     }
 
-    doc.save('ISSS-BootJAM-2026.pdf');
-  } catch (e) {
-    alert('Error generando el PDF: ' + e.message);
-  } finally {
-    btn.disabled = false;
-    icon.style.display = '';
-    label.textContent = 'Descargar PDF';
-  }
+    // ─ S2 PROBLEMA ───────────────────────────────────────────────────────────
+    lbl.textContent='Slide 2…';
+    {
+      const s=pptx.addSlide(); bg(s,LIGHT); nav(s,false);
+      const bx=0.45,bw=W-0.9; let y=0.7;
+      tag(s,'El Problema',bx,y); y+=0.34;
+      s.addText('Para una cita hoy hay que madrugar,\nhacer fila, y esperar. En 2026.',
+        {x:bx,y,w:bw,h:1.05,fontSize:26,bold:true,color:TXT,fontFace:F,lineSpacingMultiple:1.1,charSpacing:-0.6});
+      y+=1.15;
+
+      const cw=(bw-0.3)/3, ch=3.45;
+      [{stat:'~3h',title:'Filas físicas y llamadas saturadas',
+        desc:'No existe alternativa digital en salud pública. La única opción: presentarse antes del amanecer o pasar horas al teléfono.',tag:'Horas perdidas por cada cita'},
+       {stat:'60%',title:'El adulto mayor no tiene smartphone',
+        desc:'Depende 100% de un familiar. Ese familiar invisible que carga con toda la logística no existe en ningún sistema actual.',tag:'El familiar pierde horas de trabajo'},
+       {stat:'0',title:'Cero visibilidad del turno en tiempo real',
+        desc:'No existe forma de saber tu posición en la fila antes de llegar. Los pacientes llegan tarde o esperan horas sin información.',tag:'Ansiedad y ausentismo médico'}
+      ].forEach((c,i)=>{
+        const cx=bx+i*(cw+0.15);
+        card(s,cx,y,cw,ch,WHITE,BD);
+        s.addText(c.stat,{x:cx+0.2,y:y+0.15,w:cw-0.4,h:0.98,fontSize:46,bold:true,color:GREEN,fontFace:F,charSpacing:-2});
+        s.addText(c.title,{x:cx+0.2,y:y+1.16,w:cw-0.4,h:0.42,fontSize:11.5,bold:true,color:TXT,fontFace:F,lineSpacingMultiple:1.2});
+        s.addText(c.desc,{x:cx+0.2,y:y+1.6,w:cw-0.4,h:1.2,fontSize:8.5,color:SLATE,fontFace:F,lineSpacingMultiple:1.55});
+        s.addShape('rect',{x:cx+0.2,y:y+ch-0.44,w:cw-0.4,h:0.006,fill:{color:BD},line:{color:BD,width:0}});
+        s.addText(c.tag,{x:cx+0.2,y:y+ch-0.38,w:cw-0.4,h:0.28,fontSize:8,bold:true,color:GREEN,fontFace:F});
+      });
+      y+=ch+0.14;
+      ['~3h promedio de espera por cita','60% de adultos mayores sin smartphone propio','12M interacciones ISSS al año sin canal digital']
+      .forEach((f,i)=>{
+        const fw=(bw-0.3)/3,fx=bx+i*(fw+0.15);
+        s.addShape('roundRect',{x:fx,y,w:fw,h:0.44,fill:{color:NAVY},line:{color:NAVY,width:0},rectRadius:0.04});
+        s.addText(f,{x:fx+0.12,y,w:fw-0.24,h:0.44,fontSize:8.5,bold:true,color:WHITE,fontFace:F,valign:'middle'});
+      });
+    }
+
+    // ─ S3 TARGET ─────────────────────────────────────────────────────────────
+    lbl.textContent='Slide 3…';
+    {
+      const s=pptx.addSlide(); bg(s,WHITE); nav(s,false);
+      const bx=0.45,bw=W-0.9; let y=0.7;
+      tag(s,'Target e Insights',bx,y); y+=0.34;
+      s.addText('Diseñamos para dos personas con un solo problema',
+        {x:bx,y,w:bw,h:0.82,fontSize:26,bold:true,color:TXT,fontFace:F,lineSpacingMultiple:1.1,charSpacing:-0.6});
+      y+=0.92;
+
+      const cw=(bw-0.2)/2,ch=H-y-0.3;
+
+      // Primary
+      s.addShape('roundRect',{x:bx,y,w:cw,h:ch,fill:{color:NAVY},line:{color:NAVY,width:0},rectRadius:0.07});
+      s.addShape('roundRect',{x:bx+0.22,y:y+0.22,w:1.45,h:0.24,fill:{color:GREEN},line:{color:GREEN,width:0},rectRadius:0.5});
+      s.addText('USUARIO PRIMARIO',{x:bx+0.22,y:y+0.22,w:1.45,h:0.24,fontSize:7,bold:true,color:WHITE,fontFace:F,align:'center',valign:'middle',charSpacing:1});
+      s.addText('La familiar gestora',{x:bx+0.22,y:y+0.58,w:cw-0.44,h:0.52,fontSize:19,bold:true,color:WHITE,fontFace:F});
+      s.addText('Mujer, 30–45 años. Trabaja. Coordina la salud de adultos mayores en su familia desde su teléfono.',
+        {x:bx+0.22,y:y+1.14,w:cw-0.44,h:0.55,fontSize:9,color:'7B9BBF',fontFace:F,lineSpacingMultiple:1.45});
+      [['"Yo agendo, ella se presenta."','Gestiona todo digitalmente; el adulto mayor solo llega al centro.'],
+       ['Miedo al olvido:','La notificación 24h antes y el QR por WhatsApp son su red de seguridad.'],
+       ['Desconfianza al proceso:','Reagendar en 3 toques sin perder la cita original hasta confirmar.']
+      ].forEach(([lb,desc],i)=>{
+        const by=y+1.82+i*0.9;
+        s.addShape('rect',{x:bx+0.22,y:by+0.1,w:0.07,h:0.07,fill:{color:G2},line:{color:G2,width:0}});
+        s.addText([{text:lb+' ',options:{bold:true,color:WHITE}},{text:desc,options:{color:'AABFDA'}}],
+          {x:bx+0.35,y:by,w:cw-0.6,h:0.82,fontSize:9,fontFace:F,lineSpacingMultiple:1.45});
+      });
+
+      // Secondary
+      const sx=bx+cw+0.2;
+      s.addShape('roundRect',{x:sx,y,w:cw,h:ch,fill:{color:NBG},line:{color:BD,width:0.4},rectRadius:0.07});
+      s.addShape('roundRect',{x:sx+0.22,y:y+0.22,w:1.6,h:0.24,fill:{color:NAVY},line:{color:NAVY,width:0},rectRadius:0.5});
+      s.addText('USUARIO SECUNDARIO',{x:sx+0.22,y:y+0.22,w:1.6,h:0.24,fontSize:7,bold:true,color:WHITE,fontFace:F,align:'center',valign:'middle',charSpacing:1});
+      s.addText('El adulto mayor (70+)',{x:sx+0.22,y:y+0.58,w:cw-0.44,h:0.52,fontSize:19,bold:true,color:TXT,fontFace:F});
+      s.addText('Puede o no tener smartphone. Solo presenta el QR que el familiar le compartió. Sin instalar nada.',
+        {x:sx+0.22,y:y+1.14,w:cw-0.44,h:0.55,fontSize:9,color:SLATE,fontFace:F,lineSpacingMultiple:1.45});
+      [['Dignidad sin fricciones:','Comprobante en papel o pantalla. Sin apps, sin contraseñas.'],
+       ['Confianza total:','El QR le dice exactamente qué presentar, cuándo y dónde.'],
+       ['Turno en vivo:','Cuando la cita es hoy, ve su posición en la fila en tiempo real.']
+      ].forEach(([lb,desc],i)=>{
+        const by=y+1.82+i*0.9;
+        s.addShape('rect',{x:sx+0.22,y:by+0.1,w:0.07,h:0.07,fill:{color:NAVY},line:{color:NAVY,width:0}});
+        s.addText([{text:lb+' ',options:{bold:true,color:TXT}},{text:desc,options:{color:SLATE}}],
+          {x:sx+0.35,y:by,w:cw-0.6,h:0.82,fontSize:9,fontFace:F,lineSpacingMultiple:1.45});
+      });
+    }
+
+    // ─ S4 PROPUESTA ──────────────────────────────────────────────────────────
+    lbl.textContent='Slide 4…';
+    {
+      const s=pptx.addSlide(); bg(s,LIGHT); nav(s,false);
+      const bx=0.45,bw=W-0.9; let y=0.7;
+      tag(s,'Propuesta Estratégica',bx,y); y+=0.34;
+      s.addText('Una PWA. Sin descarga. En cualquier teléfono.',
+        {x:bx,y,w:bw,h:0.82,fontSize:26,bold:true,color:TXT,fontFace:F,lineSpacingMultiple:1.1,charSpacing:-0.6});
+      y+=0.92;
+
+      const arw=0.26,sw=(bw-arw*3)/4,sh=1.55;
+      [{step:'PASO 01',title:'Especialidad',desc:'Busca por nombre o síntoma. Solo opciones válidas.'},
+       {step:'PASO 02',title:'Centro médico',desc:'Ubicación, espera estimada y cupos disponibles hoy.'},
+       {step:'PASO 03',title:'Fecha y hora',desc:'Calendario real. Solo se muestran horarios disponibles.'},
+       {step:'LISTO ✓',title:'Comprobante QR',desc:'Código único compartible por WhatsApp, recordatorio 24h.',hl:true}
+      ].forEach((st,i)=>{
+        const sx=bx+i*(sw+arw);
+        card(s,sx,y,sw,sh,WHITE,st.hl?GREEN:BD,st.hl?1:0.5);
+        s.addText(st.step,{x:sx+0.15,y:y+0.13,w:sw-0.3,h:0.25,fontSize:7.5,bold:true,color:GREEN,fontFace:F,charSpacing:1.5});
+        s.addShape('roundRect',{x:sx+0.15,y:y+0.43,w:0.36,h:0.36,fill:{color:NBG},line:{color:NBG,width:0},rectRadius:0.04});
+        s.addText(st.title,{x:sx+0.15,y:y+0.87,w:sw-0.3,h:0.32,fontSize:11.5,bold:true,color:TXT,fontFace:F});
+        s.addText(st.desc,{x:sx+0.15,y:y+1.21,w:sw-0.3,h:0.34,fontSize:8.5,color:SLATE,fontFace:F,lineSpacingMultiple:1.5});
+        if(i<3)s.addText('→',{x:sx+sw,y:y+0.57,w:arw,h:0.38,fontSize:13,color:GREEN,fontFace:F,align:'center',valign:'middle'});
+      });
+      y+=sh+0.2;
+
+      const fw=(bw-0.3)/3,fh=H-y-0.3;
+      [{title:'Inclusión sin fricción',desc:'Login con DUI + teléfono. Sin email, sin contraseña. El mismo formato que ya conocen del gobierno.'},
+       {title:'Ecosistema familiar',desc:'El primero en El Salvador diseñado para que el familiar gestione la salud de alguien más, con trazabilidad.'},
+       {title:'Universal por diseño',desc:'PWA: iPhone 6, Android 2019 o tablet sin instalación. Una URL basta. Sin App Store.'}
+      ].forEach((ft,i)=>{
+        const fx=bx+i*(fw+0.15);
+        card(s,fx,y,fw,fh,WHITE,BD);
+        s.addShape('roundRect',{x:fx+0.18,y:y+0.16,w:0.36,h:0.36,fill:{color:NBG},line:{color:NBG,width:0},rectRadius:0.04});
+        s.addText(ft.title,{x:fx+0.18,y:y+0.62,w:fw-0.36,h:0.38,fontSize:11.5,bold:true,color:TXT,fontFace:F});
+        s.addText(ft.desc,{x:fx+0.18,y:y+1.04,w:fw-0.36,h:fh-1.2,fontSize:9,color:SLATE,fontFace:F,lineSpacingMultiple:1.5});
+      });
+    }
+
+    // ─ S5 DIFERENCIADOR ──────────────────────────────────────────────────────
+    lbl.textContent='Slide 5…';
+    {
+      const s=pptx.addSlide(); bg(s,WHITE); nav(s,false);
+      const bx=0.45,bw=W-0.9; let y=0.7;
+      tag(s,'Diferenciador',bx,y); y+=0.34;
+      s.addText('Tres capacidades inéditas\nen salud pública salvadoreña.',
+        {x:bx,y,w:bw,h:1.05,fontSize:26,bold:true,color:TXT,fontFace:F,lineSpacingMultiple:1.1,charSpacing:-0.6});
+      y+=1.15;
+
+      const cw=(bw-0.3)/3,nh=0.45,ch=H-y-nh-0.35;
+      [{num:'01',title:'El familiar\ncomo usuario',desc:'Primer sistema en El Salvador que reconoce que el paciente y el usuario son personas distintas. QR compartible y citas trazadas por familiar.'},
+       {num:'02',title:'Login en\n10 segundos',desc:'DUI + teléfono. Sin email, sin contraseña, sin foto. El mismo formato del gobierno. Acceso inmediato para quienes nunca han usado apps del Estado.'},
+       {num:'03',title:'Una URL.\nCualquier teléfono.',desc:'PWA: iPhone 6, Android 2019 o tablet sin instalación. Sin App Store, sin actualizaciones manuales. La única solución sin fricción de descarga.'}
+      ].forEach((d,i)=>{
+        const cx=bx+i*(cw+0.15);
+        s.addShape('roundRect',{x:cx,y,w:cw,h:ch,fill:{color:LIGHT},line:{color:BD,width:0.5},rectRadius:0.07});
+        s.addText(d.num,{x:cx+0.22,y:y+0.18,w:cw-0.44,h:0.28,fontSize:9.5,bold:true,color:GREEN,fontFace:F,charSpacing:1.5});
+        s.addShape('roundRect',{x:cx+0.22,y:y+0.52,w:0.42,h:0.42,fill:{color:WHITE},line:{color:BD,width:0.4},rectRadius:0.05});
+        s.addText(d.title,{x:cx+0.22,y:y+1.07,w:cw-0.44,h:0.65,fontSize:14.5,bold:true,color:TXT,fontFace:F,lineSpacingMultiple:1.15});
+        s.addText(d.desc,{x:cx+0.22,y:y+1.82,w:cw-0.44,h:ch-2.0,fontSize:9,color:SLATE,fontFace:F,lineSpacingMultiple:1.6});
+      });
+      y+=ch+0.12;
+      s.addShape('roundRect',{x:bx,y,w:bw,h:nh,fill:{color:NBG},line:{color:BD,width:0.4},rectRadius:0.04});
+      s.addText([
+        {text:'ⓘ  El ISSS no tiene app propia. Doctor.sv existe para el sector privado únicamente. ',options:{color:SLATE}},
+        {text:'No hay solución digital para la salud pública salvadoreña.',options:{bold:true,color:TXT}}
+      ],{x:bx+0.18,y,w:bw-0.36,h:nh,fontSize:8.5,fontFace:F,valign:'middle',lineSpacingMultiple:1.4});
+    }
+
+    // ─ S6 CIERRE ─────────────────────────────────────────────────────────────
+    lbl.textContent='Slide 6…';
+    {
+      const s=pptx.addSlide(); bg(s,NAVY); nav(s,true);
+      const mid=(H+0.54)/2;
+
+      [{n:'12M',l:'Interacciones anuales ISSS'},{n:'90s',l:'Para agendar con ISSS Digital'},{n:'0',l:'Descargas requeridas'}]
+      .forEach(({n,l},i)=>{
+        const sw=7.5/3,sx=(W-7.5)/2+i*sw;
+        if(i>0)s.addShape('rect',{x:sx,y:mid-1.74,w:0.007,h:0.96,fill:{color:WHITE,transparency:85},line:{color:WHITE,transparency:85,width:0}});
+        s.addText(n,{x:sx,y:mid-1.9,w:sw,h:0.82,fontSize:40,bold:true,color:G2,fontFace:F,align:'center',charSpacing:-1.2});
+        s.addText(l.toUpperCase(),{x:sx,y:mid-1.08,w:sw,h:0.3,fontSize:7.5,color:'4a6f8a',fontFace:F,align:'center',charSpacing:1.2});
+      });
+
+      s.addShape('rect',{x:(W-0.4)/2,y:mid-0.62,w:0.4,h:0.04,fill:{color:GREEN},line:{color:GREEN,width:0}});
+
+      s.addText([
+        {text:'"La pregunta no es si el ISSS necesita esto.\nLa pregunta es ',options:{color:WHITE}},
+        {text:'cuántas filas más tienen que hacer\nnuestras abuelas',options:{color:G2}},
+        {text:' antes de que alguien lo construya."',options:{color:WHITE}}
+      ],{x:(W-7.8)/2,y:mid-0.46,w:7.8,h:1.9,fontSize:15.5,bold:true,fontFace:F,align:'center',lineSpacingMultiple:1.45});
+
+      s.addText('KENNETH RODAS · UNIVERSIDAD MÓNICA HERRERA · BOOTJAM 2026',
+        {x:0.45,y:H-0.5,w:W-0.9,h:0.32,fontSize:7.5,color:'1a3a5c',fontFace:F,align:'center',charSpacing:1.5});
+    }
+
+    lbl.textContent='Guardando…';
+    await pptx.writeFile({fileName:'ISSS-BootJAM-2026.pptx'});
+  } catch(e){alert('Error PPTX: '+e.message);}
+  finally{btn.disabled=false;lbl.textContent='Descargar PPTX';}
 });
 </script>
 </body>
