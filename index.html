@@ -261,17 +261,10 @@ body {
 .cal-nav:hover  { background: var(--bg); }
 .cal-month-label { font-size: 17px; font-weight: 800; }
 .cal-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 0; }
-.cal-dn {
-  height: 36px; display: flex; align-items: center; justify-content: center;
-  font-size: 12px; font-weight: 700; color: var(--muted);
-}
+.cal-dn { text-align: center; font-size: 12px; font-weight: 700; color: var(--muted); padding: 6px 0 8px; }
 .cal-d {
-  height: 100%;
-  width: 100%;
-  max-width: 44px;
-  justify-self: center;
+  height: 44px;
   display: flex; align-items: center; justify-content: center;
-  flex-direction: column;
   border-radius: 50%; font-size: 15px; font-weight: 600;
   cursor: default; position: relative;
   -webkit-tap-highlight-color: transparent;
@@ -713,7 +706,7 @@ body {
 <!-- ═══════════════════════════ HOME ═══════════════════════════ -->
 <div class="view" id="view-home">
   <div class="home-topbar">
-    <img src="https://1rdekw89rj.ucarecdn.net/10a0d7a7-5a0a-42fd-9f65-0a64ba5537ab/ISSSLogo.svg" alt="ISSS"
+    <img src="https://1rdekw89rj.ucarecd.net/10a0d7a7-5a0a-42fd-9f65-0a64ba5537ab/ISSSLogo.svg" alt="ISSS"
          onerror="this.outerHTML='<span style=\'color:#fff;font-weight:900;font-size:18px\'>ISSS</span>'">
     <div class="htb-actions">
       <button class="htb-btn" id="bell-btn" title="Notificaciones" onclick="requestNotifications()"><i class="bi bi-bell"></i></button>
@@ -814,7 +807,7 @@ body {
 <!-- ═══ STEP 3 — FECHA / HORA ═══ -->
 <div class="view" id="view-step3">
   <div class="topbar">
-    <button class="back-btn" onclick="showView('view-step2')"><i class="bi bi-arrow-left"></i> Centro</button>
+    <button class="back-btn" id="step3-back-btn" onclick="showView('view-step2')"><i class="bi bi-arrow-left"></i> Centro</button>
     <div class="topbar-center">
 <span class="topbar-title">Fecha y hora</span>
     </div>
@@ -1317,6 +1310,14 @@ function goStep3(){
   renderCal();
   document.getElementById('time-section').style.display='none';
   document.getElementById('btn3').disabled=true;
+  const backBtn=document.getElementById('step3-back-btn');
+  if(S.rescheduleId){
+    backBtn.onclick=()=>{ S.rescheduleId=null; showView('view-appointments'); };
+    backBtn.innerHTML='<i class="bi bi-x"></i> Cancelar';
+  } else {
+    backBtn.onclick=()=>showView('view-step2');
+    backBtn.innerHTML='<i class="bi bi-arrow-left"></i> Centro';
+  }
   showView('view-step3');
 }
 
