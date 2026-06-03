@@ -1543,7 +1543,7 @@ function renderAppts(){
     const badge=tod
       ?`<span class="chip chip-green" style="font-size:12px"><i class="bi bi-circle-fill" style="font-size:8px"></i> Hoy</span>`
       :`<span class="chip chip-navy" style="font-size:12px"><i class="bi bi-check-circle"></i> Confirmada</span>`;
-    const famBadge=a.forFamiliar?`<div style="margin-top:6px"><span class="chip chip-sky" style="font-size:12px"><i class="bi bi-people"></i> ${a.patient}</span></div>`:'';
+    const famBadge=a.forFamiliar?`<div style="margin-top:6px"><span class="chip chip-navy" style="font-size:12px"><i class="bi bi-people"></i> ${a.patient}</span></div>`:'';
     return`<div class="appt-item si" style="animation-delay:${i*70}ms">
     <div class="appt-item-head">
       <div><div style="font-size:15px;font-weight:800">${iconEl(a.specIcon)} ${a.spec}</div><div style="font-size:12px;opacity:.65;margin-top:2px">${a.date}</div>${famBadge}</div>
@@ -1555,7 +1555,7 @@ function renderAppts(){
       <div class="appt-row"><i class="bi bi-upc-scan"></i><strong>${a.code}</strong></div>
       <div style="margin-top:10px;display:flex;gap:8px;flex-wrap:wrap">
         ${tod?`<button class="btn btn-primary btn-sm" onclick="showView('view-queue')"><i class="bi bi-hourglass-split"></i> Ver turno</button>`:''}
-        <button class="btn btn-outline btn-sm" onclick="openCancel('${a.id}')"><i class="bi bi-calendar2-x"></i> Gestionar</button>
+        <button class="btn btn-outline btn-sm" onclick="openCancel('${a.id}')"><i class="bi bi-sliders"></i> Gestionar</button>
       </div>
     </div>
   </div>`;}).join('');
@@ -1722,7 +1722,7 @@ function openDetail(id,back){
   </div>
   <div style="display:flex;flex-direction:column;gap:10px;margin-top:4px">
     ${tod?`<button class="btn btn-primary" onclick="showView('view-queue')"><i class="bi bi-hourglass-split"></i> Ver turno en vivo</button>`:''}
-    <button class="btn btn-outline" onclick="openCancel('${a.id}')"><i class="bi bi-calendar2-x"></i> Gestionar cita</button>
+    <button class="btn btn-outline" onclick="openCancel('${a.id}')"><i class="bi bi-sliders"></i> Gestionar cita</button>
   </div>`;
   showView('view-detail');
 }
