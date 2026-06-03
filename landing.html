@@ -1,0 +1,420 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <meta name="theme-color" content="#002B5C">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="ISSS Citas">
+  <link rel="icon" href="https://cdn.brandfetch.io/id8LwMLHOF/w/400/h/400/theme/dark/icon.jpeg?c=1bxid64Mup7aczewSAYMX&t=1771715114286" type="image/jpeg">
+  <link rel="apple-touch-icon" href="https://cdn.brandfetch.io/id8LwMLHOF/w/400/h/400/theme/dark/icon.jpeg?c=1bxid64Mup7aczewSAYMX&t=1771715114286">
+  <link rel="manifest" href="manifest.json">
+  <title>ISSS Digital — Instalar</title>
+  <style>
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+
+    :root{
+      --navy:  #002B5C;
+      --navy2: #003F85;
+      --green: #059669;
+      --g2:    #34D399;
+      --light: #F4F7FB;
+      --nbg:   #EBF2FA;
+      --white: #FFFFFF;
+      --slate: #475569;
+      --text:  #0D1B2A;
+      --bd:    #E2E8F0;
+    }
+
+    html,body{
+      min-height:100%;
+      font-family:-apple-system,BlinkMacSystemFont,'Inter','Segoe UI',system-ui,sans-serif;
+      background:var(--light);
+      color:var(--text);
+      -webkit-tap-highlight-color:transparent;
+    }
+
+    /* ─── HERO ──────────────────────────────────── */
+    .hero{
+      background:var(--navy);
+      padding:env(safe-area-inset-top,0px) 0 0;
+      display:flex;flex-direction:column;align-items:center;
+      text-align:center;
+      position:relative;overflow:hidden;
+    }
+    .hero-inner{ padding:44px 24px 60px; position:relative;z-index:1;width:100%; }
+    .hero::before{
+      content:'';position:absolute;
+      width:340px;height:340px;
+      background:rgba(255,255,255,.025);border-radius:50%;
+      right:-100px;top:-100px;pointer-events:none;
+    }
+    .hero::after{
+      content:'';position:absolute;
+      width:160px;height:160px;
+      background:rgba(5,150,105,.08);border-radius:50%;
+      left:-40px;bottom:-40px;pointer-events:none;
+    }
+
+    /* ISSS wordmark badge */
+    .hero-wordmark{
+      display:inline-flex;align-items:center;gap:6px;
+      margin-bottom:30px;
+    }
+    .wordmark-isss{
+      font-size:13px;font-weight:900;color:white;letter-spacing:2px;
+    }
+    .wordmark-sep{ width:1px;height:12px;background:rgba(255,255,255,.2); }
+    .wordmark-tag{
+      font-size:10px;font-weight:600;letter-spacing:1px;text-transform:uppercase;
+      color:rgba(255,255,255,.35);
+    }
+
+    /* App icon */
+    .hero-icon{
+      width:92px;height:92px;border-radius:22px;overflow:hidden;
+      box-shadow:0 12px 40px rgba(0,0,0,.35),0 0 0 1px rgba(255,255,255,.08);
+      margin:0 auto 20px;
+      background:var(--navy2);
+      display:flex;align-items:center;justify-content:center;
+    }
+    .hero-icon img{ width:100%;height:100%;object-fit:cover;display:block; }
+    .hero-icon-fallback{
+      font-size:32px;font-weight:900;color:white;letter-spacing:-1px;
+    }
+
+    .hero-name{
+      font-size:26px;font-weight:900;color:white;
+      letter-spacing:-0.5px;line-height:1.1;margin-bottom:8px;
+    }
+    .hero-name em{font-style:normal;color:var(--g2);}
+
+    .hero-sub{
+      font-size:14.5px;color:rgba(255,255,255,.5);
+      line-height:1.55;max-width:270px;margin:0 auto 26px;
+    }
+
+    .pills{display:flex;gap:7px;flex-wrap:wrap;justify-content:center;}
+    .pill{
+      background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);
+      border-radius:99px;padding:4px 11px;
+      font-size:11px;font-weight:600;color:rgba(255,255,255,.55);
+      display:flex;align-items:center;gap:5px;
+    }
+    .pill-dot{width:5px;height:5px;background:var(--g2);border-radius:50%;flex-shrink:0;}
+
+    /* ─── INSTALL CARD ───────────────────────────── */
+    .card-wrap{
+      padding:0 14px;
+      margin-top:-22px;
+      position:relative;z-index:10;
+    }
+    .card{
+      background:var(--white);
+      border:1px solid var(--bd);
+      border-radius:20px;
+      padding:22px;
+      box-shadow:0 8px 32px rgba(0,43,92,.1),0 2px 6px rgba(0,0,0,.05);
+    }
+
+    .card-title{ font-size:17px;font-weight:800;color:var(--text);margin-bottom:5px; }
+    .card-sub{ font-size:13px;color:var(--slate);line-height:1.5;margin-bottom:20px; }
+
+    /* Android / Desktop install button */
+    .btn-install{
+      width:100%;display:flex;align-items:center;justify-content:center;gap:10px;
+      background:var(--navy);color:white;
+      border:none;border-radius:14px;
+      padding:15px 20px;
+      font-family:inherit;font-size:16px;font-weight:700;
+      cursor:pointer;
+      box-shadow:0 4px 20px rgba(0,43,92,.3);
+      transition:background .15s,transform .1s;
+      -webkit-tap-highlight-color:transparent;
+    }
+    .btn-install:active{background:var(--navy2);transform:scale(.98);}
+    .btn-install:disabled{opacity:.65;cursor:wait;}
+
+    /* iOS steps */
+    .ios-steps{display:flex;flex-direction:column;gap:14px;}
+    .ios-step{display:flex;align-items:flex-start;gap:11px;}
+    .step-num{
+      width:23px;height:23px;border-radius:50%;
+      background:var(--navy);color:white;
+      font-size:10.5px;font-weight:700;
+      display:flex;align-items:center;justify-content:center;
+      flex-shrink:0;margin-top:1px;
+    }
+    .step-text{font-size:13.5px;color:var(--text);line-height:1.55;}
+    .step-text strong{font-weight:700;}
+    .step-badge{
+      display:inline-flex;align-items:center;gap:3px;
+      background:var(--nbg);border-radius:6px;
+      padding:2px 6px;margin:0 1px;
+      vertical-align:middle;color:var(--navy);
+    }
+    .step-badge svg{display:block;}
+
+    /* Installed success */
+    .success{display:flex;flex-direction:column;align-items:center;gap:14px;text-align:center;}
+    .success-ring{
+      width:54px;height:54px;border-radius:50%;
+      background:#ECFDF5;
+      display:flex;align-items:center;justify-content:center;
+    }
+    .success-title{font-size:17px;font-weight:800;color:var(--text);}
+    .success-sub{font-size:13px;color:var(--slate);line-height:1.5;}
+    .btn-open{
+      width:100%;display:flex;align-items:center;justify-content:center;gap:9px;
+      background:var(--green);color:white;text-decoration:none;
+      border-radius:14px;padding:15px 20px;
+      font-size:16px;font-weight:700;
+      transition:background .15s;
+    }
+    .btn-open:active{background:#047857;}
+
+    /* ─── FEATURES ───────────────────────────────── */
+    .features{padding:22px 14px 14px;}
+    .section-label{
+      font-size:11px;font-weight:700;letter-spacing:1.2px;text-transform:uppercase;
+      color:var(--slate);text-align:center;margin-bottom:14px;
+    }
+    .feat-list{display:flex;flex-direction:column;gap:10px;}
+    .feat{
+      display:flex;align-items:center;gap:14px;
+      background:var(--white);border:1px solid var(--bd);border-radius:14px;
+      padding:13px 15px;
+    }
+    .feat-ico{
+      width:40px;height:40px;border-radius:11px;
+      background:var(--nbg);color:var(--navy);
+      display:flex;align-items:center;justify-content:center;
+      flex-shrink:0;
+    }
+    .feat-label{font-size:13.5px;font-weight:700;color:var(--text);margin-bottom:2px;}
+    .feat-desc{font-size:11.5px;color:var(--slate);line-height:1.45;}
+
+    /* ─── FOOTER ─────────────────────────────────── */
+    .footer{
+      padding:18px 16px calc(28px + env(safe-area-inset-bottom,0px));
+      text-align:center;font-size:10.5px;color:rgba(0,0,0,.22);line-height:1.7;
+    }
+
+    .hidden{display:none!important;}
+  </style>
+</head>
+<body>
+
+<!-- ── HERO ─────────────────────────────────────── -->
+<div class="hero">
+  <div class="hero-inner">
+    <div class="hero-wordmark">
+      <span class="wordmark-isss">ISSS</span>
+      <span class="wordmark-sep"></span>
+      <span class="wordmark-tag">Salud pública digital</span>
+    </div>
+
+    <div class="hero-icon">
+      <img
+        src="https://cdn.brandfetch.io/id8LwMLHOF/w/400/h/400/theme/dark/icon.jpeg?c=1bxid64Mup7aczewSAYMX&t=1771715114286"
+        alt="ISSS"
+        onerror="this.style.display='none'">
+    </div>
+
+    <div class="hero-name">ISSS <em>Digital</em></div>
+    <div class="hero-sub">Tu cita médica en 90 segundos.<br>Sin filas. Sin llamadas. Sin madrugar.</div>
+
+    <div class="pills">
+      <span class="pill"><span class="pill-dot"></span>Sin descarga</span>
+      <span class="pill"><span class="pill-dot"></span>Funciona offline</span>
+      <span class="pill"><span class="pill-dot"></span>100% gratuito</span>
+    </div>
+  </div>
+</div>
+
+<!-- ── INSTALL CARD ────────────────────────────── -->
+<div class="card-wrap">
+  <div class="card">
+
+    <!-- STATE: Android / Chrome — native install prompt -->
+    <div id="s-android" class="hidden">
+      <div class="card-title">Agregar a pantalla de inicio</div>
+      <div class="card-sub">Un toque y tendrás ISSS Digital en tu teléfono, sin pasar por ninguna tienda de apps.</div>
+      <button class="btn-install" id="btn-install">
+        <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+          <rect x="5" y="2" width="14" height="20" rx="2"/>
+          <circle cx="12" cy="17" r="1"/>
+        </svg>
+        Agregar a pantalla de inicio
+      </button>
+    </div>
+
+    <!-- STATE: iOS Safari — manual steps -->
+    <div id="s-ios" class="hidden">
+      <div class="card-title">Instalar en iPhone o iPad</div>
+      <div class="card-sub">Safari te permite guardar esta app sin el App Store.</div>
+      <div class="ios-steps">
+        <div class="ios-step">
+          <div class="step-num">1</div>
+          <div class="step-text">
+            Toca
+            <span class="step-badge">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12v8a2 2 0 002 2h12a2 2 0 002-2v-8"/><polyline points="16 6 12 2 8 6"/><line x1="12" y1="2" x2="12" y2="15"/></svg>
+              Compartir
+            </span>
+            en la barra inferior de Safari.
+          </div>
+        </div>
+        <div class="ios-step">
+          <div class="step-num">2</div>
+          <div class="step-text">
+            Desplázate y toca
+            <span class="step-badge">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5H9a2 2 0 00-2 2v12a2 2 0 002 2h6a2 2 0 002-2v-3M9 12h9M15 9l3 3-3 3"/></svg>
+              Agregar a pantalla de inicio
+            </span>.
+          </div>
+        </div>
+        <div class="ios-step">
+          <div class="step-num">3</div>
+          <div class="step-text">Confirma tocando <strong>"Agregar"</strong> arriba a la derecha. ¡Listo!</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- STATE: Already installed / Standalone -->
+    <div id="s-installed" class="hidden">
+      <div class="success">
+        <div class="success-ring">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#059669" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>
+        </div>
+        <div>
+          <div class="success-title">Ya está instalada</div>
+          <div class="success-sub">ISSS Digital está en tu pantalla de inicio y lista para usar.</div>
+        </div>
+        <a href="./index.html" class="btn-open">
+          Abrir ISSS Digital
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+        </a>
+      </div>
+    </div>
+
+    <!-- STATE: Fallback (desktop, other browser, already dismissed) -->
+    <div id="s-default" class="hidden">
+      <div class="card-title">Disponible como app</div>
+      <div class="card-sub">Abre esta página en <strong>Chrome</strong> (Android) o <strong>Safari</strong> (iPhone) para agregar ISSS Digital a tu pantalla de inicio sin descargar nada.</div>
+      <a href="./index.html" class="btn-open" style="margin-top:4px">
+        Continuar en el navegador
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+      </a>
+    </div>
+
+  </div>
+</div>
+
+<!-- ── FEATURES ────────────────────────────────── -->
+<div class="features">
+  <div class="section-label">¿Por qué instalarlo?</div>
+  <div class="feat-list">
+
+    <div class="feat">
+      <div class="feat-ico">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3"/></svg>
+      </div>
+      <div>
+        <div class="feat-label">Cita en 90 segundos</div>
+        <div class="feat-desc">Especialidad → Centro médico → Fecha → comprobante QR. Sin llamadas ni filas.</div>
+      </div>
+    </div>
+
+    <div class="feat">
+      <div class="feat-ico">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="7" r="3"/><path d="M3 20v-1a6 6 0 0112 0v1"/><circle cx="17" cy="8" r="2.5"/><path d="M21 20v-1a4 4 0 00-5.6-3.7"/></svg>
+      </div>
+      <div>
+        <div class="feat-label">Agenda para toda la familia</div>
+        <div class="feat-desc">Gestiona las citas de tus adultos mayores. El QR se comparte directamente por WhatsApp.</div>
+      </div>
+    </div>
+
+    <div class="feat">
+      <div class="feat-ico">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1018 0 9 9 0 00-18 0"/><path d="M3 12h4M17 12h4M12 3v4M12 17v4"/></svg>
+      </div>
+      <div>
+        <div class="feat-label">Sin App Store, sin datos extra</div>
+        <div class="feat-desc">Es una PWA. Se instala desde el navegador, pesa poco y funciona sin conexión.</div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ── FOOTER ──────────────────────────────────── -->
+<div class="footer">
+  ISSS Digital · BootJAM 2026 · Universidad Mónica Herrera<br>
+  Solución de citas médicas para la salud pública de El Salvador
+</div>
+
+<script>
+if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.register('./sw.js').catch(() => {});
+}
+
+const sAndroid   = document.getElementById('s-android');
+const sIOS       = document.getElementById('s-ios');
+const sInstalled = document.getElementById('s-installed');
+const sDefault   = document.getElementById('s-default');
+const btnInstall = document.getElementById('btn-install');
+
+let deferredPrompt = null;
+
+const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
+const isStandalone = window.navigator.standalone === true
+                  || window.matchMedia('(display-mode: standalone)').matches;
+
+function show(el) {
+  [sAndroid, sIOS, sInstalled, sDefault].forEach(s => s.classList.add('hidden'));
+  el.classList.remove('hidden');
+}
+
+// Determine initial state
+if (isStandalone) {
+  show(sInstalled);
+} else if (isIOS) {
+  show(sIOS);
+} else {
+  // Android/Chrome/Edge: wait for the browser's install prompt
+  window.addEventListener('beforeinstallprompt', e => {
+    e.preventDefault();
+    deferredPrompt = e;
+    show(sAndroid);
+  });
+
+  // If no prompt fires within 600ms → show fallback (desktop, dismissed, not eligible)
+  setTimeout(() => {
+    if (sAndroid.classList.contains('hidden') && sInstalled.classList.contains('hidden')) {
+      show(sDefault);
+    }
+  }, 600);
+}
+
+btnInstall.addEventListener('click', async () => {
+  if (!deferredPrompt) return;
+  btnInstall.disabled = true;
+  deferredPrompt.prompt();
+  const { outcome } = await deferredPrompt.userChoice;
+  deferredPrompt = null;
+  if (outcome === 'accepted') {
+    show(sInstalled);
+  } else {
+    // User dismissed — hide the card, show fallback
+    show(sDefault);
+  }
+});
+
+window.addEventListener('appinstalled', () => show(sInstalled));
+</script>
+</body>
+</html>
