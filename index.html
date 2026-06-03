@@ -11,6 +11,13 @@
   <link rel="apple-touch-icon" href="https://cdn.brandfetch.io/id8LwMLHOF/w/400/h/400/theme/dark/icon.jpeg?c=1bxid64Mup7aczewSAYMX&t=1771715114286">
   <link rel="manifest" href="manifest.json">
   <title>ISSS Digital — Instalar</title>
+  <!-- Redirect before first paint if already running as installed PWA -->
+  <script>
+    if (window.navigator.standalone === true ||
+        window.matchMedia('(display-mode: standalone)').matches) {
+      window.location.replace('./app.html');
+    }
+  </script>
   <style>
     *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 
@@ -327,7 +334,7 @@
             <div class="step-text">
               Desplázate y toca
               <span class="step-badge">
-                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5H9a2 2 0 00-2 2v12a2 2 0 002 2h6a2 2 0 002-2v-3M9 12h9M15 9l3 3-3 3"/></svg>
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="3"/><path d="M12 8v8M8 12h8"/></svg>
                 Agregar a pantalla de inicio
               </span>.
             </div>
