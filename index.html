@@ -201,6 +201,31 @@
       text-align:center;font-size:10.5px;color:rgba(0,0,0,.22);line-height:1.7;
     }
 
+    /* ─── PLATFORM TABS ─────────────────────────── */
+    .tabs{
+      display:flex;background:var(--light);border-radius:12px;
+      padding:4px;gap:4px;margin-bottom:20px;
+    }
+    .tab{
+      flex:1;display:flex;align-items:center;justify-content:center;gap:7px;
+      padding:9px 10px;border:none;border-radius:9px;
+      background:transparent;
+      font-family:inherit;font-size:13px;font-weight:600;color:var(--slate);
+      cursor:pointer;transition:all .18s;
+      -webkit-tap-highlight-color:transparent;
+    }
+    .tab.active{
+      background:var(--white);color:var(--text);
+      box-shadow:0 1px 4px rgba(0,0,0,.1);
+    }
+    .tab svg{ flex-shrink:0; }
+
+    .no-prompt{
+      margin-top:12px;padding:10px 14px;
+      background:var(--nbg);border-radius:10px;
+      font-size:12.5px;color:var(--slate);line-height:1.5;text-align:center;
+    }
+
     .skip-link{
       display:flex;align-items:center;justify-content:center;gap:6px;
       margin-top:14px;padding:10px;
@@ -245,50 +270,75 @@
 <div class="card-wrap">
   <div class="card">
 
-    <!-- STATE: Android / Chrome — native install prompt -->
-    <div id="s-android" class="hidden">
-      <div class="card-title">Agregar a pantalla de inicio</div>
-      <div class="card-sub">Un toque y tendrás ISSS Digital en tu teléfono, sin pasar por ninguna tienda de apps.</div>
-      <button class="btn-install" id="btn-install">
-        <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-          <rect x="5" y="2" width="14" height="20" rx="2"/>
-          <circle cx="12" cy="17" r="1"/>
-        </svg>
-        Agregar a pantalla de inicio
-      </button>
-    </div>
+    <!-- STATE: Install (Android + iOS tabs) -->
+    <div id="s-install" class="hidden">
 
-    <!-- STATE: iOS Safari — manual steps -->
-    <div id="s-ios" class="hidden">
-      <div class="card-title">Instalar en iPhone o iPad</div>
-      <div class="card-sub">Safari te permite guardar esta app sin el App Store.</div>
-      <div class="ios-steps">
-        <div class="ios-step">
-          <div class="step-num">1</div>
-          <div class="step-text">
-            Toca
-            <span class="step-badge">
-              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12v8a2 2 0 002 2h12a2 2 0 002-2v-8"/><polyline points="16 6 12 2 8 6"/><line x1="12" y1="2" x2="12" y2="15"/></svg>
-              Compartir
-            </span>
-            en la barra inferior de Safari.
-          </div>
-        </div>
-        <div class="ios-step">
-          <div class="step-num">2</div>
-          <div class="step-text">
-            Desplázate y toca
-            <span class="step-badge">
-              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5H9a2 2 0 00-2 2v12a2 2 0 002 2h6a2 2 0 002-2v-3M9 12h9M15 9l3 3-3 3"/></svg>
-              Agregar a pantalla de inicio
-            </span>.
-          </div>
-        </div>
-        <div class="ios-step">
-          <div class="step-num">3</div>
-          <div class="step-text">Confirma tocando <strong>"Agregar"</strong> arriba a la derecha. ¡Listo!</div>
+      <!-- Platform selector -->
+      <div class="tabs">
+        <button class="tab" id="tab-btn-android">
+          <!-- Android robot icon -->
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+            <path d="M7.2 9.8C6.54 9.8 6 10.34 6 11v4.4c0 .66.54 1.2 1.2 1.2s1.2-.54 1.2-1.2V11c0-.66-.54-1.2-1.2-1.2zm9.6 0c-.66 0-1.2.54-1.2 1.2v4.4c0 .66.54 1.2 1.2 1.2s1.2-.54 1.2-1.2V11c0-.66-.54-1.2-1.2-1.2zM15.53 3.16l.97-1.68c.06-.11.02-.24-.09-.3-.11-.06-.25-.02-.3.09l-.99 1.71A5.97 5.97 0 0012 2.4c-1.14 0-2.2.31-3.12.78L7.89 1.47c-.06-.11-.2-.15-.3-.09-.11.06-.15.2-.09.3l.97 1.68A5.944 5.944 0 006 8.4v.6h12v-.6c0-2-1.01-3.77-2.47-4.84zM10 6.6H9V5.4h1v1.2zm5 0h-1V5.4h1v1.2zM6.6 9.6h10.8v9c0 .66-.54 1.2-1.2 1.2H7.8c-.66 0-1.2-.54-1.2-1.2v-9z"/>
+          </svg>
+          Android
+        </button>
+        <button class="tab" id="tab-btn-ios">
+          <!-- Apple icon -->
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+            <path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.8-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M13 3.5c.73-.83 1.94-1.46 2.94-1.5.13 1.17-.34 2.35-1.04 3.19-.69.85-1.83 1.51-2.95 1.42-.15-1.15.41-2.35 1.05-3.11z"/>
+          </svg>
+          iPhone / iPad
+        </button>
+      </div>
+
+      <!-- Android tab content -->
+      <div id="tab-android">
+        <div class="card-title">Agregar a pantalla de inicio</div>
+        <div class="card-sub">Un toque y tendrás ISSS Digital en tu teléfono, sin pasar por ninguna tienda de apps.</div>
+        <button class="btn-install" id="btn-install">
+          <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="5" y="2" width="14" height="20" rx="2"/><circle cx="12" cy="17" r="1"/>
+          </svg>
+          Agregar a pantalla de inicio
+        </button>
+        <div id="no-prompt-msg" class="no-prompt hidden">
+          Abre esta página en <strong>Chrome</strong> para instalar la app directamente desde el navegador.
         </div>
       </div>
+
+      <!-- iOS tab content -->
+      <div id="tab-ios" class="hidden">
+        <div class="card-title">Instalar en iPhone o iPad</div>
+        <div class="card-sub">Safari te permite guardar esta app sin el App Store.</div>
+        <div class="ios-steps">
+          <div class="ios-step">
+            <div class="step-num">1</div>
+            <div class="step-text">
+              Toca
+              <span class="step-badge">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12v8a2 2 0 002 2h12a2 2 0 002-2v-8"/><polyline points="16 6 12 2 8 6"/><line x1="12" y1="2" x2="12" y2="15"/></svg>
+                Compartir
+              </span>
+              en la barra inferior de Safari.
+            </div>
+          </div>
+          <div class="ios-step">
+            <div class="step-num">2</div>
+            <div class="step-text">
+              Desplázate y toca
+              <span class="step-badge">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5H9a2 2 0 00-2 2v12a2 2 0 002 2h6a2 2 0 002-2v-3M9 12h9M15 9l3 3-3 3"/></svg>
+                Agregar a pantalla de inicio
+              </span>.
+            </div>
+          </div>
+          <div class="ios-step">
+            <div class="step-num">3</div>
+            <div class="step-text">Confirma tocando <strong>"Agregar"</strong> arriba a la derecha. ¡Listo!</div>
+          </div>
+        </div>
+      </div>
+
     </div>
 
     <!-- STATE: Already installed / Standalone -->
@@ -376,11 +426,16 @@ if ('serviceWorker' in navigator) {
   navigator.serviceWorker.register('./sw.js').catch(() => {});
 }
 
-const sAndroid   = document.getElementById('s-android');
-const sIOS       = document.getElementById('s-ios');
-const sInstalled = document.getElementById('s-installed');
-const sDefault   = document.getElementById('s-default');
-const btnInstall = document.getElementById('btn-install');
+const sInstall    = document.getElementById('s-install');
+const sInstalled  = document.getElementById('s-installed');
+const sDefault    = document.getElementById('s-default');
+const skipLink    = document.getElementById('skip-link');
+const btnInstall  = document.getElementById('btn-install');
+const noPromptMsg = document.getElementById('no-prompt-msg');
+const tabAndroid  = document.getElementById('tab-android');
+const tabIOS      = document.getElementById('tab-ios');
+const btnAndroid  = document.getElementById('tab-btn-android');
+const btnIOS      = document.getElementById('tab-btn-ios');
 
 let deferredPrompt = null;
 
@@ -388,52 +443,64 @@ const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
 const isStandalone = window.navigator.standalone === true
                   || window.matchMedia('(display-mode: standalone)').matches;
 
-const skipLink = document.getElementById('skip-link');
-
-function show(el) {
-  [sAndroid, sIOS, sInstalled, sDefault].forEach(s => s.classList.add('hidden'));
+function showMain(el) {
+  [sInstall, sInstalled, sDefault].forEach(s => s.classList.add('hidden'));
   el.classList.remove('hidden');
-  // Hide skip link when installed state is showing (redundant) or default (has its own CTA)
   skipLink.classList.toggle('hidden', el === sInstalled || el === sDefault);
 }
 
-// Determine initial state
+function switchTab(os) {
+  const toAndroid = os === 'android';
+  tabAndroid.classList.toggle('hidden', !toAndroid);
+  tabIOS.classList.toggle('hidden', toAndroid);
+  btnAndroid.classList.toggle('active', toAndroid);
+  btnIOS.classList.toggle('active', !toAndroid);
+}
+
+// Manual tab clicks — user can always override auto-detection
+btnAndroid.addEventListener('click', () => switchTab('android'));
+btnIOS.addEventListener('click', () => switchTab('ios'));
+
+// ── Initial state ──────────────────────────────
 if (isStandalone) {
-  // Already running as installed PWA — go straight to the app
   window.location.replace('./app.html');
 } else if (isIOS) {
-  show(sIOS);
+  showMain(sInstall);
+  switchTab('ios');
 } else {
-  // Android/Chrome/Edge: wait for the browser's install prompt
+  showMain(sInstall);
+  switchTab('android');
+
   window.addEventListener('beforeinstallprompt', e => {
     e.preventDefault();
     deferredPrompt = e;
-    show(sAndroid);
+    noPromptMsg.classList.add('hidden');
   });
 
-  // If no prompt fires within 600ms → show fallback (desktop, dismissed, not eligible)
+  // No install prompt after 700ms → user is on desktop / already dismissed
   setTimeout(() => {
-    if (sAndroid.classList.contains('hidden') && sInstalled.classList.contains('hidden')) {
-      show(sDefault);
-    }
-  }, 600);
+    if (!deferredPrompt) noPromptMsg.classList.remove('hidden');
+  }, 700);
 }
 
+// ── Install button ─────────────────────────────
 btnInstall.addEventListener('click', async () => {
-  if (!deferredPrompt) return;
+  if (!deferredPrompt) {
+    noPromptMsg.classList.remove('hidden');
+    return;
+  }
   btnInstall.disabled = true;
   deferredPrompt.prompt();
   const { outcome } = await deferredPrompt.userChoice;
   deferredPrompt = null;
   if (outcome === 'accepted') {
-    show(sInstalled);
+    showMain(sInstalled);
   } else {
-    // User dismissed — hide the card, show fallback
-    show(sDefault);
+    btnInstall.disabled = false;
   }
 });
 
-window.addEventListener('appinstalled', () => show(sInstalled));
+window.addEventListener('appinstalled', () => showMain(sInstalled));
 </script>
 </body>
 </html>
