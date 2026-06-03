@@ -730,7 +730,7 @@ body {
     <img src="https://1rdekw89rj.ucarecd.net/10a0d7a7-5a0a-42fd-9f65-0a64ba5537ab/ISSSLogo.svg" alt="ISSS"
          onerror="this.outerHTML='<span style=\'color:#fff;font-weight:900;font-size:18px\'>ISSS</span>'">
     <div class="htb-actions">
-      <button class="htb-btn" id="bell-btn" title="Notificaciones" onclick="requestNotifications()"><i class="bi bi-bell"></i></button>
+      <button class="htb-btn" id="settings-btn" title="Configuración" onclick="openSettings()"><i class="bi bi-gear"></i></button>
     </div>
   </div>
   <div class="home-hero">
@@ -1229,6 +1229,7 @@ function doLogin(){
     S.relatives=[...DEMO_RELS.map(r=>({...r}))];
   }
   save(); initHome(); showView('view-home');
+  setTimeout(maybeShowNotifBanner, 1200);
 }
 
 function doRegister(){
@@ -1301,10 +1302,10 @@ function renderQaGrid(){
   const items=[
     {icon:'bi-calendar2-check',label:'Mis citas',  fn:"showView('view-appointments')"},
     today?{icon:'bi-hourglass-split',label:'Mi turno',fn:"showView('view-queue')"}:null,
-    {icon:'bi-people',          label:'Familiares', fn:"showView('view-relatives')"},
+    {icon:'bi-people',          label:'Familiares', fn:"showView('view-relatives')", id:'qa-familiares'},
   ].filter(Boolean);
   document.getElementById('qa-grid').innerHTML=items.map(it=>
-    `<div class="qa-item" onclick="${it.fn}"><i class="bi ${it.icon} qa-icon"></i><div class="qa-label">${it.label}</div></div>`
+    `<div class="qa-item"${it.id?' id="'+it.id+'"':''} onclick="${it.fn}"><i class="bi ${it.icon} qa-icon"></i><div class="qa-label">${it.label}</div></div>`
   ).join('');
 }
 
@@ -1766,29 +1767,55 @@ function showToast(msg,dur=2800){
   _toastT=setTimeout(()=>{el.style.display='none'},dur);
 }
 
-// ─── NOTIFICATIONS ───
-function requestNotifications(){
-  const btn=document.getElementById('bell-btn');
+// ─── SETTINGS ───
+function openSettings(){
+  const perm=('Notification' in window)?Notification.permission:'denied';
+  document.getElementById('sett-notif-status').textContent=
+    perm==='granted'?'Activadas':'No activadas';
+  document.getElementById('sett-notif-btn').textContent=
+    perm==='granted'?'Notificaciones activas ✓':'Activar notificaciones';
+  document.getElementById('sett-notif-btn').disabled=(perm==='granted');
+  const u=S.user;
+  document.getElementById('sett-name').textContent=u?.name||'—';
+  document.getElementById('sett-dui').textContent=u?.dui||'—';
+  document.getElementById('settings-sheet').classList.add('open');
+}
+function closeSettings(){
+  document.getElementById('settings-sheet').classList.remove('open');
+}
+function settingsRequestNotif(){
   if(!('Notification' in window)){showToast('Su navegador no soporta notificaciones');return;}
-  if(Notification.permission==='granted'){
-    btn.innerHTML='<i class="bi bi-bell-fill"></i>';
-    new Notification('ISSS Citas',{
-      body:'Notificaciones activas. Le avisaremos de sus próximas citas.',
-      icon:'https://cdn.brandfetch.io/id8LwMLHOF/w/400/h/400/theme/dark/icon.jpeg?c=1bxid64Mup7aczewSAYMX&t=1771715114286'
-    });
-    showToast('Notificaciones ya están activas ✓');
-    return;
-  }
   Notification.requestPermission().then(p=>{
     if(p==='granted'){
-      btn.innerHTML='<i class="bi bi-bell-fill"></i>';
       showToast('Notificaciones activadas ✓');
-      new Notification('ISSS Citas',{
-        body:'¡Listo! Le avisaremos antes de sus citas médicas.',
-        icon:'https://cdn.brandfetch.io/id8LwMLHOF/w/400/h/400/theme/dark/icon.jpeg?c=1bxid64Mup7aczewSAYMX&t=1771715114286'
-      });
-    } else {
-      showToast('Notificaciones denegadas');
+      new Notification('ISSS Citas',{body:'¡Listo! Le avisaremos antes de sus citas.',icon:'https://cdn.brandfetch.io/id8LwMLHOF/w/400/h/400/theme/dark/icon.jpeg?c=1bxid64Mup7aczewSAYMX&t=1771715114286'});
+      document.getElementById('sett-notif-status').textContent='Activadas';
+      document.getElementById('sett-notif-btn').textContent='Notificaciones activas ✓';
+      document.getElementById('sett-notif-btn').disabled=true;
+      dismissNotifBanner();
+    } else { showToast('Permiso denegado'); }
+  });
+}
+function doLogout(){
+  closeSettings();
+  S.user=null; save(); showView('view-login');
+}
+
+// ─── NOTIF BANNER ───
+function maybeShowNotifBanner(){
+  if(!('Notification' in window)||Notification.permission==='granted'||Notification.permission==='denied') return;
+  setTimeout(()=>document.getElementById('notif-banner').style.display='block', 800);
+}
+function dismissNotifBanner(){
+  document.getElementById('notif-banner').style.display='none';
+}
+function bannerRequestNotif(){
+  if(!('Notification' in window)) return;
+  Notification.requestPermission().then(p=>{
+    dismissNotifBanner();
+    if(p==='granted'){
+      showToast('Notificaciones activadas ✓');
+      new Notification('ISSS Citas',{body:'¡Listo! Le avisaremos antes de sus citas.',icon:'https://cdn.brandfetch.io/id8LwMLHOF/w/400/h/400/theme/dark/icon.jpeg?c=1bxid64Mup7aczewSAYMX&t=1771715114286'});
     }
   });
 }
@@ -1810,7 +1837,7 @@ load();
 if(!S.users.find(u=>u.dui===DEMO_DUI)) { S.users.push({...DEMO_USER}); save(); }
 if(S.user){
   if(!S.user.phone) S.user=null; // require re-login if old session had no phone
-  else { if(!S.users.find(u=>u.dui===S.user.dui))S.users.push(S.user); save(); initHome(); showView('view-home'); }
+  else { if(!S.users.find(u=>u.dui===S.user.dui))S.users.push(S.user); save(); initHome(); showView('view-home'); setTimeout(maybeShowNotifBanner,1200); }
 }
 
 // Register service worker for PWA
@@ -1819,9 +1846,11 @@ if('serviceWorker' in navigator){
 }
 // ─── SPOTLIGHT TUTORIAL ───
 const T_STEPS=[
-  {sel:'.next-cta',   title:'Pide tu primera cita',      desc:'Toca este botón para reservar una cita médica en 3 pasos rápidos. Elige especialidad, centro y horario.', pos:'above'},
-  {sel:'#qa-grid',    title:'Acciones rápidas',           desc:'Desde aquí puedes ver tus citas, agregar familiares y compartir tu comprobante QR por WhatsApp.', pos:'above'},
-  {sel:'.bnav',       title:'Navegación',                 desc:'Usa la barra inferior para moverte entre tus citas, historial y perfil en cualquier momento.', pos:'above'},
+  {sel:'.next-cta',    title:'Pide tu primera cita',    desc:'Toca este botón para reservar una cita médica en 3 pasos rápidos. Elige especialidad, centro y horario.'},
+  {sel:'#qa-grid',     title:'Acciones rápidas',         desc:'Acceso directo a tus citas activas y a la sala de espera virtual cuando llegues al centro médico.'},
+  {sel:'#qa-familiares',title:'Familiares',              desc:'Agrega a tu familia para gestionar sus citas. Ellos solo se presentan a la hora indicada, sin app.'},
+  {sel:'.bnav',        title:'Navegación',               desc:'Usa la barra inferior para ir a tus citas, tu historial de consultas y tu perfil desde cualquier pantalla.'},
+  {sel:'#settings-btn',title:'Configuración',            desc:'Aquí puedes ver tu perfil, activar recordatorios de citas y cerrar sesión de forma segura.'},
 ];
 let tStep=0, tActive=false;
 
@@ -1835,60 +1864,58 @@ function renderSpotlight(){
   if(!tActive) return;
   const step=T_STEPS[tStep];
   const el=document.querySelector(step.sel);
-  const overlay=document.getElementById('tut-overlay');
   const card=document.getElementById('tut-card');
   const pulse=document.getElementById('tut-pulse');
 
   if(!el){ tutorialSkip(); return; }
 
-  // Scroll element into view before measuring (skip for fixed elements like bnav)
-  const elPos=window.getComputedStyle(el).position;
-  if(elPos!=='fixed') el.scrollIntoView({block:'nearest',behavior:'instant'});
+  // Scroll into view before measuring (skip fixed elements)
+  if(window.getComputedStyle(el).position!=='fixed')
+    el.scrollIntoView({block:'nearest',behavior:'instant'});
   const r=el.getBoundingClientRect();
   const vw=window.innerWidth, vh=window.innerHeight;
-  const pad=10;
+  const pad=10, gap=16;
   const rx=r.left-pad, ry=r.top-pad, rw=r.width+pad*2, rh=r.height+pad*2, rr=14;
 
-  // Update SVG mask cutout
-  const rect=document.getElementById('tut-hole');
-  rect.setAttribute('x', rx);
-  rect.setAttribute('y', ry);
-  rect.setAttribute('width', rw);
-  rect.setAttribute('height', rh);
-  rect.setAttribute('rx', rr);
+  // SVG cutout
+  const hole=document.getElementById('tut-hole');
+  hole.setAttribute('x',rx); hole.setAttribute('y',ry);
+  hole.setAttribute('width',rw); hole.setAttribute('height',rh);
+  hole.setAttribute('rx',rr);
 
-  // Position pulse ring
-  pulse.style.left=rx+'px';
-  pulse.style.top=ry+'px';
-  pulse.style.width=rw+'px';
-  pulse.style.height=rh+'px';
-  pulse.style.borderRadius=rr+'px';
-  pulse.style.display='block';
+  // Pulse ring
+  Object.assign(pulse.style,{left:rx+'px',top:ry+'px',width:rw+'px',height:rh+'px',borderRadius:rr+'px',display:'block'});
 
-  // Position tooltip card
-  const cardW=Math.min(320, vw-32);
-  card.style.width=cardW+'px';
-  const cardLeft=Math.max(16, Math.min(rx+(rw-cardW)/2, vw-cardW-16));
-
-  let cardTop;
-  const spaceAbove=ry-16;
-  const cardEstH=150;
-  if(spaceAbove>cardEstH || step.pos==='above'){
-    cardTop=ry-cardEstH-16;
-    if(cardTop<16) cardTop=ry+rh+16;
-  } else {
-    cardTop=ry+rh+16;
-    if(cardTop+cardEstH>vh-16) cardTop=ry-cardEstH-16;
-  }
-  card.style.left=cardLeft+'px';
-  card.style.top=Math.max(16,cardTop)+'px';
-
-  // Update card content
+  // Render card content first, measure, then position
   document.getElementById('tut-title').textContent=step.title;
   document.getElementById('tut-desc').textContent=step.desc;
   document.getElementById('tut-btn').textContent=tStep<T_STEPS.length-1?'Siguiente →':'¡Entendido!';
-  const dots=document.getElementById('tut-dots');
-  dots.innerHTML=T_STEPS.map((_,i)=>`<div style="width:${i===tStep?18:6}px;height:6px;border-radius:3px;background:${i===tStep?'#002B5C':'#E2E8F0'};transition:all .25s"></div>`).join('');
+  document.getElementById('tut-dots').innerHTML=T_STEPS.map((_,i)=>
+    `<div style="width:${i===tStep?18:6}px;height:6px;border-radius:3px;background:${i===tStep?'#002B5C':'#E2E8F0'};transition:all .25s"></div>`
+  ).join('');
+
+  const cardW=Math.min(320, vw-32);
+  card.style.width=cardW+'px';
+  card.style.visibility='hidden';
+  card.style.top='0px';
+
+  requestAnimationFrame(()=>{
+    const ch=card.offsetHeight;
+    const cardLeft=Math.max(16, Math.min(rx+(rw-cardW)/2, vw-cardW-16));
+    let cardTop;
+    // Place above hole if there's room, otherwise below
+    if(ry-gap-ch>=16){
+      cardTop=ry-gap-ch;
+    } else if(ry+rh+gap+ch<=vh-16){
+      cardTop=ry+rh+gap;
+    } else {
+      // Tight screen — go above, clamped
+      cardTop=Math.max(16, ry-gap-ch);
+    }
+    card.style.left=cardLeft+'px';
+    card.style.top=cardTop+'px';
+    card.style.visibility='visible';
+  });
 }
 
 function tutorialNext(){
@@ -1901,9 +1928,58 @@ function tutorialSkip(){
   tActive=false;
   document.getElementById('tut-overlay').style.display='none';
   document.getElementById('tut-pulse').style.display='none';
+  maybeShowNotifBanner();
 }
 window.addEventListener('resize',()=>{ if(tActive) renderSpotlight(); });
 </script>
+
+<!-- ═══ SETTINGS SHEET ═══ -->
+<div class="moverlay" id="settings-sheet" onclick="if(event.target===this)closeSettings()">
+  <div class="msheet">
+    <div style="position:relative;margin-bottom:18px"><div class="mhandle"></div><button class="mclose" onclick="closeSettings()"><i class="bi bi-x"></i></button></div>
+
+    <!-- Profile -->
+    <div style="display:flex;align-items:center;gap:14px;padding:4px 0 20px;border-bottom:1px solid var(--border)">
+      <div style="width:52px;height:52px;border-radius:50%;background:var(--navy-3);display:flex;align-items:center;justify-content:center;color:var(--navy);font-size:22px;flex-shrink:0"><i class="bi bi-person-fill"></i></div>
+      <div>
+        <div id="sett-name" style="font-size:17px;font-weight:800;color:var(--text)"></div>
+        <div id="sett-dui" style="font-size:13px;color:var(--muted);margin-top:2px"></div>
+      </div>
+    </div>
+
+    <!-- Notif row -->
+    <div style="padding:18px 0 16px;border-bottom:1px solid var(--border)">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px">
+        <div>
+          <div style="font-size:15px;font-weight:700;color:var(--text)"><i class="bi bi-bell" style="margin-right:8px;color:var(--navy)"></i>Notificaciones</div>
+          <div id="sett-notif-status" style="font-size:12px;color:var(--muted);margin-top:3px;margin-left:26px"></div>
+        </div>
+      </div>
+      <button id="sett-notif-btn" onclick="settingsRequestNotif()" class="btn btn-outline btn-sm" style="margin-top:4px;width:100%"></button>
+    </div>
+
+    <!-- Sign out -->
+    <div style="padding-top:16px">
+      <button class="btn btn-danger" onclick="doLogout()"><i class="bi bi-box-arrow-right"></i> Cerrar sesión</button>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ NOTIF BANNER ═══ -->
+<div id="notif-banner" style="display:none;position:fixed;bottom:80px;left:50%;transform:translateX(-50%);width:calc(100% - 32px);max-width:398px;background:#fff;border-radius:16px;padding:16px;box-shadow:0 4px 28px rgba(0,0,0,.18);z-index:8000;border:1px solid var(--border)">
+  <div style="display:flex;align-items:flex-start;gap:12px">
+    <div style="font-size:26px;line-height:1;padding-top:2px">🔔</div>
+    <div style="flex:1">
+      <div style="font-size:15px;font-weight:700;color:var(--text);margin-bottom:3px">Activa los recordatorios</div>
+      <div style="font-size:13px;color:var(--muted);line-height:1.5">Te avisaremos antes de cada cita para que nunca la olvides.</div>
+    </div>
+    <button onclick="dismissNotifBanner()" style="background:none;border:none;color:var(--muted);font-size:18px;cursor:pointer;padding:0;line-height:1;flex-shrink:0"><i class="bi bi-x"></i></button>
+  </div>
+  <div style="display:flex;gap:8px;margin-top:12px">
+    <button onclick="bannerRequestNotif()" class="btn btn-primary btn-sm" style="flex:1">Activar</button>
+    <button onclick="dismissNotifBanner()" class="btn btn-ghost btn-sm">Ahora no</button>
+  </div>
+</div>
 
 <!-- ═══ SPOTLIGHT TUTORIAL ═══ -->
 <style>
