@@ -58,7 +58,7 @@ body {
 }
 
 /* ─── VIEWS ─── */
-.view { display: none; flex-direction: column; min-height: 100vh; }
+.view { display: none; flex-direction: column; height: 100vh; height: 100dvh; overflow: hidden; }
 .view.active { display: flex; }
 
 /* slide transition */
@@ -101,7 +101,7 @@ body {
 .back-btn:hover { color: var(--navy-2); }
 
 /* ─── SCROLL ─── */
-.scroll { flex: 1; padding: 0 0 88px; overflow-y: auto; }
+.scroll { flex: 1; min-height: 0; padding: 0 0 88px; overflow-y: auto; }
 .px { padding-left: 16px; padding-right: 16px; }
 
 /* ─── BOTTOM NAV ─── */
@@ -163,12 +163,18 @@ body {
 .btn-danger:hover { background: #FEE2E2; }
 .btn-sm { padding: 10px 14px; font-size: 14px; border-radius: var(--r-sm); width: auto; }
 .btn-footer {
-  padding: 12px 16px calc(12px + env(safe-area-inset-bottom));
-  background: var(--surface); border-top: 1px solid var(--border);
-  transform: translateY(110%); opacity: 0; pointer-events: none;
-  transition: transform 0.3s var(--ease-out), opacity 0.25s ease;
+  max-height: 0; overflow: hidden;
+  background: var(--surface);
+  transition: max-height 0.35s var(--ease-out);
 }
-.btn-footer.show { transform: translateY(0); opacity: 1; pointer-events: auto; }
+.btn-footer > .btn {
+  display: block; margin: 12px 16px calc(12px + env(safe-area-inset-bottom));
+  width: calc(100% - 32px);
+}
+.btn-footer.show {
+  max-height: 100px;
+  border-top: 1px solid var(--border);
+}
 
 /* ─── INPUT ─── */
 .fg { margin-bottom: 16px; }
@@ -895,7 +901,7 @@ body {
       </div>
     </div>
   </div>
-  <div class="btn-footer show">
+  <div class="btn-footer show" style="border-top:1px solid var(--border)">
     <button class="btn btn-accent" onclick="confirmAppt()"><i class="bi bi-check-circle"></i> Confirmar cita</button>
   </div>
 </div>
@@ -1259,7 +1265,7 @@ function renderNextAppt(){
     <div class="next-meta" style="margin-top:4px"><i class="bi bi-calendar3"></i>${a.date} &nbsp;·&nbsp; <i class="bi bi-clock"></i> ${a.time}</div>
     <div style="margin-top:10px;display:flex;gap:8px">
       ${today?`<button class="btn btn-ghost btn-sm" style="color:#fff;background:rgba(255,255,255,.18);border-color:rgba(255,255,255,.3);font-size:13px" onclick="event.stopPropagation();showView('view-queue')"><i class="bi bi-hourglass-split"></i> Ver turno</button>`:''}
-      <button class="btn btn-ghost btn-sm" style="color:#FCA5A5;background:rgba(255,255,255,.1);border-color:rgba(255,255,255,.2);font-size:13px" onclick="event.stopPropagation();openCancel('${a.id}')"><i class="bi bi-x-circle"></i> Cancelar</button>
+      <button class="btn btn-ghost btn-sm" style="color:#fff;background:rgba(255,255,255,.1);border-color:rgba(255,255,255,.2);font-size:13px" onclick="event.stopPropagation();openCancel('${a.id}')"><i class="bi bi-sliders"></i> Gestionar</button>
     </div>
   </div>`;
 }
@@ -1501,7 +1507,7 @@ function confirmAppt(){
     document.getElementById('tk-status-chip').innerHTML=`<span class="chip chip-green"><i class="bi bi-check-circle-fill"></i> Reagendada</span>`;
   } else {
     code='ISSS-'+Math.random().toString(36).slice(2,8).toUpperCase();
-    const a={id:Date.now().toString(),spec:specName,specIcon,center:centerName,date:ds,dateISO,time:S.time,code,status:'upcoming',doctor:'Por asignar',patient:patientName};
+    const a={id:Date.now().toString(),spec:specName,specIcon,center:centerName,date:ds,dateISO,time:S.time,code,status:'upcoming',doctor:'Por asignar',patient:patientName,forFamiliar};
     S.appts.unshift(a); save();
     document.getElementById('tk-status-chip').innerHTML=`<span class="chip chip-green"><i class="bi bi-check-circle-fill"></i> Confirmada</span>`;
   }
