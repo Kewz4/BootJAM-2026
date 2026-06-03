@@ -1432,11 +1432,20 @@ function selDate(d){
   setTimeout(()=>document.getElementById('time-section').scrollIntoView({behavior:'smooth',block:'nearest'}),100);
 }
 
+function slotMinutes(t){
+  const [time,ap]=t.split(' '); let [h,m]=time.split(':').map(Number);
+  if(ap==='PM'&&h!==12)h+=12; if(ap==='AM'&&h===12)h=0;
+  return h*60+m;
+}
 function renderTSlots(){
   const times=['7:00 AM','7:30 AM','8:00 AM','8:30 AM','9:00 AM','9:30 AM','10:00 AM','10:30 AM','11:00 AM','11:30 AM','2:00 PM','2:30 PM'];
-  const taken=[2,5,8];
+  const hardTaken=[2,5,8];
+  const now=new Date();
+  const isToday=S.date&&S.date.getFullYear()===now.getFullYear()&&S.date.getMonth()===now.getMonth()&&S.date.getDate()===now.getDate();
+  const cutoff=isToday?(now.getHours()*60+now.getMinutes()+60):0; // +1 hr buffer
   document.getElementById('tslots-grid').innerHTML=times.map((t,i)=>{
-    const tk=taken.includes(i), sel=S.time===t;
+    const tk=hardTaken.includes(i)||(isToday&&slotMinutes(t)<=cutoff);
+    const sel=S.time===t;
     return`<button class="tslot${tk?' taken':''}${sel?' sel':''}" onclick="${!tk?`selTime('${t}')`:''}">
       ${t}${tk?'<br><span style="font-size:10px;font-weight:400;color:#C5CDD8">Ocupado</span>':''}
     </button>`;
